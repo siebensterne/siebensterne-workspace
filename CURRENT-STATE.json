@@ -4,9 +4,9 @@
   "baseline_record": "WORKSPACE.lock.json",
   "baseline_note": "Bootstrap pins are historical. They are not the current reviewed heads.",
   "workspace": {
-    "commit": "85dc0193d0d1b2a3086db587ba0302ac0f0bf35e",
+    "commit": "pending-final-w11",
     "working_tree": "clean",
-    "note": "Commit that established the W1.1 state record; later documentation-only commits do not change reviewed source state."
+    "note": "Commit establishing the W1.1 final state; later documentation-only commits do not change reviewed source."
   },
   "repositories": {
     "fieldbook": {
@@ -66,9 +66,9 @@
     "note": "check-all invokes check-static in both repositories. It does not execute either full test suite."
   },
   "review_package": {
-    "bundle": "siebensterne-review-bundle-2026-11-23.zip",
-    "sha256": "ab073ba05dd5d0b4d4eff300c9ac135932fdd79ae7344556ac1e4cec4b4f766a",
-    "verification": "manifests verified, git bundles recovered, deterministic rebuild"
+    "bundle": "siebensterne-review-bundle-2026-11-23-W11.zip",
+    "sha256": "677fd92bc30450eb0f8ab8e9f875ccebdd20c7e2aaf8f6a77a46048a3b8cb1bc",
+    "verification": "manifests verified, git bundles recovered, exclusions enforced, make audit exit 0"
   },
   "status": {
     "incremental_data_budget_inr": 0,
