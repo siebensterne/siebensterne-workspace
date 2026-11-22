@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "workspace_prepared_utc": "2026-11-22",
+  "root_kind": "local-orchestration-only",
+  "repositories": [
+    {
+      "name": "fieldbook",
+      "remote": "https://github.com/siebensterne/fieldbook.git",
+      "branch": "main",
+      "baseline_commit": "28eb8779ea2aab67ce471d9d3e9f222faf8f7327",
+      "source_archive_sha256": "96224f255c061ed147417327af81688af920dc8d386ea0ebae031f398b8e2b60",
+      "role": "data platform and NDC producer"
+    },
+    {
+      "name": "nirnay",
+      "remote": "https://github.com/siebensterne/nirnay.git",
+      "branch": "main",
+      "baseline_commit": "437179a8fdd0b1935420d1467f9a5c8a60da824d",
+      "source_archive_sha256": "98d300a7a54be8e8f1c02638a7c2962cbb00938f00a128831622e69fd230c0a1",
+      "role": "research, simulation, portfolio, risk and eventual execution consumer"
+    }
+  ],
+  "shared_toolchain": {
+    "rust": "1.99.1",
+    "quality_contract": "quality-contract.json is maintained independently in each repository"
+  },
+  "no_provider_contact": true,
+  "data_budget_inr": 0,
+  "ndc_state": "semantic requirements proposed; no accepted release implementation",
+  "rights_state": "unknown",
+  "live_order_submission": "disabled",
+  "tool_pins": {
+    "rust": "1.99.1",
+    "python": "3.12",
+    "ruff": "0.17.5",
+    "pyink": "26.5.1",
+    "shellcheck": "0.11.0.1",
+    "clang_format": "21.1.8"
+  },
+  "canonical_command_surface": [
+    "check",
+    "check-static",
+    "ci",
+    "assure",
+    "lint",
+    "test",
+    "fmt",
+    "format-fix"
+  ],
+  "registries": [
+    "ADR-REGISTRY.md",
+    "NDC-REGISTRY.md",
+    "REVIEW-LOG.md",
+    "TOOL-MATRIX.md",
+    "SHARED-FILES.md"
+  ],
+  "workspace_repository": "https://github.com/siebensterne/siebensterne-workspace.git"
+}

@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "name": "Workspace",
+      "path": "."
+    },
+    {
+      "name": "Fieldbook",
+      "path": "fieldbook"
+    },
+    {
+      "name": "Nirnay",
+      "path": "nirnay"
+    }
+  ],
+  "settings": {
+    "files.eol": "\\n",
+    "search.exclude": {
+      "**/target": true,
+      "**/.git": true
+    }
+  }
+}

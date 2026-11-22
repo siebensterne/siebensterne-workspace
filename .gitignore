@@ -1,0 +1,14 @@
+.DS_Store
+*.log
+*.tmp
+target/
+**/target/
+**/.venv/
+**/venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+
+# Local source clones are never part of this repository
+/fieldbook/
+/nirnay/
