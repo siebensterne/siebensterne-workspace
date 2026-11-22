@@ -10,6 +10,9 @@ evidence or review archive.
 | 2026-11-23 | Fieldbook `afc6f28`, Nirnay `b997d48` | W1 paired PRs merged: egress rights enforcement and dataset admission | Fieldbook PR #40, Nirnay PR #123 |
 | 2026-11-23 | Nirnay `8c2a09a` | License metadata corrected in both repositories | Fieldbook PR #39, Nirnay PR #122 |
 | 2026-11-23 | Workspace | Tooling standardised; workspace published as an independent repository | This repository |
+| 2026-11-23 | Fieldbook `55027e0`, Nirnay `f250fee` | Paired standardisation PRs merged: Python 3.12, line length 100, canonical Make surface, canonical root docs, NDC producer doc, clippy filename, ADR index, quality-contract alignment | Fieldbook PR #41, Nirnay PR #125 |
+| 2026-11-23 | CI | Fieldbook main CI `45062268375` 2/2 after rerun (stale remote branch cleared); Nirnay main CI `45062286601` 12/12 | Hosted CI |
+| 2026-11-23 | Workspace `37665f7` | Three independent org repositories; workspace contains only orchestration files | This repository |
 
 ## Rules
 
