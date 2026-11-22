@@ -4,9 +4,9 @@
   "baseline_record": "WORKSPACE.lock.json",
   "baseline_note": "Bootstrap pins are historical. They are not the current reviewed heads.",
   "workspace": {
-    "commit": "pending-w11-record",
+    "commit": "85dc0193d0d1b2a3086db587ba0302ac0f0bf35e",
     "working_tree": "clean",
-    "note": "Commit that established this state record. Later documentation-only commits do not change the reviewed source state."
+    "note": "Commit that established the W1.1 state record; later documentation-only commits do not change reviewed source state."
   },
   "repositories": {
     "fieldbook": {
