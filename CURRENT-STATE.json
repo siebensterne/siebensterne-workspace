@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "generated_utc_date": "2026-11-23",
+  "baseline_record": "WORKSPACE.lock.json",
+  "baseline_note": "Bootstrap pins are historical. They are not the current reviewed heads.",
+  "workspace": {
+    "commit": "pending-state-record",
+    "working_tree": "clean",
+    "note": "The commit recording this state is written after the first commit; the value is then updated in a documentation-only follow-up."
+  },
+  "repositories": {
+    "fieldbook": {
+      "current_head": "55027e0394abc5d773a4753455e643c18dbaeb0e",
+      "tested_head": "55027e0394abc5d773a4753455e643c18dbaeb0e",
+      "head_kind": "merge of tested code",
+      "working_tree": "clean",
+      "ci": {
+        "run_id": "45062268375",
+        "head_sha": "55027e0394abc5d773a4753455e643c18dbaeb0e",
+        "conclusion": "success",
+        "jobs": "2/2",
+        "note": "Rerun after clearing a stale remote-tracking branch. The earlier run failed on a branch-policy check, not on code."
+      },
+      "static_gate": {
+        "command": "make check-static",
+        "result": "pass"
+      },
+      "test_suite": {
+        "command": "cargo test --workspace --all-targets --locked",
+        "result": "pass",
+        "counts": "1058 passed, 0 failed, 32 ignored",
+        "policy": "venue live captures and prediction-market fixtures are out of scope for the review package; test-policy reconciliation is tracked under W1.1-B"
+      }
+    },
+    "nirnay": {
+      "current_head": "72bac0cecc588e393eb9cd2f2a7b6b0d735c1b42",
+      "tested_head": "72bac0cecc588e393eb9cd2f2a7b6b0d735c1b42",
+      "code_head": "f250feeebc5085e148fc8315aaa482f71f76c9c8",
+      "head_kind": "documentation-only CI record after the code-bearing merge",
+      "working_tree": "clean",
+      "ci": {
+        "run_id": "45064691263",
+        "head_sha": "72bac0cecc588e393eb9cd2f2a7b6b0d735c1b42",
+        "conclusion": "success",
+        "jobs": "12/12",
+        "earlier_code_run": {
+          "run_id": "45062286601",
+          "head_sha": "f250feeebc5085e148fc8315aaa482f71f76c9c8",
+          "conclusion": "success",
+          "jobs": "12/12"
+        }
+      },
+      "static_gate": {
+        "command": "make check-static",
+        "result": "pass"
+      },
+      "test_suite": {
+        "command": "python3 -m pytest -q",
+        "result": "pass",
+        "counts": "352 passed, 90 deselected, 2 subtests",
+        "policy": "90 tests deselected by the market_shaped_fixture marker; inline-generated market observations are under audit under W1.1-B"
+      }
+    }
+  },
+  "workspace_gates": {
+    "command": "make audit",
+    "includes": ["status", "consistency", "check-all"],
+    "static_only": true,
+    "result": "pass",
+    "note": "check-all invokes check-static in both repositories. It does not execute either full test suite."
+  },
+  "review_package": {
+    "bundle": "siebensterne-review-bundle-2026-11-23.zip",
+    "sha256": "ab073ba05dd5d0b4d4eff300c9ac135932fdd79ae7344556ac1e4cec4b4f766a",
+    "verification": "manifests verified, git bundles recovered, deterministic rebuild"
+  },
+  "status": {
+    "incremental_data_budget_inr": 0,
+    "provider_rights": "21 UNKNOWN",
+    "dataset_acceptance": "BLOCKED",
+    "provider_collection": "DISABLED",
+    "experiment_registration": "BLOCKED",
+    "m4_holdout": "UNTOUCHED",
+    "live_execution": "DISABLED"
+  },
+  "open_owner_decisions": [
+    "Ownership ADR ratification and named responsible roles",
+    "NDC v1 semantic approval with document digests",
+    "Written source rights for any exact operation",
+    "Dataset acceptance after qualification",
+    "Synthetic-data directive scope for market-shaped software tests",
+    "India venue and product coverage definition"
+  ],
+  "reporting_categories": [
+    "implemented",
+    "tested with abstract mathematical values",
+    "tested against official reference data",
+    "verified against permitted real observations",
+    "blocked"
+  ]
+}

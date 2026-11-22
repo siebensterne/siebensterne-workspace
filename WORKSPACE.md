@@ -295,33 +295,26 @@ not an assumed universal feed or protocol.
   the contract and workload justify it.
 - No live broker order submission.
 
-## Current blockers identified in the supplied source snapshots
+## Blocker resolution register
 
-1. Fieldbook's governance types and coverage certification are not yet wired
-   into all provider-contact and export paths. Its default CLI command is
-   `Collect`; remove that default and gate provider contact inside the binary
-   before any future source onboarding.
-2. Fieldbook's distribution audit identified a verified-export verifier defect,
-   run identity mismatch, incomplete export identity, missing release index,
-   rights/retention proof and incomplete NDC fields. Do not expose its current
-   exports as an accepted NDC release.
-3. Fieldbook's durability is local-host only. The audit identified segment,
-   acknowledgement, sync-policy, metadata/catalog and failure-propagation
-   issues. Backup/restore across failure domains is not implemented.
-4. Fieldbook's live event path remains a limited order-book collector; its V2
-   domain types are not a connected NSE/BSE/MCX implementation.
-5. Nirnay's supplied snapshot is `437179a`, not the earlier `e66a49c` state
-   mentioned in conversation. Treat this lock as the reviewed baseline; do not
-   combine claims from different commits.
-6. Both root Cargo manifests declare `license = "MIT"` while the checked-in
-   LICENSE files, ORIGIN.md and SPDX headers declare Apache-2.0. Correct the
-   package metadata in separate reviewed PRs before making package/license
-   claims or publishing artifacts.
-7. The earlier Fieldbook architecture audits in Nirnay target Fieldbook
-   `aee91de`; refresh affected audit findings against `28eb877` before treating
-   them as an acceptance record. The six intervening commits do not modify the
-   rights-gate or analytics-export paths implicated by the principal A4/A5
-   findings.
+The original findings below are preserved as historical statements. Their current
+treatment is recorded alongside them. This is not a rewrite of the bootstrap baseline;
+`WORKSPACE.lock.json` still identifies the exact source snapshots from which this
+workspace was created. Machine-readable current state is in `CURRENT-STATE.json`.
+
+| Original finding | Current treatment |
+|---|---|
+| Fieldbook governance types and coverage certification were not wired into provider egress and export paths; CLI defaulted to `Collect` | Resolved by Fieldbook PR #40: no default provider command, rights gated at egress and publication, mandatory venue-scoped authorization. Deeper scope and operation-precision defects remain open under W1.1-C |
+| Fieldbook distribution audit found a verified-export verifier defect, run identity mismatch, incomplete export identity, no release index or rights proof, incomplete NDC fields | Open. Do not expose current exports as an accepted NDC release |
+| Fieldbook durability is local-host only, with segment, acknowledgement, sync-policy, metadata/catalog and failure-propagation issues; no cross-domain backup or restore | Open |
+| Fieldbook live event path is a limited order-book collector; V2 domain types are not a connected NSE/BSE/MCX implementation | Open; India domain work starts only after W1.1 |
+| Nirnay supplied snapshot was `437179a`, not `e66a49c`; do not combine claims from different commits | Superseded by reviewed commits recorded in `CURRENT-STATE.json`; commits are never mixed in a claim |
+| Both root Cargo manifests declared `license = "MIT"` while LICENSE, ORIGIN.md and SPDX headers declare Apache-2.0 | Resolved by Fieldbook PR #39 and Nirnay PR #122 |
+| Earlier Fieldbook architecture audits targeted `aee91de`; refresh against `28eb877` | Refreshed by Nirnay PR #124; A4 superseded by PR #40, A5 findings remain open |
+
+``make check-all`` runs both repositories' **static** gates. It does not run both full
+test suites. Static-gate results and test-suite results are recorded separately in
+`CURRENT-STATE.json` and remain separate claims.
 
 ## Done means
 
