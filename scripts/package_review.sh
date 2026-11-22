@@ -53,9 +53,11 @@ package_repo() {
   : > "$excluded_list"
   while IFS= read -r -d '' file; do
     local skip=0
-    for pattern in "${excluded_patterns[@]}"; do
-      if [[ "$file" == $pattern ]]; then skip=1; break; fi
-    done
+    if [[ ${#excluded_patterns[@]} -gt 0 ]]; then
+      for pattern in "${excluded_patterns[@]}"; do
+        if [[ "$file" == $pattern ]]; then skip=1; break; fi
+      done
+    fi
     if [[ "$skip" -eq 1 ]]; then
       printf '%s\n' "$file" >> "$excluded_list"
       continue
@@ -88,7 +90,7 @@ evidence. It contains no provider contact, collection command output, experiment
 live order, synthetic market observation or strategy claim.
 
 Review scope is Indian and global securities. Exchange-specific live captures, venue
-latency measurements and prediction-market fixtures are excluded; `MANIFEST.json`
+latency measurements and prediction-market fixtures are excluded; \`MANIFEST.json\`
 records the exact exclusion patterns and paths. Source code and documentation remain
 complete, so the package is still a faithful source snapshot at the recorded HEAD.
 
@@ -107,7 +109,7 @@ Check the manifest with:
     python3 -c 'import json,hashlib,pathlib,sys; m=json.load(open("MANIFEST.json")); root=pathlib.Path("."); bad=[f["path"] for f in m["files"] if hashlib.sha256((root/f["path"]).read_bytes()).hexdigest()!=f["sha256"]]; print("OK" if not bad else bad)'
 EOF
 
-  python3 - "$stage/$name" "$excluded_list" "${excluded_patterns[*]:-}" \
+  python3 - "$stage/$name" "$excluded_list" "${excluded_patterns[*]-}" \
           "$name" "$head" "$branch" "$origin" "$ci" "$LABEL" <<'PY'
 import hashlib, json, pathlib, sys
 root = pathlib.Path(sys.argv[1])
