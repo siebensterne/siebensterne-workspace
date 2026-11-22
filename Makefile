@@ -1,4 +1,4 @@
-.PHONY: help bootstrap status check-fieldbook-static check-nirnay-static check-nirnay check-all ci-report consistency audit
+.PHONY: help bootstrap status check-fieldbook-static check-nirnay-static check-nirnay check-all ci-report consistency audit package-review
 
 WORKSPACE_DIR ?= $(CURDIR)
 
@@ -12,7 +12,8 @@ help:
 	  'check-all             Run both static gate surfaces' \
 	  'ci-report             Show latest hosted CI conclusion per repository' \
 	  'consistency           Read-only tool, lock and shared-file audit' \
-	  'audit                 status + consistency + all static gates'
+	  'audit                 status + consistency + all static gates' \
+	  'package-review        build deterministic review ZIPs with manifests and bundles'
 
 bootstrap:
 	bash scripts/bootstrap.sh "$(WORKSPACE_DIR)"
@@ -38,3 +39,6 @@ consistency:
 	bash scripts/consistency.sh "$(WORKSPACE_DIR)"
 
 audit: status consistency check-all
+
+package-review:
+	bash scripts/package_review.sh "$(WORKSPACE_DIR)" "$(WORKSPACE_DIR)/../siebensterne-review-packages"

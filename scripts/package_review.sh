@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+# Build deterministic review packages for the three independent repositories.
+# Only Git-tracked files are included. Raw captures, credentials, build output and
+# local .local/ evidence are excluded. No provider contact and no collector runs.
+set -euo pipefail
+
+ROOT="${1:-$(cd "$(dirname "$0")/.." && pwd)}"
+OUT="${2:-$ROOT/../siebensterne-review-packages}"
+LABEL="${3:-$(date -u +%Y-%m-%d)}"
+
+ROOT="$(cd "$ROOT" && pwd)"
+mkdir -p "$OUT"
+OUT="$(cd "$OUT" && pwd)"
+
+package_repo() {
+  local name="$1" dir="$2"
+  local stage="$OUT/.stage-$name"
+  rm -rf "$stage"
+  mkdir -p "$stage/$name/git" "$stage/$name/source"
+
+  if [[ -n "$(git -C "$dir" status --porcelain)" ]]; then
+    printf 'ERROR: %s working tree is dirty; no package built.\n' "$name" >&2
+    git -C "$dir" status --short >&2
+    return 1
+  fi
+
+  local head branch origin ci
+  head="$(git -C "$dir" rev-parse HEAD)"
+  branch="$(git -C "$dir" branch --show-current)"
+  origin="$(git -C "$dir" config --get remote.origin.url || printf 'none')"
+  ci="$(gh run list --repo "siebensterne/$name" --branch main --workflow CI --limit 1 \
+        --json databaseId,headSha,conclusion \
+        --jq '.[] | "\(.databaseId) \(.headSha) \(.conclusion)"' 2>/dev/null || printf 'unavailable')"
+
+  git -C "$dir" bundle create "$stage/$name/git/$name-refs.bundle" --all >/dev/null 2>&1
+  git bundle verify "$stage/$name/git/$name-refs.bundle" >/dev/null 2>&1
+
+  git -C "$dir" ls-files -z | while IFS= read -r -d '' file; do
+    mkdir -p "$stage/$name/source/$(dirname "$file")"
+    cp -p "$dir/$file" "$stage/$name/source/$file"
+  done
+
+  cat > "$stage/$name/REVIEW.md" <<EOF
+# Review package — $name
+
+Generated: $LABEL (UTC)
+Repository: https://github.com/siebensterne/$name
+Branch: $branch
+HEAD: $head
+Origin: $origin
+Latest CI: $ci
+
+## Contents
+
+- \`source/\` — every Git-tracked file at HEAD, paths unchanged.
+- \`git/$name-refs.bundle\` — all refs for source recovery and history inspection.
+- \`MANIFEST.json\` — per-file SHA-256 and size, plus package totals.
+
+## Boundaries
+
+This package contains source and documentation only. It excludes Git-ignored raw
+market-data captures, credentials, build output, virtual environments and operator-local
+evidence. It contains no provider contact, collection command output, experiment result,
+live order, synthetic market observation or strategy claim.
+
+Rights remain UNKNOWN, dataset acceptance remains BLOCKED, live execution is disabled.
+The M4 holdout and all dated evidence are preserved, not re-run.
+
+## Verification
+
+Recover the exact source commit from the bundle:
+
+    git clone git/$name-refs.bundle restored-$name
+    git -C restored-$name cat-file -e $head^{commit}
+
+Check the manifest with:
+
+    python3 -c 'import json,hashlib,pathlib,sys; m=json.load(open("MANIFEST.json")); root=pathlib.Path("."); bad=[f["path"] for f in m["files"] if hashlib.sha256((root/f["path"]).read_bytes()).hexdigest()!=f["sha256"]]; print("OK" if not bad else bad)'
+EOF
+
+  python3 - "$stage/$name" "$name" "$head" "$branch" "$origin" "$ci" "$LABEL" <<'PY'
+import hashlib, json, pathlib, sys
+root = pathlib.Path(sys.argv[1]); name, head, branch, origin, ci, label = sys.argv[2:]
+files = []
+for path in sorted(p for p in root.rglob("*") if p.is_file() and p.name != "MANIFEST.json"):
+    rel = path.relative_to(root).as_posix()
+    data = path.read_bytes()
+    files.append({"path": rel, "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)})
+manifest = {
+    "schema": 1,
+    "repository": name,
+    "generated_utc_date": label,
+    "head": head,
+    "branch": branch,
+    "origin": origin,
+    "latest_ci": ci,
+    "tracked_files": len([f for f in files if f["path"].startswith("source/")]),
+    "files": files,
+    "total_bytes": sum(f["bytes"] for f in files),
+}
+(root / "MANIFEST.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+PY
+
+  local zip="$OUT/siebensterne-$name-review-$LABEL.zip"
+  python3 - "$stage/$name" "$zip" <<'PY'
+import pathlib, sys, zipfile
+root = pathlib.Path(sys.argv[1]); out = pathlib.Path(sys.argv[2])
+paths = sorted(p for p in root.rglob("*") if p.is_file())
+epoch = (1980, 1, 1, 0, 0, 0)
+with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+    for p in paths:
+        info = zipfile.ZipInfo(p.relative_to(root).as_posix(), date_time=epoch)
+        info.external_attr = 0o644 << 16
+        zf.writestr(info, p.read_bytes())
+PY
+  local sha
+  sha="$(shasum -a 256 "$zip" | awk '{print $1}')"
+  printf '%s  %s\n' "$sha" "$(basename "$zip")" > "$zip.sha256"
+  printf 'PACKED %-12s files=%-4s bytes=%-9s sha256=%s\n' \
+    "$name" "$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["tracked_files"])' "$stage/$name/MANIFEST.json")" \
+    "$(stat -f%z "$zip")" "$sha"
+  rm -rf "$stage"
+}
+
+package_repo fieldbook "$ROOT/fieldbook"
+package_repo nirnay "$ROOT/nirnay"
+package_repo workspace "$ROOT"
+
+# Combined bundle for a single hand-off.
+STAGE="$OUT/.stage-combined"
+rm -rf "$STAGE"; mkdir -p "$STAGE"
+cp "$OUT"/siebensterne-*-review-"$LABEL".zip "$STAGE/"
+cp "$OUT"/siebensterne-*-review-"$LABEL".zip.sha256 "$STAGE/"
+cat > "$STAGE/README.md" <<EOF
+# siebensterne review bundle — $LABEL
+
+Three independent repositories reviewed as source packages. No monorepo, no source
+copies inside the workspace package, no raw market data, no credentials.
+
+| Package | Repository |
+|---|---|
+| siebensterne-fieldbook-review-$LABEL.zip | data platform |
+| siebensterne-nirnay-review-$LABEL.zip | quantitative platform |
+| siebensterne-workspace-review-$LABEL.zip | orchestration only |
+
+Each package has its own SHA-256 sidecar and MANIFEST.json. Verify with:
+
+    shasum -a 256 -c siebensterne-*-review-$LABEL.zip.sha256
+
+Rights remain UNKNOWN; dataset acceptance BLOCKED; live execution disabled.
+EOF
+python3 - "$STAGE" "$OUT/siebensterne-review-bundle-$LABEL.zip" <<'PY'
+import hashlib, json, pathlib, sys, zipfile
+root = pathlib.Path(sys.argv[1]); out = pathlib.Path(sys.argv[2])
+paths = sorted(p for p in root.rglob("*") if p.is_file())
+epoch = (1980, 1, 1, 0, 0, 0)
+with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+    for p in paths:
+        info = zipfile.ZipInfo(p.relative_to(root).as_posix(), date_time=epoch)
+        info.external_attr = 0o644 << 16
+        zf.writestr(info, p.read_bytes())
+(root / "BUNDLE-MANIFEST.json").write_text(json.dumps({
+    "schema": 1,
+    "members": [{"name": p.relative_to(root).as_posix(),
+                 "sha256": hashlib.sha256(p.read_bytes()).hexdigest(),
+                 "bytes": p.stat().st_size} for p in paths],
+}, indent=2) + "\n", encoding="utf-8")
+PY
+sha="$(shasum -a 256 "$OUT/siebensterne-review-bundle-$LABEL.zip" | awk '{print $1}')"
+printf '%s  %s\n' "$sha" "$(basename "$OUT/siebensterne-review-bundle-$LABEL.zip")" > "$OUT/siebensterne-review-bundle-$LABEL.zip.sha256"
+rm -rf "$STAGE"
+printf 'BUNDLE %s bytes=%s sha256=%s\n' "$(basename "$OUT/siebensterne-review-bundle-$LABEL.zip")" "$(stat -f%z "$OUT/siebensterne-review-bundle-$LABEL.zip")" "$sha"
