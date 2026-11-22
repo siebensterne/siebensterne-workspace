@@ -4,9 +4,9 @@
   "baseline_record": "WORKSPACE.lock.json",
   "baseline_note": "Bootstrap pins are historical. They are not the current reviewed heads.",
   "workspace": {
-    "commit": "pending-state-record",
+    "commit": "899e9aced1a30cae013294faa5be9dcc18bd35f6",
     "working_tree": "clean",
-    "note": "The commit recording this state is written after the first commit; the value is then updated in a documentation-only follow-up."
+    "note": "Commit that established this state record. Later documentation-only commits do not change the reviewed source state."
   },
   "repositories": {
     "fieldbook": {
@@ -64,7 +64,11 @@
   },
   "workspace_gates": {
     "command": "make audit",
-    "includes": ["status", "consistency", "check-all"],
+    "includes": [
+      "status",
+      "consistency",
+      "check-all"
+    ],
     "static_only": true,
     "result": "pass",
     "note": "check-all invokes check-static in both repositories. It does not execute either full test suite."
