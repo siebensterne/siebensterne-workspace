@@ -4,51 +4,43 @@
   "baseline_record": "WORKSPACE.lock.json",
   "baseline_note": "Bootstrap pins are historical. They are not the current reviewed heads.",
   "workspace": {
-    "commit": "899e9aced1a30cae013294faa5be9dcc18bd35f6",
+    "commit": "pending-w11-record",
     "working_tree": "clean",
     "note": "Commit that established this state record. Later documentation-only commits do not change the reviewed source state."
   },
   "repositories": {
     "fieldbook": {
-      "current_head": "55027e0394abc5d773a4753455e643c18dbaeb0e",
-      "tested_head": "55027e0394abc5d773a4753455e643c18dbaeb0e",
+      "current_head": "340f829c5256257ae8dbaf6e64b55c1f4401396f",
+      "tested_head": "340f829c5256257ae8dbaf6e64b55c1f4401396f",
       "head_kind": "merge of tested code",
       "working_tree": "clean",
       "ci": {
-        "run_id": "45062268375",
-        "head_sha": "55027e0394abc5d773a4753455e643c18dbaeb0e",
+        "run_id": "45084154089",
+        "head_sha": "340f829c5256257ae8dbaf6e64b55c1f4401396f",
         "conclusion": "success",
         "jobs": "2/2",
-        "note": "Rerun after clearing a stale remote-tracking branch. The earlier run failed on a branch-policy check, not on code."
+        "note": "Rerun after stale remote branch cleared"
       },
       "static_gate": {
         "command": "make check-static",
         "result": "pass"
       },
       "test_suite": {
-        "command": "cargo test --workspace --all-targets --locked",
+        "command": "cargo xtask test (market-shaped-tests disabled)",
         "result": "pass",
-        "counts": "1058 passed, 0 failed, 32 ignored",
-        "policy": "venue live captures and prediction-market fixtures are out of scope for the review package; test-policy reconciliation is tracked under W1.1-B"
+        "counts": "548 passed, 12 ignored including doc test",
+        "policy": "W1.1-B market-shaped tests preserved but not executable by default"
       }
     },
     "nirnay": {
-      "current_head": "72bac0cecc588e393eb9cd2f2a7b6b0d735c1b42",
-      "tested_head": "72bac0cecc588e393eb9cd2f2a7b6b0d735c1b42",
-      "code_head": "f250feeebc5085e148fc8315aaa482f71f76c9c8",
-      "head_kind": "documentation-only CI record after the code-bearing merge",
+      "current_head": "e975be9b4c085890a94c192a54c34a48616dcd68",
+      "tested_head": "e975be9b4c085890a94c192a54c34a48616dcd68",
       "working_tree": "clean",
       "ci": {
-        "run_id": "45064691263",
-        "head_sha": "72bac0cecc588e393eb9cd2f2a7b6b0d735c1b42",
+        "run_id": "45084174149",
+        "head_sha": "e975be9b4c085890a94c192a54c34a48616dcd68",
         "conclusion": "success",
-        "jobs": "12/12",
-        "earlier_code_run": {
-          "run_id": "45062286601",
-          "head_sha": "f250feeebc5085e148fc8315aaa482f71f76c9c8",
-          "conclusion": "success",
-          "jobs": "12/12"
-        }
+        "jobs": "12/12"
       },
       "static_gate": {
         "command": "make check-static",
@@ -57,8 +49,8 @@
       "test_suite": {
         "command": "python3 -m pytest -q",
         "result": "pass",
-        "counts": "352 passed, 90 deselected, 2 subtests",
-        "policy": "90 tests deselected by the market_shaped_fixture marker; inline-generated market observations are under audit under W1.1-B"
+        "counts": "251 passed, 199 deselected, 2 subtests",
+        "policy": "Collection-time inventory and AST gate; old 352-pass count historical"
       }
     }
   },
@@ -88,12 +80,12 @@
     "live_execution": "DISABLED"
   },
   "open_owner_decisions": [
-    "Ownership ADR ratification and named responsible roles",
-    "NDC v1 semantic approval with document digests",
-    "Written source rights for any exact operation",
-    "Dataset acceptance after qualification",
-    "Synthetic-data directive scope for market-shaped software tests",
-    "India venue and product coverage definition"
+    "Ratify ownership ADR with named responsible roles",
+    "Approve NDC v1 semantics and document digests",
+    "Provide written source rights for an exact operation and scope",
+    "Accept a dataset after qualification",
+    "Decide whether synthetic-data directive should change for market-shaped software tests",
+    "Define India venue and product coverage"
   ],
   "reporting_categories": [
     "implemented",
@@ -101,5 +93,6 @@
     "tested against official reference data",
     "verified against permitted real observations",
     "blocked"
-  ]
+  ],
+  "w11_completion_record": "W1.1-COMPLETION-RECORD.md"
 }

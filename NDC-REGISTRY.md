@@ -11,6 +11,10 @@ one producer and one consumer. No transport, queue, shared crate or database is 
 | Consumer | Nirnay |
 | Consumer document | `engineering/ndc-consumer-requirements-v1.md` in Nirnay |
 | Ownership decision | `NR-ARCH-ADR-0001` (Proposed) |
+| Producer document digest | `592a1c9043ed2756a3f9d938dbe6e2ee80007166b440cf6f2709d5de11424c33` |
+| Consumer document digest | `25315c57de753bde33b0f8044e70646f24b19c8af7ca9fdbdd2e53682a53b8bd` |
+| Operation sets | producer (8) / consumer (5), distinct; extra grants imply nothing |
+| Trust model | detached Ed25519 via Nirnay dataset-signature.v1.schema.json; integrity is not authenticity |
 | Rights state | all provider rights `UNKNOWN` |
 | Release state | no accepted dataset release |
 

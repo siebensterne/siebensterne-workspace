@@ -17,6 +17,7 @@ by this repository's `.gitignore`.
 | `WORKSPACE.md` | full programme, ownership and operating rules |
 | `WORKSPACE.lock.json` | pinned bootstrap baselines and tool policy |
 | `CURRENT-STATE.json` | current reviewed heads, CI runs, static/test separation and open owner decisions |
+| `W1.1-COMPLETION-RECORD.md` | W1.1 work packages, CI, test-policy outcome, contract digests and remaining owner gates |
 | `TOOL-MATRIX.md` | canonical tool versions, command surface and preserved differences |
 | `ADR-REGISTRY.md` | collision-free canonical ADR IDs across both repositories |
 | `NDC-REGISTRY.md` | NDC version, producer/consumer and compatibility rules |

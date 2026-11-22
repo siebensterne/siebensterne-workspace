@@ -20,3 +20,5 @@ evidence or review archive.
 - Never describe a documentation review as verification of live or real-market data.
 - Never record a claim of zero loss, nanosecond precision or profitability here.
 - Rights remain `UNKNOWN` until written evidence and owner approval exist.
+| 2026-11-23 | Fieldbook `340f829`, Nirnay `e975be9` | W1.1-B/C/D merged: test-policy enforcement, exact operation and mandatory audit, paired NDC rights and trust semantics | Fieldbook PRs #42/#43/#44, Nirnay PRs #126/#127 |
+| 2026-11-23 | CI | Fieldbook `45084154089` 2/2, Nirnay `45084174149` 12/12 | Hosted CI |
