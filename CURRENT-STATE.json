@@ -4,7 +4,7 @@
   "baseline_record": "WORKSPACE.lock.json",
   "baseline_note": "Bootstrap pins are historical. They are not the current reviewed heads.",
   "workspace": {
-    "commit": "pending-final-w11",
+    "commit": "81eb756dabf88668cd435668f9814c5102e6ca4e",
     "working_tree": "clean",
     "note": "Commit establishing the W1.1 final state; later documentation-only commits do not change reviewed source."
   },
