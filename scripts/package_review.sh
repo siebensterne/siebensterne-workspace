@@ -35,10 +35,34 @@ package_repo() {
   git -C "$dir" bundle create "$stage/$name/git/$name-refs.bundle" --all >/dev/null 2>&1
   git bundle verify "$stage/$name/git/$name-refs.bundle" >/dev/null 2>&1
 
-  git -C "$dir" ls-files -z | while IFS= read -r -d '' file; do
+  # Review scope is Indian and global securities. Venue-specific live captures,
+  # venue latency measurements and prediction-market fixtures are excluded from
+  # the review package. Source code and documentation remain fully included.
+  local -a excluded_patterns=()
+  case "$name" in
+    fieldbook)
+      excluded_patterns=(
+        'measurements/live/*'
+        'measurements/polymarket-*'
+        'measurements/remediation/*polymarket*'
+        'fixtures/polymarket/*'
+      )
+      ;;
+  esac
+  local excluded_list="$stage/.$name-excluded"
+  : > "$excluded_list"
+  while IFS= read -r -d '' file; do
+    local skip=0
+    for pattern in "${excluded_patterns[@]}"; do
+      if [[ "$file" == $pattern ]]; then skip=1; break; fi
+    done
+    if [[ "$skip" -eq 1 ]]; then
+      printf '%s\n' "$file" >> "$excluded_list"
+      continue
+    fi
     mkdir -p "$stage/$name/source/$(dirname "$file")"
     cp -p "$dir/$file" "$stage/$name/source/$file"
-  done
+  done < <(git -C "$dir" ls-files -z)
 
   cat > "$stage/$name/REVIEW.md" <<EOF
 # Review package — $name
@@ -63,6 +87,11 @@ market-data captures, credentials, build output, virtual environments and operat
 evidence. It contains no provider contact, collection command output, experiment result,
 live order, synthetic market observation or strategy claim.
 
+Review scope is Indian and global securities. Exchange-specific live captures, venue
+latency measurements and prediction-market fixtures are excluded; `MANIFEST.json`
+records the exact exclusion patterns and paths. Source code and documentation remain
+complete, so the package is still a faithful source snapshot at the recorded HEAD.
+
 Rights remain UNKNOWN, dataset acceptance remains BLOCKED, live execution is disabled.
 The M4 holdout and all dated evidence are preserved, not re-run.
 
@@ -78,16 +107,22 @@ Check the manifest with:
     python3 -c 'import json,hashlib,pathlib,sys; m=json.load(open("MANIFEST.json")); root=pathlib.Path("."); bad=[f["path"] for f in m["files"] if hashlib.sha256((root/f["path"]).read_bytes()).hexdigest()!=f["sha256"]]; print("OK" if not bad else bad)'
 EOF
 
-  python3 - "$stage/$name" "$name" "$head" "$branch" "$origin" "$ci" "$LABEL" <<'PY'
+  python3 - "$stage/$name" "$excluded_list" "${excluded_patterns[*]:-}" \
+          "$name" "$head" "$branch" "$origin" "$ci" "$LABEL" <<'PY'
 import hashlib, json, pathlib, sys
-root = pathlib.Path(sys.argv[1]); name, head, branch, origin, ci, label = sys.argv[2:]
+root = pathlib.Path(sys.argv[1])
+excluded_path = pathlib.Path(sys.argv[2])
+patterns = [p for p in sys.argv[3].split() if p]
+name, head, branch, origin, ci, label = sys.argv[4:]
+excluded = sorted(x.strip() for x in excluded_path.read_text(encoding="utf-8").splitlines() if x.strip())
+excluded_path.unlink()
 files = []
 for path in sorted(p for p in root.rglob("*") if p.is_file() and p.name != "MANIFEST.json"):
     rel = path.relative_to(root).as_posix()
     data = path.read_bytes()
     files.append({"path": rel, "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)})
 manifest = {
-    "schema": 1,
+    "schema": 2,
     "repository": name,
     "generated_utc_date": label,
     "head": head,
@@ -95,6 +130,8 @@ manifest = {
     "origin": origin,
     "latest_ci": ci,
     "tracked_files": len([f for f in files if f["path"].startswith("source/")]),
+    "excluded_files": excluded,
+    "exclusion_patterns": patterns,
     "files": files,
     "total_bytes": sum(f["bytes"] for f in files),
 }
@@ -143,7 +180,11 @@ copies inside the workspace package, no raw market data, no credentials.
 | siebensterne-nirnay-review-$LABEL.zip | quantitative platform |
 | siebensterne-workspace-review-$LABEL.zip | orchestration only |
 
-Each package has its own SHA-256 sidecar and MANIFEST.json. Verify with:
+Each package has its own SHA-256 sidecar and MANIFEST.json. Venue-specific live captures,
+venue latency measurements and prediction-market fixtures are excluded from the Fieldbook
+package; the manifest records the exact patterns and paths. Source code is complete.
+
+Verify with:
 
     shasum -a 256 -c siebensterne-*-review-$LABEL.zip.sha256
 
