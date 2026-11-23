@@ -30,8 +30,9 @@
       "test_suite": {
         "command": "cargo xtask test (market-shaped-tests disabled)",
         "result": "pass",
-        "counts": "548 passed, 12 ignored including doc test",
-        "policy": "W1.1-B market-shaped tests preserved but not executable by default"
+        "counts": "557 passed, 0 failed, 12 ignored (all-targets) + 1 doc test = 558 passed, 12 ignored",
+        "policy": "W1.1-B market-shaped tests preserved but not executable by default",
+        "note": "Exact output of cargo test --workspace --all-targets --locked and --doc at head 340f829 under W1.1-B policy. Prior 548 figure was a transcription error."
       }
     },
     "nirnay": {
@@ -52,7 +53,8 @@
         "command": "python3 -m pytest -q",
         "result": "pass",
         "counts": "251 passed, 199 deselected, 2 subtests",
-        "policy": "Collection-time inventory and AST gate; old 352-pass count historical"
+        "policy": "Collection-time inventory and AST gate; old 352-pass count historical",
+        "note": "Exact output of python3 -m pytest -q at head e975be9. 243 was correct at W1.1-B commit ba21945; 8 admission tests were added by W1.1-D. 352 at 72bac0c is historical."
       }
     }
   },
@@ -96,5 +98,24 @@
     "verified against permitted real observations",
     "blocked"
   ],
-  "w11_completion_record": "W1.1-COMPLETION-RECORD.md"
+  "w11_completion_record": "W1.1-COMPLETION-RECORD.md",
+  "evidence_reconciliation": {
+    "date": "2026-11-23",
+    "fieldbook": {
+      "head": "340f829",
+      "command": "cargo test --workspace --all-targets --locked + --doc",
+      "current": "558 passed, 12 ignored",
+      "historical": "548 figure in W1.1 completion record was incorrect"
+    },
+    "nirnay": {
+      "head": "e975be9",
+      "command": "python3 -m pytest -q",
+      "current": "251 passed, 199 deselected, 2 subtests",
+      "prior_commit": {
+        "head": "ba21945",
+        "count": "243 passed, 199 deselected, 2 subtests"
+      },
+      "historical": "352 passed, 90 deselected at 72bac0c"
+    }
+  }
 }
