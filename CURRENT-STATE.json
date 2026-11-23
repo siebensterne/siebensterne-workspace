@@ -95,10 +95,29 @@
     "m4_holdout": "UNTOUCHED",
     "synthetic_market_shaped_tests": "DISABLED",
     "live_execution": "DISABLED",
-    "ownership_adr": "ACCEPTED 2026-11-23",
-    "ndc_v1": "PROPOSED/historical; superseded by v2 draft semantics",
-    "ndc_v2": "APPROVED 2026-11-23 (producer/consumer digests above)",
+    "ownership_adr": "ACCEPTED 2026-11-23 (NR-ARCH-ADR-0001; owner ratification record)",
+    "ndc_v1": "HISTORICAL; superseded by approved v2; v1 digests preserved unchanged",
+    "ndc_v2": "APPROVED 2026-11-23; active contract version; producer and consumer digests above; C0 digest 3dace660c362e683790ba7e56a785ded8af836abda36f6eab06ed284de49eed2",
+    "ndc_consumer_use_v2_proposed": "PROPOSED; not approved; separate implementation proposal digest 4b9d1fe7190de08151989fc8895f42e1daa737021e8dae019ddc3325f9603a2c",
+    "w2_india_design": "PROPOSED pending a separate India design approval (ownership ratification does not ratify the domain model)",
+    "final_ndc_serialization_schema": "Not yet implemented",
+    "full_release_verifier": "Not implemented",
+    "owner_directive_d11": "Recorded in engineering/retirement/RRP-001.md; supersedes preserve-source-while-disabled for synthetic market-data test assets",
+    "retirement_programme": "RRP-001 published for approval; RRP-002..RRP-007 pending; no source files deleted in this PR",
     "test_data_policy": "strict prohibition retained; versioned amendment not approved"
+  },
+  "ratification_reference": {
+    "path": "engineering/decisions/OWNER-RATIFICATION-2026-11-23.md",
+    "sha256": "e3cc365b9121c22f114b1b17805cffcf0e0f0d5324d0b65ea5255e3be7d6f3f1",
+    "note": "Decision A ownership Accepted; Decision B NDC v2 semantics Approved. No data rights and no separate consumer-use approval."
+  },
+  "implementation_component_status": {
+    "approved_semantic_requirements": "Approved 2026-11-23 (v2 producer, v2 consumer, C0)",
+    "approved_implementation_conformance_rules": "Approved as requirements in W1.2 C1/C2 paired PRs #45/#46/#130; runtime enforcement to be proven in W2.1",
+    "json_schemas": "Present as versioned repository artifacts; not part of the approved NDC v2 requirement bytes",
+    "canonical_serialization": "Ratified as RFC 8785 JCS canonical manifest bytes with detached Ed25519 sidecar; integrity only, not source authenticity",
+    "runtime_implementation": "Exists in both repositories; full semantic enforcement not yet demonstrated",
+    "consumer_verification_capability": "Partial admission code only; full release verifier not implemented"
   },
   "reporting_categories": [
     "implemented",

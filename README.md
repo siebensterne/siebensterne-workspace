@@ -26,7 +26,12 @@ by this repository's `.gitignore`.
 | `engineering/coverage/india-coverage-register.md` | W2-A measurable-coverage axes, I1–I6 India priority register and per-dimension denominators from C0 §6; development sequence only, no coverage figure claimed, rights UNKNOWN, dataset BLOCKED |
 | `TOOL-MATRIX.md` | canonical tool versions, command surface and preserved differences |
 | `ADR-REGISTRY.md` | collision-free canonical ADR IDs across both repositories |
-| `NDC-REGISTRY.md` | NDC version, producer/consumer and compatibility rules |
+| `NDC-REGISTRY.md` | NDC version, active `v2` contract, approved digests, consumer-use proposal status and compatibility rules |
+| `engineering/retirement/RRP-001.md` | owner directive D11, six dispositions, per-file record schema, P0/P1/P2 priorities and binding retirement rules |
+| `engineering/retirement/FIELD-BOOK-RETIREMENT-MANIFEST.csv` | measured Fieldbook retirement candidates with path, commit, SHA-256, size, disposition and reason (219 rows) |
+| `engineering/retirement/NIRNAY-RETIREMENT-MANIFEST.csv` | measured Nirnay retirement candidates with the same record schema (76 rows) |
+| `engineering/retirement/DEPENDENCY-CROSSWALK.csv` | retired paths to the module registrations, commands, CI targets and docs that must be updated (45 rows) |
+| `engineering/retirement/RETIREMENT-ACCEPTANCE.md` | RRP-002..RRP-007 acceptance gates and no-deletion-before-replacement rules |
 | `REVIEW-LOG.md` | cross-repository decisions with exact commits |
 | `PAIRED-PR-CHECKLIST.md` | required checks for any cross-repository change |
 | `SHARED-FILES.md` | byte-identical versus repository-local file classification |
@@ -45,9 +50,10 @@ make audit            status + consistency + check-all
 ```
 
 `make check-fieldbook-static` and `make check-nirnay-static` share one meaning: static
-gates only, no tests, no e2e, no provider contact. Fieldbook's fixture inventory is
-under owner review and Nirnay deselects `market_shaped_fixture`; those policies are
-preserved.
+gates only, no tests, no e2e, no provider contact. Under owner directive D11 the Fieldbook
+synthetic fixture inventory is being retired rather than merely disabled, and the Nirnay
+`market_shaped_fixture` deselection is being replaced by removal. The W1.1/W1.2 test-policy
+records, counts and digests remain historical and unchanged; see `engineering/retirement/`.
 
 ## Boundaries
 
