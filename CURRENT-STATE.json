@@ -2,32 +2,31 @@
   "schema_version": 2,
   "generated_utc_date": "2026-11-23",
   "purpose": "Coordination record. No field contains this record's own commit hash.",
-  "workspace_state_commit_preceding_record": "032989e3e0c6ca47a779909654cef21c6bbec446",
+  "workspace_state_commit_preceding_record": "7e76ea8ef85ccd637d545cfefa08ec73c1c38244",
   "bootstrap_baselines": {
     "fieldbook": "28eb8779ea2aab67ce471d9d3e9f222faf8f7327",
     "nirnay": "437179a8fdd0b1935420d1467f9a5c8a60da824d",
     "note": "Historical bootstrap pins in WORKSPACE.lock.json. Not current heads."
   },
   "current_source_heads": {
-    "fieldbook": "9e603244336ed8d5efdf755aff7a0cce4dd1eb88",
-    "nirnay": "0d72fdaa0bb87bd9356a85d8309b0937b7ea6669"
+    "fieldbook": "3c3279bdaa8df6aa44018184fefb662e98b5e0c1",
+    "nirnay": "f6842d2b6438c657c4d4eaec8edb3920193d2181"
   },
   "tested_source_heads": {
-    "fieldbook": "9e603244336ed8d5efdf755aff7a0cce4dd1eb88",
-    "nirnay": "0d72fdaa0bb87bd9356a85d8309b0937b7ea6669",
-    "note": "Hosted CI ran on these exact heads. Prose-only commits after a tested head are not claimed as tested source."
+    "fieldbook": "3c3279bdaa8df6aa44018184fefb662e98b5e0c1",
+    "nirnay": "f6842d2b6438c657c4d4eaec8edb3920193d2181"
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45165997939",
-      "head_sha": "9e603244336ed8d5efdf755aff7a0cce4dd1eb88",
+      "run_id": "45170768762",
+      "head_sha": "3c3279bdaa8df6aa44018184fefb662e98b5e0c1",
       "conclusion": "success",
       "jobs": "2/2",
-      "note": "Rerun after stale merged remote branch cleared the git-policy check."
+      "note": "Rerun after stale merged branch cleared git-policy check"
     },
     "nirnay": {
-      "run_id": "45166038617",
-      "head_sha": "0d72fdaa0bb87bd9356a85d8309b0937b7ea6669",
+      "run_id": "45170810756",
+      "head_sha": "f6842d2b6438c657c4d4eaec8edb3920193d2181",
       "conclusion": "success",
       "jobs": "12/12"
     }
@@ -38,8 +37,14 @@
       "result": "static gates only",
       "note": "make check-all invokes check-static in both repositories. It does not execute either full test suite."
     },
-    "fieldbook": {"command": "cargo xtask fmt/lint/docs/style", "result": "pass"},
-    "nirnay": {"command": "make docs-check/source-style/prose-style", "result": "pass"}
+    "fieldbook": {
+      "command": "cargo xtask fmt/lint/docs/style",
+      "result": "pass"
+    },
+    "nirnay": {
+      "command": "make docs-check/source-style/prose-style",
+      "result": "pass"
+    }
   },
   "test_suite_results": {
     "fieldbook": {
@@ -69,7 +74,11 @@
     "c3_nirnay": "Nirnay PR #130",
     "c4_producer": "Fieldbook PR #47, digest 215a5b553c6cd51aca8c55d1150eef7ceb7bb6c4d3ea9540d09eb990f415f77c",
     "c4_consumer": "Nirnay PR #131, digest 22eaef7de012e4f144299bc7fe82a701670531799e7e340e60a2908786a5a957",
-    "d1_crosswalk": "Workspace PR #2"
+    "d1_crosswalk": "Workspace PR #2",
+    "w2_a": "Workspace PR #3",
+    "w2_b": "Fieldbook PR #48",
+    "w2_e": "Nirnay PR #133",
+    "ratification": "Workspace OWNER-RATIFICATION-2026-11-23.md; Nirnay PR #132"
   },
   "review_package_manifest": {
     "authority": "external REVIEW-PACKAGE-QA.md and package sidecars",
@@ -86,9 +95,10 @@
     "m4_holdout": "UNTOUCHED",
     "synthetic_market_shaped_tests": "DISABLED",
     "live_execution": "DISABLED",
-    "ownership_adr": "PROPOSED",
-    "ndc_v1": "PROPOSED",
-    "ndc_v2": "PROPOSED"
+    "ownership_adr": "ACCEPTED 2026-11-23",
+    "ndc_v1": "PROPOSED/historical; superseded by v2 draft semantics",
+    "ndc_v2": "APPROVED 2026-11-23 (producer/consumer digests above)",
+    "test_data_policy": "strict prohibition retained; versioned amendment not approved"
   },
   "reporting_categories": [
     "implemented",
@@ -98,10 +108,9 @@
     "blocked"
   ],
   "open_owner_decisions": [
-    "Ratify ownership ADR with named responsible roles",
-    "Approve NDC v2 semantics with producer/consumer document digests",
-    "Decide test-data policy: maintain strict prohibition or approve a versioned test-only amendment",
     "Provide written source rights for an exact operation and scope",
-    "Accept a dataset after qualification"
+    "Accept a dataset after qualification",
+    "Decide whether to approve a versioned test-only fixture amendment",
+    "Define India venue/product coverage beyond the I1-I6 register"
   ]
 }
