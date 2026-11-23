@@ -1,0 +1,14 @@
+{
+  "c0_semantic_model": {
+    "path": "engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md",
+    "sha256": "3dace660c362e683790ba7e56a785ded8af836abda36f6eab06ed284de49eed2"
+  },
+  "d1_india_crosswalk": {
+    "path": "engineering/architecture/india-domain-ownership-crosswalk.md",
+    "sha256": "a857592dfa415043d5e87e79d930dbd98792f414cab4ec264b2a1c165d5ecd68"
+  },
+  "w11_completion": {
+    "path": "W1.1-COMPLETION-RECORD.md",
+    "sha256": "02e2e3cec965f0e90f084bf5e900fd6e533674930b17d5a986f77e313eba5100"
+  }
+}
