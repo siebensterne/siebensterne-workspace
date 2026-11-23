@@ -2,33 +2,41 @@
   "schema_version": 2,
   "generated_utc_date": "2026-11-23",
   "purpose": "Coordination record. No field contains this record's own commit hash.",
-  "workspace_state_commit_preceding_record": "7e76ea8ef85ccd637d545cfefa08ec73c1c38244",
+  "workspace_state_commit_preceding_record": "b425829b1b4c670fcafaf96935360432088592d1",
   "bootstrap_baselines": {
     "fieldbook": "28eb8779ea2aab67ce471d9d3e9f222faf8f7327",
     "nirnay": "437179a8fdd0b1935420d1467f9a5c8a60da824d",
-    "note": "Historical bootstrap pins in WORKSPACE.lock.json. Not current heads."
+    "note": "Historical bootstrap pins in WORKSPACE.lock.json. Not current, reviewed or tested heads."
+  },
+  "reviewed_source_heads": {
+    "fieldbook": "3c3279bdaa8df6aa44018184fefb662e98b5e0c1",
+    "nirnay": "f6842d2b6438c657c4d4eaec8edb3920193d2181",
+    "note": "RRP-001 review and measurement heads: manifests were built with git ls-files + shasum -a 256 + stat at these heads. Historical; not the current or tested heads."
   },
   "current_source_heads": {
-    "fieldbook": "3c3279bdaa8df6aa44018184fefb662e98b5e0c1",
-    "nirnay": "f6842d2b6438c657c4d4eaec8edb3920193d2181"
+    "fieldbook": "d686067486ebcbedecdf7c62e24d63d9aa7af435",
+    "nirnay": "371a7add585b4baee4a37205e71022ed9927461c",
+    "note": "Final RRP heads packaged in the RRP review bundle; not the bootstrap baselines."
   },
   "tested_source_heads": {
-    "fieldbook": "3c3279bdaa8df6aa44018184fefb662e98b5e0c1",
-    "nirnay": "f6842d2b6438c657c4d4eaec8edb3920193d2181"
+    "fieldbook": "d686067486ebcbedecdf7c62e24d63d9aa7af435",
+    "nirnay": "371a7add585b4baee4a37205e71022ed9927461c",
+    "note": "Exact heads of the CI runs recorded below. Per-repository counts are tied to one head and are never merged across commits or repositories."
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45170768762",
-      "head_sha": "3c3279bdaa8df6aa44018184fefb662e98b5e0c1",
+      "run_id": "45220169720",
+      "head_sha": "d686067486ebcbedecdf7c62e24d63d9aa7af435",
       "conclusion": "success",
       "jobs": "2/2",
-      "note": "Rerun after stale merged branch cleared git-policy check"
+      "note": "RRP final-head CI; static gates only, not a full test suite"
     },
     "nirnay": {
-      "run_id": "45170810756",
-      "head_sha": "f6842d2b6438c657c4d4eaec8edb3920193d2181",
+      "run_id": "45220222082",
+      "head_sha": "371a7add585b4baee4a37205e71022ed9927461c",
       "conclusion": "success",
-      "jobs": "12/12"
+      "jobs": "12/12",
+      "note": "RRP final-head CI; static gates only, not a full test suite"
     }
   },
   "static_gate_results": {
@@ -47,18 +55,38 @@
     }
   },
   "test_suite_results": {
+    "note": "Each count belongs to one repository at one exact head. Counts from different commits or repositories are never merged into a combined total. The CI runs recorded above are static gates only and do not execute either full test suite.",
     "fieldbook": {
+      "head": "3c3279bdaa8df6aa44018184fefb662e98b5e0c1",
       "command": "cargo test --workspace --all-targets --locked + --doc",
       "counts": "561 passed, 0 failed, 12 ignored + 1 doc test = 562 passed",
       "policy": "market-shaped-tests feature off"
     },
     "nirnay_python": {
+      "head": "f6842d2b6438c657c4d4eaec8edb3920193d2181",
       "command": "python3 -m pytest -q",
       "counts": "292 passed, 199 deselected, 2 subtests"
     },
     "nirnay_rust": {
+      "head": "f6842d2b6438c657c4d4eaec8edb3920193d2181",
       "command": "cargo test --workspace --all-targets --locked + --doc",
-      "counts": "73 tests + 1 doctest executed; 638 of 711 test functions withdrawn"
+      "counts": "73 tests + 1 doctest executed; 638 of 711 test functions withdrawn",
+      "note": "Last separately recorded Rust count; the RRP final head is verified by CI 45220222082 (12/12 static gates), not by a merged test total."
+    },
+    "rrp_final_head_results": {
+      "note": "Fieldbook-only and Nirnay-only figures from the RRP retirement records. They are not combined with each other or with the reviewed-head counts above.",
+      "fieldbook": {
+        "head": "d686067486ebcbedecdf7c62e24d63d9aa7af435",
+        "command": "cargo test --workspace --all-targets --locked + --doc",
+        "counts": "553 passed, 0 failed, 12 ignored + 1 doc test = 554 passed",
+        "source": "docs/product-scope-retirement-2026-11-23.md section 7"
+      },
+      "nirnay_python": {
+        "head": "371a7add585b4baee4a37205e71022ed9927461c",
+        "command": "python3 -m pytest -q",
+        "counts": "288 passed, 199 deselected, 2 subtests",
+        "source": "evidence/RRP-005-CONSOLIDATION-2026-11-23.md section 6"
+      }
     },
     "historical": [
       "Fieldbook 558/12 at 340f829",
@@ -78,13 +106,25 @@
     "w2_a": "Workspace PR #3",
     "w2_b": "Fieldbook PR #48",
     "w2_e": "Nirnay PR #133",
-    "ratification": "Workspace OWNER-RATIFICATION-2026-11-23.md; Nirnay PR #132"
+    "ratification": "Workspace OWNER-RATIFICATION-2026-11-23.md; Nirnay PR #132",
+    "rrp_001": "Workspace PR #4 (merged): D11 directive, six dispositions and measured manifests",
+    "rrp_002": "Fieldbook PR #49, Nirnay PR #134 (merged)",
+    "rrp_003": "Fieldbook PR #50 (merged)",
+    "rrp_004": "Nirnay PR #135 (merged)",
+    "rrp_005": "Fieldbook PR #51, Nirnay PR #136 (merged)",
+    "rrp_006": "Workspace PR #5 (merged)",
+    "rrp_007": "Verified; no new PR"
   },
   "review_package_manifest": {
-    "authority": "external REVIEW-PACKAGE-QA.md and package sidecars",
-    "last_package": "siebensterne-review-bundle-2026-11-23-W12.zip",
-    "last_digest": "5cc7b130d52e62be2bec0f3cebeed5f644e2d681f8aa7fcd139a23c2c1b859b4",
-    "note": "A new W1.2 package supersedes W12 after E1. Its digest belongs in the external QA record, not here."
+    "authority": "external REVIEW-PACKAGE-QA.md (RRP-001..007 complete) and package sidecars",
+    "last_package": "siebensterne-review-bundle-2026-11-23-RRP.zip",
+    "last_digest": "87cba777609736025f9988320a7089f7e2d5c863838f9a3cf6415abc53b99217",
+    "packaged_heads": {
+      "fieldbook": "d686067486ebcbedecdf7c62e24d63d9aa7af435",
+      "nirnay": "371a7add585b4baee4a37205e71022ed9927461c",
+      "workspace": "b425829b1b4c670fcafaf96935360432088592d1"
+    },
+    "note": "The RRP bundle supersedes W12. External QA verified four sidecars, manifest counts 252/252, 648/648 and 34/34, recovery of all three bundles and a deterministic rebuild. The superseded W12 digest belongs in the external QA record, not here."
   },
   "status": {
     "incremental_data_budget_inr": 0,
@@ -103,9 +143,30 @@
     "final_ndc_serialization_schema": "Not yet implemented",
     "full_release_verifier": "Not implemented",
     "owner_directive_d11": "Recorded in engineering/retirement/RRP-001.md; supersedes preserve-source-while-disabled for synthetic market-data test assets",
-    "retirement_programme": "RRP-001 published for approval; RRP-002..RRP-007 pending; no source files deleted in this PR",
+    "retirement_programme": "RRP-001..RRP-007 completed (no pending items): RRP-001 workspace PR #4; RRP-002 Fieldbook PR #49 / Nirnay PR #134; RRP-003 Fieldbook PR #50; RRP-004 Nirnay PR #135; RRP-005 Fieldbook PR #51 / Nirnay PR #136; RRP-006 workspace PR #5; RRP-007 verified. No history rewrite; retired paths keep their blobs in Git history.",
+    "retirement_programme_items": {
+      "RRP-001": {"status": "completed", "pr": "workspace#4", "outcome": "Owner directive D11, six dispositions, manifest schema and measured manifests established"},
+      "RRP-002": {"status": "completed", "pr": "Fieldbook#49 / Nirnay#134", "outcome": "75 Fieldbook and 61 Nirnay synthetic market-data assets removed individually; blobs retained"},
+      "RRP-003": {"status": "completed", "pr": "Fieldbook#50", "outcome": "Seven non-target venue adapters and obsolete measurements removed"},
+      "RRP-004": {"status": "completed", "pr": "Nirnay#135", "outcome": "Nine source-ingestion paths frozen under ADR-0001 and the freeze manifest"},
+      "RRP-005": {"status": "completed", "pr": "Fieldbook#51 / Nirnay#136", "outcome": "Documentation authorities consolidated; approved NDC/ADR bytes unchanged"},
+      "RRP-006": {"status": "completed", "pr": "workspace#5", "outcome": "Analytics and SBE ownership decision recorded; custom SBE format conditional"},
+      "RRP-007": {"status": "verified", "pr": "verified", "outcome": "RRP repository state verified; final heads and bundle recorded above"}
+    },
+    "residual_jobs_v1_code_digest": "RESIDUAL DEFECT: configs/research/jobs.v1.json code_digest does not recompute from its declared code_paths; no gate consumes it; correct before any research job is admitted",
     "test_data_policy": "strict prohibition retained; versioned amendment not approved"
   },
+  "residual_items": [
+    {
+      "id": "RRP-RESIDUAL-001",
+      "repository": "nirnay",
+      "path": "configs/research/jobs.v1.json",
+      "field": "code_digest",
+      "status": "residual defect, not fixed in RRP-001..007",
+      "detail": "The research-job manifest pin's code_digest does not recompute from its declared code_paths. No gate consumes the value. Recorded for correction before any research job is admitted; no experiment was run or reinterpreted.",
+      "authority": "external REVIEW-PACKAGE-QA.md, Residual item (RRP, 2026-11-23)"
+    }
+  ],
   "ratification_reference": {
     "path": "engineering/decisions/OWNER-RATIFICATION-2026-11-23.md",
     "sha256": "e3cc365b9121c22f114b1b17805cffcf0e0f0d5324d0b65ea5255e3be7d6f3f1",
