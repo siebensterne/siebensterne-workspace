@@ -40,3 +40,13 @@
 17. Do not force byte identity for files classified repository-local in `SHARED-FILES.md`.
 18. Standardisation never weakens a gate, changes a test policy, or upgrades a tool beyond
     the shared pins without a paired, reviewed decision.
+
+19. Adopt `engineering/style/DOCUMENTATION-STANDARD.md` for all cross-repository
+    documentation: Markdown for human-maintained docs, rustdoc `///` and `//!` for Rust
+    API/module contracts, `//` for implementation reasoning, `// SAFETY:` for unsafe
+    justification, and Markdown ADRs for permanent decisions. Canonical language
+    references: Rust rustdoc https://doc.rust-lang.org/rustdoc/how-to-write-documentation.html
+    and https://doc.rust-lang.org/reference/, C++ https://isocpp.org/ and
+    https://en.cppreference.com/w/, Python 3 https://docs.python.org/3/, Bash
+    https://www.gnu.org/software/bash/manual/. Fix tautologies, banned promotional or
+    black-box terms, first-person pronouns and intent adverbs before running gates.
