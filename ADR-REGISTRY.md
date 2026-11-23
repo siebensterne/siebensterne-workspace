@@ -14,6 +14,16 @@ Nirnay also carries `NR-ARCH-ADR-INDEX.md` under `engineering/architecture/decis
 New ADRs must register here in the same commit that adds them, using the repository
 prefix. Never renumber a historical ADR.
 
-The ownership decision `NR-ARCH-ADR-0001` was Accepted by owner ratification on
-2026-11-23 (`engineering/decisions/OWNER-RATIFICATION-2026-11-23.md`), which also named
-responsible roles. Acceptance grants no data rights.
+The ownership decision `NR-ARCH-ADR-0001` was **Accepted 2026-11-23** by owner
+ratification (`engineering/decisions/OWNER-RATIFICATION-2026-11-23.md`, Decision A), which
+also named responsible roles. Acceptance grants no data rights.
+
+Status cross-check (W2.1-A): this registry, `NDC-REGISTRY.md`,
+`ENGINEERING-DOC-DIGESTS.json`, `CURRENT-STATE.json` and `REVIEW-LOG.md` all express the
+same decision state — ownership ADR Accepted, NDC v2 semantics Approved, v1 historical.
+Ratification of ownership does **not** ratify the W2 India domain design; the India
+ownership crosswalk, coverage register, Fieldbook India reference design and Nirnay
+reference-projection design remain **Proposed pending a separate design approval**. D11
+(owner directive, `engineering/retirement/RRP-001.md`) changes test-asset retirement policy,
+not an ADR status, and supersedes the earlier preserve-source-while-disabled policy for
+synthetic market-data test assets.

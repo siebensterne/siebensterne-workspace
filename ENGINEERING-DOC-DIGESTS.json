@@ -1,14 +1,75 @@
 {
+  "ratification_reference": {
+    "path": "engineering/decisions/OWNER-RATIFICATION-2026-11-23.md",
+    "sha256": "e3cc365b9121c22f114b1b17805cffcf0e0f0d5324d0b65ea5255e3be7d6f3f1",
+    "status": "Ratified 2026-11-23",
+    "note": "Decision A accepts ownership; Decision B approves NDC v2 semantics. No data rights and no separate consumer-use proposal approval."
+  },
   "c0_semantic_model": {
     "path": "engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md",
-    "sha256": "3dace660c362e683790ba7e56a785ded8af836abda36f6eab06ed284de49eed2"
+    "sha256": "3dace660c362e683790ba7e56a785ded8af836abda36f6eab06ed284de49eed2",
+    "status": "Approved (ratified 2026-11-23)",
+    "note": "Approved bytes unchanged; filename retains its historical PROPOSED suffix."
+  },
+  "ndc_v2_producer_requirements": {
+    "path": "fieldbook/engineering/ndc-producer-requirements-v2-proposed.md",
+    "repository": "fieldbook",
+    "sha256": "215a5b553c6cd51aca8c55d1150eef7ceb7bb6c4d3ea9540d09eb990f415f77c",
+    "status": "Approved 2026-11-23",
+    "note": "Approved by owner ratification; approved bytes unchanged."
+  },
+  "ndc_v2_consumer_requirements": {
+    "path": "nirnay/engineering/ndc-consumer-requirements-v2-proposed.md",
+    "repository": "nirnay",
+    "sha256": "22eaef7de012e4f144299bc7fe82a701670531799e7e340e60a2908786a5a957",
+    "status": "Approved 2026-11-23",
+    "note": "Approved by owner ratification; approved bytes unchanged."
+  },
+  "ndc_v1_producer_requirements": {
+    "path": "fieldbook/engineering/ndc-producer-requirements-v1.md",
+    "repository": "fieldbook",
+    "sha256": "592a1c9043ed2756a3f9d938dbe6e2ee80007166b440cf6f2709d5de11424c33",
+    "status": "Historical (superseded by v2)"
+  },
+  "ndc_v1_consumer_requirements": {
+    "path": "nirnay/engineering/ndc-consumer-requirements-v1.md",
+    "repository": "nirnay",
+    "sha256": "25315c57de753bde33b0f8044e70646f24b19c8af7ca9fdbdd2e53682a53b8bd",
+    "status": "Historical (superseded by v2)"
+  },
+  "ndc_consumer_use_v2_proposed": {
+    "path": "nirnay/engineering/ndc-consumer-use-v2-proposed.md",
+    "repository": "nirnay",
+    "sha256": "4b9d1fe7190de08151989fc8895f42e1daa737021e8dae019ddc3325f9603a2c",
+    "status": "Proposed — not approved",
+    "note": "Separate implementation proposal. Not part of the ratified NDC v2 semantic set; no separate approval record exists."
   },
   "d1_india_crosswalk": {
     "path": "engineering/architecture/india-domain-ownership-crosswalk.md",
-    "sha256": "a857592dfa415043d5e87e79d930dbd98792f414cab4ec264b2a1c165d5ecd68"
+    "sha256": "a857592dfa415043d5e87e79d930dbd98792f414cab4ec264b2a1c165d5ecd68",
+    "status": "Proposed pending separate India design approval",
+    "note": "Ownership ADR NR-ARCH-ADR-0001 is Accepted; this crosswalk records that status but the domain design is not itself ratified."
+  },
+  "w2_india_coverage_register": {
+    "path": "engineering/coverage/india-coverage-register.md",
+    "sha256": "c10091435e010089d68b6f8a18622a903435f7c4e86ce059d7c3e643568a9335",
+    "status": "Proposed pending separate India design approval"
+  },
+  "w2_fieldbook_india_reference_design": {
+    "path": "fieldbook/docs/india-reference-foundation-design.md",
+    "repository": "fieldbook",
+    "sha256": "4f5afcde304fb10589a966ef91f7b4d66e4ccf07ece835695b41dae9ac4caa29",
+    "status": "Proposed pending separate India design approval"
+  },
+  "w2_nirnay_reference_projection_design": {
+    "path": "nirnay/engineering/ndc-reference-projection-design.md",
+    "repository": "nirnay",
+    "sha256": "eff6a8fdd53aeef5c32405627776d826c67c7fe0ded4ca47362871d8b97ca924",
+    "status": "Proposed pending separate India design approval"
   },
   "w11_completion": {
     "path": "W1.1-COMPLETION-RECORD.md",
-    "sha256": "02e2e3cec965f0e90f084bf5e900fd6e533674930b17d5a986f77e313eba5100"
+    "sha256": "02e2e3cec965f0e90f084bf5e900fd6e533674930b17d5a986f77e313eba5100",
+    "status": "Historical — preserved unchanged under D11"
   }
 }
