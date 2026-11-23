@@ -80,6 +80,30 @@ Canonical actions, each with an object class:
 `source_contact` is an egress prerequisite, not a data-producing operation. It does not
 belong in `producer_activity` unless it itself produced retained data.
 
+The canonical action names are semantic labels. They are mapped explicitly to the
+authoritative enums; neither enum is renamed:
+
+| Canonical action | Fieldbook `Operation` (14 values) |
+|---|---|
+| `source_contact` | `SourceContact` |
+| `reference_data_retrieval` | `ReferenceDataRetrieval` |
+| `historical_data_retrieval` | `HistoricalDataRetrieval` |
+| `real_time_capture` | `RealTimeCapture` |
+| `store` (raw object) | `RawStorage` |
+| `normalize` | `Normalization` |
+| `backup` | `Backup` |
+| `replay` (producer) | `Replay` |
+| `retain` | `Retention` |
+| `delete` | `Deletion` |
+| `analyze` | `InternalAnalytics` |
+| `create_derived` | `DerivedDataCreation` |
+| `display` | `Display` |
+| `redistribute` | `ExternalRedistribution` |
+
+The complete Fieldbook enum is the authority for producer actions. Canonical labels are
+used in this document only to keep actor/object semantics explicit; implementations MUST
+store the enum value, not the label.
+
 ### 2.2 Purpose
 
 The declared purpose is `proprietary_own_account_trading_research`. It must be preserved
@@ -185,6 +209,23 @@ Versioned use profiles:
 A job must declare its profile and cannot omit a required action. An extra grant never
 authorises an unrequested action. An unpermitted requested action blocks admission.
 
+Nirnay's existing `CONSUMER_OPERATIONS` (`read_release`,
+`store_permitted_research_copy`, `replay`, `internal_analytics`,
+`retain_permitted_derived_data`) remains the authoritative consumer enumeration. The
+profile table above uses descriptive verb phrases; its exact mapping is:
+
+| Descriptive phrase | Nirnay `CONSUMER_OPERATIONS` value |
+|---|---|
+| verify release / read manifest | `read_release` |
+| read event payloads | covered by `read_release`; payload access is a separate stage in §4.1, not a new right |
+| store research copy | `store_permitted_research_copy` |
+| replay | `replay` |
+| analyze | `internal_analytics` |
+| create derived / retain derived | `retain_permitted_derived_data` for retention; creation requires an explicit grant and is not implied by retention |
+
+Derived-data creation is a separate requested action; it must appear in the use request
+and in a matching grant. No new enum value is invented by this document.
+
 ### 4.1 Release verification stages
 
 1. Parse manifest and validate schema/contract version.
@@ -215,8 +256,10 @@ The publication key and rights-review authority are separate trust relationships
 
 ### 5.1 Canonical bytes
 
-Manifest signing uses RFC 8785 JCS over the manifest object with the signature property
-removed. JCS rules applied here:
+Manifest signing uses a detached signature: the signature is a sidecar, not a property
+inside the manifest. RFC 8785 JCS is applied to the manifest object itself; no property
+removal is needed because no signature property exists in that object. JCS rules applied
+here:
 
 - I-JSON subset; no duplicate property names; Unicode strings preserved as-is;
 - no whitespace between tokens; recursive property-name sorting by UTF-16 code units;
@@ -225,7 +268,8 @@ removed. JCS rules applied here:
 - UTF-8 output;
 - exact financial decimals and large integers are JSON strings, not IEEE 754 numbers;
 - NaN/Infinity/lone surrogates terminate the operation;
-- the detached signature is excluded by property removal before canonicalization.
+- the detached signature sidecar is not part of the canonicalized bytes and never enters
+  the manifest digest.
 
 ## 6. Coverage dimensions
 
