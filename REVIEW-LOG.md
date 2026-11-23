@@ -23,3 +23,6 @@ evidence or review archive.
 | 2026-11-23 | Fieldbook `340f829`, Nirnay `e975be9` | W1.1-B/C/D merged: test-policy enforcement, exact operation and mandatory audit, paired NDC rights and trust semantics | Fieldbook PRs #42/#43/#44, Nirnay PRs #126/#127 |
 | 2026-11-23 | CI | Fieldbook `45084154089` 2/2, Nirnay `45084174149` 12/12 | Hosted CI |
 | 2026-11-23 | W1.2-A | Test counts reconciled from exact output: Fieldbook 558/12 at `340f829`, Nirnay 251/199/2 at `e975be9`; 243 and 352 Nirnay figures tied to earlier commits | `CURRENT-STATE.json`, `W1.1-COMPLETION-RECORD.md` |
+| 2026-11-23 | W1.2-A | Reconciled counts from exact output: Fieldbook 558/12 at `340f829`; Nirnay 251/199/2 at `e975be9`; 243 tied to `ba21945`, 352 to `72bac0c` | `CURRENT-STATE.json`, Nirnay PR #128 |
+| 2026-11-23 | W1.2-B | Nirnay Rust market-shaped tests gated; 73 + 1 doctest executed, 638 withdrawn, 711 preserved | Nirnay PR #129, `evidence/RUST-TEST-POLICY-NIRNAY-2026-11-23.md` |
+| 2026-11-23 | CI | Nirnay main CI `45131112797` 12/12 at `d73e145` | Hosted CI |

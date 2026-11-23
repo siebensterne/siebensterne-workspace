@@ -36,12 +36,12 @@
       }
     },
     "nirnay": {
-      "current_head": "e975be9b4c085890a94c192a54c34a48616dcd68",
-      "tested_head": "e975be9b4c085890a94c192a54c34a48616dcd68",
+      "current_head": "d73e145909a190322194a471d10b0c8d458e8bc4",
+      "tested_head": "d73e145909a190322194a471d10b0c8d458e8bc4",
       "working_tree": "clean",
       "ci": {
-        "run_id": "45084174149",
-        "head_sha": "e975be9b4c085890a94c192a54c34a48616dcd68",
+        "run_id": "45131112797",
+        "head_sha": "d73e145909a190322194a471d10b0c8d458e8bc4",
         "conclusion": "success",
         "jobs": "12/12"
       },
@@ -50,11 +50,11 @@
         "result": "pass"
       },
       "test_suite": {
-        "command": "python3 -m pytest -q",
-        "result": "pass",
-        "counts": "251 passed, 199 deselected, 2 subtests",
-        "policy": "Collection-time inventory and AST gate; old 352-pass count historical",
-        "note": "Exact output of python3 -m pytest -q at head e975be9. 243 was correct at W1.1-B commit ba21945; 8 admission tests were added by W1.1-D. 352 at 72bac0c is historical."
+        "python_command": "python3 -m pytest -q",
+        "python_counts": "251 passed, 199 deselected, 2 subtests",
+        "rust_command": "cargo test --workspace --all-targets --locked + --doc",
+        "rust_counts": "73 tests + 1 doctest executed; 638 of 711 test functions withdrawn",
+        "policy": "W1.1-B Python collection gate; W1.2-B Rust feature gate; no --all-features in any gate"
       }
     }
   },
@@ -115,7 +115,16 @@
         "head": "ba21945",
         "count": "243 passed, 199 deselected, 2 subtests"
       },
-      "historical": "352 passed, 90 deselected at 72bac0c"
+      "historical": "352 passed, 90 deselected at 72bac0c",
+      "current_head": "d73e145909a190322194a471d10b0c8d458e8bc4",
+      "rust_policy": "73 + 1 doctest executed at d73e145; 638 withdrawn; 711 preserved"
     }
+  },
+  "w12_progress": {
+    "A": "complete",
+    "B": "complete",
+    "C": "pending paired producer/consumer operation semantics",
+    "D": "pending India domain crosswalk",
+    "E": "pending final workspace review"
   }
 }
