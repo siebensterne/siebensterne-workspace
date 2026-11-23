@@ -32,6 +32,7 @@ by this repository's `.gitignore`.
 | `engineering/retirement/NIRNAY-RETIREMENT-MANIFEST.csv` | measured Nirnay retirement candidates with the same record schema (76 rows) |
 | `engineering/retirement/DEPENDENCY-CROSSWALK.csv` | retired paths to the module registrations, commands, CI targets and docs that must be updated (45 rows) |
 | `engineering/retirement/RETIREMENT-ACCEPTANCE.md` | RRP-002..RRP-007 acceptance gates and no-deletion-before-replacement rules |
+| `engineering/retirement/RRP-006-analytics-sbe-decision.md` | RRP-006 decision: Nirnay owns research analytics, KDB/q and experiments; NDC v2 is the only cross-repo semantic contract; custom SBE format, Fieldbook offline analytics and the generated/decoder codecs are CONDITIONAL and deprecate after first accepted NDC v2 release publication |
 | `REVIEW-LOG.md` | cross-repository decisions with exact commits |
 | `PAIRED-PR-CHECKLIST.md` | required checks for any cross-repository change |
 | `SHARED-FILES.md` | byte-identical versus repository-local file classification |
