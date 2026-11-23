@@ -32,7 +32,7 @@ package_repo() {
         --json databaseId,headSha,conclusion \
         --jq '.[] | "\(.databaseId) \(.headSha) \(.conclusion)"' 2>/dev/null || printf 'unavailable')"
 
-  git -C "$dir" bundle create "$stage/$name/git/$name-refs.bundle" --all >/dev/null 2>&1
+  git -C "$dir" -c pack.threads=1 bundle create "$stage/$name/git/$name-refs.bundle" --all >/dev/null 2>&1
   git bundle verify "$stage/$name/git/$name-refs.bundle" >/dev/null 2>&1
 
   # Review scope is Indian and global securities. Venue-specific live captures,
