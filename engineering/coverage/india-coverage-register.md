@@ -15,7 +15,7 @@
   licence), `engineering/architecture/india-domain-ownership-crosswalk.md` (domain crosswalk,
   findings I1–I6 migration register) and `engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md`
   (C0; §1 six separable concepts, §2 scope containment, §5 three independent proofs, §6
-  coverage dimensions, §8 lineage).
+  coverage dimensions, §8 provenance).
 
 ## 1. What "measurable coverage" means
 

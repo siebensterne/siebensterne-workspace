@@ -14,6 +14,6 @@ Nirnay also carries `NR-ARCH-ADR-INDEX.md` under `engineering/architecture/decis
 New ADRs must register here in the same commit that adds them, using the repository
 prefix. Never renumber a historical ADR.
 
-The ownership decision `NR-ARCH-ADR-0001` remains Proposed. Owner ratification of
-responsible people is required before it becomes Accepted. This registry does not
-ratify it.
+The ownership decision `NR-ARCH-ADR-0001` was Accepted by owner ratification on
+2026-11-23 (`engineering/decisions/OWNER-RATIFICATION-2026-11-23.md`), which also named
+responsible roles. Acceptance grants no data rights.
