@@ -19,6 +19,7 @@ by this repository's `.gitignore`.
 | `CURRENT-STATE.json` | current reviewed heads, CI runs, static/test separation and open owner decisions |
 | `W1.1-COMPLETION-RECORD.md` | W1.1 work packages, CI, test-policy outcome, contract digests and remaining owner gates |
 | `engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md` | C0 normative rights/operation/data-object model; settles action, grant, purpose, time, revocation, trust and coverage semantics before implementation |
+| `engineering/architecture/india-domain-ownership-crosswalk.md` | W1.2-D1 domain-by-domain Fieldbook-authority vs Nirnay-code crosswalk, ownership rule, verified defect findings and migration phases I1–I6; documentation only, ownership ADR remains Proposed |
 | `TOOL-MATRIX.md` | canonical tool versions, command surface and preserved differences |
 | `ADR-REGISTRY.md` | collision-free canonical ADR IDs across both repositories |
 | `NDC-REGISTRY.md` | NDC version, producer/consumer and compatibility rules |
