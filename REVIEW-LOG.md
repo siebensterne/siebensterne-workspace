@@ -26,3 +26,6 @@ evidence or review archive.
 | 2026-11-23 | W1.2-A | Reconciled counts from exact output: Fieldbook 558/12 at `340f829`; Nirnay 251/199/2 at `e975be9`; 243 tied to `ba21945`, 352 to `72bac0c` | `CURRENT-STATE.json`, Nirnay PR #128 |
 | 2026-11-23 | W1.2-B | Nirnay Rust market-shaped tests gated; 73 + 1 doctest executed, 638 withdrawn, 711 preserved | Nirnay PR #129, `evidence/RUST-TEST-POLICY-NIRNAY-2026-11-23.md` |
 | 2026-11-23 | CI | Nirnay main CI `45131112797` 12/12 at `d73e145` | Hosted CI |
+| 2026-11-23 | W1.2-C0/C1/C2/C3/C4 | Semantic model approved; Fieldbook PRs #45/#46; Nirnay PR #130; paired NDC v2 PRs #47/#131 | Workspace, Fieldbook, Nirnay |
+| 2026-11-23 | W1.2-D1 | India domain ownership crosswalk approved; Fieldbook owns canonical identity, Nirnay consumes | Workspace PR #2 |
+| 2026-11-23 | CI | Fieldbook `45165997939` 2/2; Nirnay `45166038617` 12/12 | Hosted CI |

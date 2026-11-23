@@ -15,6 +15,9 @@ one producer and one consumer. No transport, queue, shared crate or database is 
 | Consumer document digest | `25315c57de753bde33b0f8044e70646f24b19c8af7ca9fdbdd2e53682a53b8bd` |
 | Operation sets | producer (8) / consumer (5), distinct; extra grants imply nothing |
 | Trust model | detached Ed25519 via Nirnay dataset-signature.v1.schema.json; integrity is not authenticity |
+| NDC v2 producer digest | `215a5b553c6cd51aca8c55d1150eef7ceb7bb6c4d3ea9540d09eb990f415f77c` |
+| NDC v2 consumer digest | `22eaef7de012e4f144299bc7fe82a701670531799e7e340e60a2908786a5a957` |
+| NDC v2 status | Proposed; pair reviewed, not ratified |
 | Rights state | all provider rights `UNKNOWN` |
 | Release state | no accepted dataset release |
 

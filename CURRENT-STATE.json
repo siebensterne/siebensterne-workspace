@@ -1,78 +1,81 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "generated_utc_date": "2026-11-23",
-  "baseline_record": "WORKSPACE.lock.json",
-  "baseline_note": "Bootstrap pins are historical. They are not the current reviewed heads.",
-  "workspace": {
-    "commit": "81eb756dabf88668cd435668f9814c5102e6ca4e",
-    "working_tree": "clean",
-    "note": "packaged_commit is the workspace state inside the review bundle; current_head is the latest documentation-only commit. Reviewed source is unchanged.",
-    "packaged_commit": "81eb756dabf88668cd435668f9814c5102e6ca4e",
-    "current_head": "719e9ad4b6cd76a18abdef3d0fb1ecb662904901"
+  "purpose": "Coordination record. No field contains this record's own commit hash.",
+  "workspace_state_commit_preceding_record": "032989e3e0c6ca47a779909654cef21c6bbec446",
+  "bootstrap_baselines": {
+    "fieldbook": "28eb8779ea2aab67ce471d9d3e9f222faf8f7327",
+    "nirnay": "437179a8fdd0b1935420d1467f9a5c8a60da824d",
+    "note": "Historical bootstrap pins in WORKSPACE.lock.json. Not current heads."
   },
-  "repositories": {
+  "current_source_heads": {
+    "fieldbook": "9e603244336ed8d5efdf755aff7a0cce4dd1eb88",
+    "nirnay": "0d72fdaa0bb87bd9356a85d8309b0937b7ea6669"
+  },
+  "tested_source_heads": {
+    "fieldbook": "9e603244336ed8d5efdf755aff7a0cce4dd1eb88",
+    "nirnay": "0d72fdaa0bb87bd9356a85d8309b0937b7ea6669",
+    "note": "Hosted CI ran on these exact heads. Prose-only commits after a tested head are not claimed as tested source."
+  },
+  "ci": {
     "fieldbook": {
-      "current_head": "340f829c5256257ae8dbaf6e64b55c1f4401396f",
-      "tested_head": "340f829c5256257ae8dbaf6e64b55c1f4401396f",
-      "head_kind": "merge of tested code",
-      "working_tree": "clean",
-      "ci": {
-        "run_id": "45084154089",
-        "head_sha": "340f829c5256257ae8dbaf6e64b55c1f4401396f",
-        "conclusion": "success",
-        "jobs": "2/2",
-        "note": "Rerun after stale remote branch cleared"
-      },
-      "static_gate": {
-        "command": "make check-static",
-        "result": "pass"
-      },
-      "test_suite": {
-        "command": "cargo xtask test (market-shaped-tests disabled)",
-        "result": "pass",
-        "counts": "557 passed, 0 failed, 12 ignored (all-targets) + 1 doc test = 558 passed, 12 ignored",
-        "policy": "W1.1-B market-shaped tests preserved but not executable by default",
-        "note": "Exact output of cargo test --workspace --all-targets --locked and --doc at head 340f829 under W1.1-B policy. Prior 548 figure was a transcription error."
-      }
+      "run_id": "45165997939",
+      "head_sha": "9e603244336ed8d5efdf755aff7a0cce4dd1eb88",
+      "conclusion": "success",
+      "jobs": "2/2",
+      "note": "Rerun after stale merged remote branch cleared the git-policy check."
     },
     "nirnay": {
-      "current_head": "d73e145909a190322194a471d10b0c8d458e8bc4",
-      "tested_head": "d73e145909a190322194a471d10b0c8d458e8bc4",
-      "working_tree": "clean",
-      "ci": {
-        "run_id": "45131112797",
-        "head_sha": "d73e145909a190322194a471d10b0c8d458e8bc4",
-        "conclusion": "success",
-        "jobs": "12/12"
-      },
-      "static_gate": {
-        "command": "make check-static",
-        "result": "pass"
-      },
-      "test_suite": {
-        "python_command": "python3 -m pytest -q",
-        "python_counts": "251 passed, 199 deselected, 2 subtests",
-        "rust_command": "cargo test --workspace --all-targets --locked + --doc",
-        "rust_counts": "73 tests + 1 doctest executed; 638 of 711 test functions withdrawn",
-        "policy": "W1.1-B Python collection gate; W1.2-B Rust feature gate; no --all-features in any gate"
-      }
+      "run_id": "45166038617",
+      "head_sha": "0d72fdaa0bb87bd9356a85d8309b0937b7ea6669",
+      "conclusion": "success",
+      "jobs": "12/12"
     }
   },
-  "workspace_gates": {
-    "command": "make audit",
-    "includes": [
-      "status",
-      "consistency",
-      "check-all"
-    ],
-    "static_only": true,
-    "result": "pass",
-    "note": "check-all invokes check-static in both repositories. It does not execute either full test suite."
+  "static_gate_results": {
+    "workspace": {
+      "command": "make audit",
+      "result": "static gates only",
+      "note": "make check-all invokes check-static in both repositories. It does not execute either full test suite."
+    },
+    "fieldbook": {"command": "cargo xtask fmt/lint/docs/style", "result": "pass"},
+    "nirnay": {"command": "make docs-check/source-style/prose-style", "result": "pass"}
   },
-  "review_package": {
-    "bundle": "siebensterne-review-bundle-2026-11-23-W11.zip",
-    "sha256": "677fd92bc30450eb0f8ab8e9f875ccebdd20c7e2aaf8f6a77a46048a3b8cb1bc",
-    "verification": "manifests verified, git bundles recovered, exclusions enforced, make audit exit 0"
+  "test_suite_results": {
+    "fieldbook": {
+      "command": "cargo test --workspace --all-targets --locked + --doc",
+      "counts": "561 passed, 0 failed, 12 ignored + 1 doc test = 562 passed",
+      "policy": "market-shaped-tests feature off"
+    },
+    "nirnay_python": {
+      "command": "python3 -m pytest -q",
+      "counts": "292 passed, 199 deselected, 2 subtests"
+    },
+    "nirnay_rust": {
+      "command": "cargo test --workspace --all-targets --locked + --doc",
+      "counts": "73 tests + 1 doctest executed; 638 of 711 test functions withdrawn"
+    },
+    "historical": [
+      "Fieldbook 558/12 at 340f829",
+      "Nirnay Python 251/199/2 at d73e145",
+      "Nirnay Python 243/199/2 at ba21945",
+      "Nirnay Python 352/90/2 at 72bac0c"
+    ]
+  },
+  "reviewed_commit_ids": {
+    "c0_semantic_model": "engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md",
+    "c1_fieldbook": "Fieldbook PR #45",
+    "c2_fieldbook": "Fieldbook PR #46",
+    "c3_nirnay": "Nirnay PR #130",
+    "c4_producer": "Fieldbook PR #47, digest 215a5b553c6cd51aca8c55d1150eef7ceb7bb6c4d3ea9540d09eb990f415f77c",
+    "c4_consumer": "Nirnay PR #131, digest 22eaef7de012e4f144299bc7fe82a701670531799e7e340e60a2908786a5a957",
+    "d1_crosswalk": "Workspace PR #2"
+  },
+  "review_package_manifest": {
+    "authority": "external REVIEW-PACKAGE-QA.md and package sidecars",
+    "last_package": "siebensterne-review-bundle-2026-11-23-W12.zip",
+    "last_digest": "5cc7b130d52e62be2bec0f3cebeed5f644e2d681f8aa7fcd139a23c2c1b859b4",
+    "note": "A new W1.2 package supersedes W12 after E1. Its digest belongs in the external QA record, not here."
   },
   "status": {
     "incremental_data_budget_inr": 0,
@@ -81,16 +84,12 @@
     "provider_collection": "DISABLED",
     "experiment_registration": "BLOCKED",
     "m4_holdout": "UNTOUCHED",
-    "live_execution": "DISABLED"
+    "synthetic_market_shaped_tests": "DISABLED",
+    "live_execution": "DISABLED",
+    "ownership_adr": "PROPOSED",
+    "ndc_v1": "PROPOSED",
+    "ndc_v2": "PROPOSED"
   },
-  "open_owner_decisions": [
-    "Ratify ownership ADR with named responsible roles",
-    "Approve NDC v1 semantics and document digests",
-    "Provide written source rights for an exact operation and scope",
-    "Accept a dataset after qualification",
-    "Decide whether synthetic-data directive should change for market-shaped software tests",
-    "Define India venue and product coverage"
-  ],
   "reporting_categories": [
     "implemented",
     "tested with abstract mathematical values",
@@ -98,33 +97,11 @@
     "verified against permitted real observations",
     "blocked"
   ],
-  "w11_completion_record": "W1.1-COMPLETION-RECORD.md",
-  "evidence_reconciliation": {
-    "date": "2026-11-23",
-    "fieldbook": {
-      "head": "340f829",
-      "command": "cargo test --workspace --all-targets --locked + --doc",
-      "current": "558 passed, 12 ignored",
-      "historical": "548 figure in W1.1 completion record was incorrect"
-    },
-    "nirnay": {
-      "head": "e975be9",
-      "command": "python3 -m pytest -q",
-      "current": "251 passed, 199 deselected, 2 subtests",
-      "prior_commit": {
-        "head": "ba21945",
-        "count": "243 passed, 199 deselected, 2 subtests"
-      },
-      "historical": "352 passed, 90 deselected at 72bac0c",
-      "current_head": "d73e145909a190322194a471d10b0c8d458e8bc4",
-      "rust_policy": "73 + 1 doctest executed at d73e145; 638 withdrawn; 711 preserved"
-    }
-  },
-  "w12_progress": {
-    "A": "complete",
-    "B": "complete",
-    "C": "pending paired producer/consumer operation semantics",
-    "D": "pending India domain crosswalk",
-    "E": "pending final workspace review"
-  }
+  "open_owner_decisions": [
+    "Ratify ownership ADR with named responsible roles",
+    "Approve NDC v2 semantics with producer/consumer document digests",
+    "Decide test-data policy: maintain strict prohibition or approve a versioned test-only amendment",
+    "Provide written source rights for an exact operation and scope",
+    "Accept a dataset after qualification"
+  ]
 }
