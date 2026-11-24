@@ -59,11 +59,26 @@ are separate objects with separate lifecycles.
 
 Achieved: `CONTRACT_RATIFIED`, `SCHEMA_CONFORMANT`, `BINARY_CROSS_EXECUTED`,
 `CRYPTOGRAPHICALLY_VERIFIED`, `RELEASE_CORRECTNESS` (P0 corrections merged),
-`D0_PROCESS_RECOVERY_VERIFIED` (fresh-process recovery from durable evidence).
+`D0_PROCESS_RECOVERY_VERIFIED` (exactly three fresh-process cases; see scope below).
 
 Not achieved: `PUBLICATION_DURABILITY_VERIFIED` (D1 unqualified),
 `OPERATIONALLY_QUALIFIED` (B15/B16 streaming and PERF-001 measurements absent),
 `RIGHTS_ADMITTED`, `DATASET_ACCEPTED`, `COUNTRY_PACK_RATIFIED`.
+
+### D0 subprocess evidence scope (WS-EVIDENCE-026)
+
+The D0 fresh-process harness covers exactly three subprocess cases: `publish_before` (process
+restart after the rename syscall but before the rename journal commit), `publish_staging` (process
+restart after the durable staging-tree journal commit), and `publish_rename` (process restart after
+the durable rename journal commit). These three cases are the D0 subprocess evidence. All other
+journal/filesystem boundaries — journal directory sync failure, staging mkdir, root sync,
+artifacts mkdir, each file write/sync, both directory syncs, rename root sync, receipt and marker
+write/sync/ledger sync, recovery from staging and final directory, v1-record readability and
+mixed-version refusal — were exercised by in-process fault injection only.
+`D0_PROCESS_RECOVERY_VERIFIED` is ACHIEVED for this stated three-case scope only;
+`PUBLICATION_DURABILITY_VERIFIED` remains NOT ACHIEVED (D1 unqualified). See
+`engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` §2.1 and
+`engineering/conformance/ws-evidence-026-provenance-2026-11-24.md`.
 
 ## Remaining gates
 

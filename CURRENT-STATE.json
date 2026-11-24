@@ -11,6 +11,29 @@
     "base_commit": "62b617c380ea97cd2a68f67c880a1f652ef14961",
     "note": "The five source-head concepts below are separately evidenced and must not be conflated. Legacy mixed head keys further down are retained only for backward compatibility with existing checkers and are explicitly HISTORICAL or legacy."
   },
+  "workspace_audited_subject_head": "6d45af29793485e5b3fce03840228f5d97a34cd9",
+  "workspace_evidence_commit": "95580f5c92480c6965a4b72d54bf0b6af30f5dbd",
+  "workspace_hosted_ci": "NOT_RUN",
+  "workspace_static_gates": {
+    "result": "PASS",
+    "commands": [
+      "make consistency",
+      "make audit"
+    ],
+    "tested_commit": "95580f5c92480c6965a4b72d54bf0b6af30f5dbd",
+    "note": "Run in the docs/JSON-only worktree whose base is the Workspace evidence commit (documentation-only uncommitted changes; no commit created). Temporary local clone symlinks were used for the runs and removed afterwards. Static gates only: no hosted CI and no full Fieldbook fixture/e2e or Nirnay test suite was run."
+  },
+  "workspace_package_head_attestation": {
+    "commit_sha": "95580f5c92480c6965a4b72d54bf0b6af30f5dbd",
+    "attested_by": "external package manifest (REVIEW-PACKAGE-QA.md / package sidecar), not an internal workspace file",
+    "snapshot": "Workspace Git bundle main head at the 2026-11-24 publication-integrity evidence snapshot",
+    "no_internal_self_hash": true,
+    "note": "No committed workspace file contains its own final commit hash. The exact packaged snapshot commit is attested by the external package manifest, not by an internal file."
+  },
+  "workspace_head_terminology": {
+    "record": "engineering/conformance/ws-evidence-026-provenance-2026-11-24.md",
+    "note": "6d45af2 is the audited subject; 95580f5 is the evidence commit and packaged Git bundle main head. The five head concepts below are separately evidenced and are not interchangeable; see the dated terminology record."
+  },
   "current_source_head": {
     "fieldbook": {
       "repository": "fieldbook",
@@ -21,7 +44,7 @@
       "run_id": "FINAL_SPRINT_HEAD",
       "result": "HEAD_CONFIRMED_CLEAN",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     },
     "nirnay": {
       "repository": "nirnay",
@@ -32,18 +55,20 @@
       "run_id": "FINAL_SPRINT_HEAD",
       "result": "HEAD_CONFIRMED_CLEAN",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     },
     "workspace": {
       "repository": "workspace",
-      "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
+      "commit_sha": "95580f5c92480c6965a4b72d54bf0b6af30f5dbd",
+      "head_role": "PACKAGED_HEAD (Workspace Git bundle main); not the audited subject",
       "clean_worktree": true,
-      "verification_method": "final sprint head; local clean worktree observation",
-      "workflow_or_command": "git -C <repo> rev-parse HEAD && git -C <repo> status --short",
-      "run_id": "FINAL_SPRINT_HEAD",
-      "result": "HEAD_CONFIRMED_CLEAN",
+      "verification_method": "packaged workspace Git bundle main head; local clean worktree observation",
+      "workflow_or_command": "git -C <workspace> rev-parse main && git -C <workspace> status --short; attested by the external package manifest (not an internal file)",
+      "run_id": "WS_EVIDENCE_026_PACKAGED_HEAD",
+      "result": "PACKAGED_HEAD_CONFIRMED_CLEAN",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c",
+      "note": "The audited subject 6d45af2 is recorded separately as workspace_audited_subject_head and remains the value of the other four head concepts. Historical sprint final head 6d45af2 is preserved in publication_integrity_sprint and the sprint acceptance record. evidence_digest is the sprint acceptance record digest, not a digest of the packaged head."
     }
   },
   "ci_verified_source_head": {
@@ -56,7 +81,7 @@
       "run_id": "45454563981",
       "result": "SUCCESS; 2/2 after stale-branch rerun",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     },
     "nirnay": {
       "repository": "nirnay",
@@ -67,18 +92,20 @@
       "run_id": "45434824649",
       "result": "SUCCESS; 12/12 after macOS job rerun",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     },
     "workspace": {
       "repository": "workspace",
       "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
+      "head_role": "AUDITED_SUBJECT (not the packaged head)",
       "clean_worktree": true,
-      "verification_method": "workspace static gates at exact head",
+      "verification_method": "workspace static gates at audited-subject head; hosted CI NOT_RUN",
       "workflow_or_command": "make audit",
       "run_id": "NONE_WORKSPACE_NO_CI",
-      "result": "CONSISTENCY OK; audit exit 0",
+      "result": "CONSISTENCY OK; audit exit 0 (static gates, not hosted CI)",
+      "hosted_ci": "NOT_RUN",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     }
   },
   "local_tested_source_head": {
@@ -91,7 +118,7 @@
       "run_id": "FINAL_SPRINT_LOCAL_GATES",
       "result": "ALL_GATES_PASS",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     },
     "nirnay": {
       "repository": "nirnay",
@@ -102,18 +129,19 @@
       "run_id": "FINAL_SPRINT_LOCAL_GATES",
       "result": "ALL_GATES_PASS",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     },
     "workspace": {
       "repository": "workspace",
       "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
+      "head_role": "AUDITED_SUBJECT (not the packaged head)",
       "clean_worktree": true,
-      "verification_method": "final sprint local gates and tests at exact heads",
-      "workflow_or_command": "cargo xtask / make check / make audit at exact PR heads",
+      "verification_method": "final sprint local static gates at audited-subject head",
+      "workflow_or_command": "make consistency && make audit at exact audited-subject head",
       "run_id": "FINAL_SPRINT_LOCAL_GATES",
-      "result": "ALL_GATES_PASS",
+      "result": "STATIC_GATES_PASS; no full test suite run in this repository",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     }
   },
   "cross_execution_source_head": {
@@ -126,7 +154,7 @@
       "run_id": "FINAL_SPRINT_CROSS_EXECUTION",
       "result": "STAGES_1_5_PASS; STAGE_6_REJECT_RIGHTS_EVIDENCE; NO_ADMISSION_RECEIPT",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     },
     "nirnay": {
       "repository": "nirnay",
@@ -137,18 +165,19 @@
       "run_id": "FINAL_SPRINT_CROSS_EXECUTION",
       "result": "STAGES_1_5_PASS; STAGE_6_REJECT_RIGHTS_EVIDENCE; NO_ADMISSION_RECEIPT",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     },
     "workspace": {
       "repository": "workspace",
       "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
+      "head_role": "AUDITED_SUBJECT (not the packaged head; Workspace is the orchestration record)",
       "clean_worktree": true,
       "verification_method": "final sprint binary-to-binary run recorded in sprint acceptance record",
       "workflow_or_command": "target/debug/ndc-conformance-producer + nirnay/target/debug/ndc-conformance-verifier; see sprint acceptance record",
       "run_id": "FINAL_SPRINT_CROSS_EXECUTION",
       "result": "STAGES_1_5_PASS; STAGE_6_REJECT_RIGHTS_EVIDENCE; NO_ADMISSION_RECEIPT",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     }
   },
   "reviewed_source_head": {
@@ -161,7 +190,7 @@
       "run_id": "FINAL_SPRINT_REVIEWS",
       "result": "ALL_APPROVED_AT_EXACT_HEADS",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     },
     "nirnay": {
       "repository": "nirnay",
@@ -172,18 +201,19 @@
       "run_id": "FINAL_SPRINT_REVIEWS",
       "result": "ALL_APPROVED_AT_EXACT_HEADS",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     },
     "workspace": {
       "repository": "workspace",
       "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
+      "head_role": "AUDITED_SUBJECT (not the packaged head)",
       "clean_worktree": true,
-      "verification_method": "final sprint independent reviews at exact heads",
+      "verification_method": "final sprint independent reviews at audited-subject head",
       "workflow_or_command": "PRs WS #22/#23, FB #69/#70/#71/#72, NZ #144 review records",
       "run_id": "FINAL_SPRINT_REVIEWS",
       "result": "ALL_APPROVED_AT_EXACT_HEADS",
       "verification_timestamp": "2026-11-24T18:08:34Z",
-      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
+      "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
     }
   },
   "bootstrap_baselines": {
@@ -530,7 +560,7 @@
   "durability_profiles": {
     "decision": "engineering/decisions/WS-DUR-001-publication-durability-failure-model.md",
     "status": "RATIFIED 2026-11-24 by owner direction: publication durability is failure-model scoped, not a test count; governing programme contract for durability claims; not a claim that D1 is achieved and not a capability-state promotion",
-    "sha256": "2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71",
+    "sha256": "d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6",
     "scope": "docs/JSON only; no source, schema, right, data, provider, India, experiment, release, key or dataset change; no commit",
     "tiers": [
       "D0 process termination",
@@ -541,7 +571,14 @@
     ],
     "profile_scoped_booleans": {
       "D0_PROCESS_RECOVERY_VERIFIED": true,
-      "D0_condition": "SATISFIED: PUB-020 merged at Fieldbook df0b1d5 (merged main 2ca329c); fresh-process recovery evidence recorded in fb-pub-020 record and sprint acceptance record; D0 applies only to process-termination profile",
+      "D0_condition": "ACHIEVED for the stated scope only: PUB-020 merged at Fieldbook df0b1d5 (merged main 2ca329c); fresh-process recovery evidence recorded in fb-pub-020 record and sprint acceptance record; D0 applies only to the process-termination profile and the exact three subprocess cases below",
+      "D0_subprocess_cases": [
+        "publish_before — process restart after the rename syscall but before the rename journal commit",
+        "publish_staging — process restart after the durable staging-tree journal commit",
+        "publish_rename — process restart after the durable rename journal commit"
+      ],
+      "D0_other_boundaries": "In-process fault injection only, not fresh-process/subprocess evidence: journal directory sync failure, staging mkdir, root sync, artifacts mkdir, each file write/sync, both directory syncs, rename root sync, receipt and marker write/sync/ledger sync, recovery from staging and final directory, v1-record readability and mixed-version refusal",
+      "D0_scope_note": "D0 is neither narrowed to false nor broadened beyond these three cases; D1-D4 remain unqualified and PUBLICATION_DURABILITY_VERIFIED remains NOT ACHIEVED. See WS-DUR-001 section 2.1 and engineering/conformance/ws-evidence-026-provenance-2026-11-24.md.",
       "D1_APFS_QUALIFIED": false,
       "D1_EXT4_QUALIFIED": false,
       "D2_LOCAL_DEVICE_FAILURE_QUALIFIED": false,
@@ -602,7 +639,7 @@
   "publication_integrity_sprint": {
     "status": "EXECUTED",
     "acceptance_record": "engineering/conformance/publication-integrity-sprint-acceptance-2026-11-24.md",
-    "sha256": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c",
+    "sha256": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c",
     "final_heads": {
       "fieldbook": "fd4b542c2df9b775c138a50d068734adedad985e",
       "nirnay": "d3b66f52d500757701f37a21834fde39b89731f4",
