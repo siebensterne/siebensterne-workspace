@@ -10,6 +10,7 @@ or authorize use.
 |---|---|
 | Fieldbook producer and wire mapping | `c0acffc323172f23f65dd2bf1b727478fde2b0a1` (PR #63) |
 | Fieldbook abstract spec alignment | `5b66336d23c1c7663547b4f7afd9646279f345bb` (PR #64) |
+| Fieldbook atomic publication correction | `071da27ed6512fb38c29ada679d76dd0e30ddb6b` (PR #65) |
 | Nirnay verifier and wire mapping | `70716ebf66289a86335641847724fd92bf6bcce7` (PR #143) |
 | Workspace canonical schema package | `f54759b853704be9f26777c15540a24502ff601f` |
 | Canonical schema digest | `6e8c1e48e27289b8c3d3e959a06a805e736d0759b4fb244edbb074f65e107bab` |
@@ -86,3 +87,14 @@ No real market observation, provider contact, right, collection, experiment,
 live execution, India implementation or production signing key was involved.
 No dataset was accepted. A future rights decision is required before any
 admission receipt can be issued.
+
+## Re-execution after the publication correction (B12)
+
+After PR #65 replaced `create_dir`+`hard_link` with a genuine atomic no-replace
+rename, the producer binary was rebuilt and the cross-execution was repeated at
+Fieldbook `071da27` and Nirnay `70716eb`. Result unchanged: structural, manifest,
+signature, publisher key, artifact and ordering stages PASS; stage 6
+`REJECT_RIGHTS_EVIDENCE`; no receipt; no surviving snapshot; dataset BLOCKED.
+In-process fault and recovery tests for every publication transition pass, but
+`PUBLICATION_DURABILITY_VERIFIED` is not claimed: independent receipt exchange
+and filesystem durability evidence remain a separate gate.

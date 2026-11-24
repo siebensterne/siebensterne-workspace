@@ -34,7 +34,7 @@ exact files at those exact heads.
 | Finding | Reviewer claim | Actual evidence at current heads | Status | Next action |
 |---|---|---|---|---|
 | 1. Release directory layout | Producer writes artifacts at the release root while the verifier expects `artifacts/`. | Producer `fieldbook/src/distribution/ndc_wire.rs:943-960` `validate_artifact_path` requires the `artifacts/` prefix and rejects any other path; it is called by `map_artifact` at `:2263` and `prepare_artifact` at `:2582`. The conformance spec declares `artifacts/sequenced-abstract.jsonl` and `artifacts/reference-abstract.jsonl.gz` (`fieldbook/docs/specifications/ndc-conformance-producer-spec-example-2026-11-24.json:486,518`), and the recorded produced release lists exactly those two paths under `artifacts/` (`ndc-v2-cross-execution-2026-11-24.md:32-34`). Verifier `nirnay/crates/release-verifier/src/files.rs:139-159` requires the same prefix; `verifier.rs:404-428` opens the `artifacts` directory and compares its exact file set with `artifacts[]`. | **RESOLVED** | No fix. Keep both mappings byte-aligned; any future path-alphabet change requires a paired representation change. |
-| 2. Publication atomicity | `finalize_publication` uses `create_dir` plus `hard_link` and records a `false`/mislabelled `AtomicNoReplaceRename` stage. | `fieldbook/src/distribution/ndc_release.rs:2317-2362`: `fs::create_dir(final_dir)` at `:2326`, `link_into_release` at `:2340` (which calls `fs::hard_link` at `:2304`); stage is set to `PublicationState::AtomicNoReplaceRename` at `:2338` and written at `:2339`. Module doc `:20-23` states Linux `renameat2(RENAME_NOREPLACE)` is unavailable and exclusive creation plus hard links is the no-replace primitive. Ratified rule requires an atomic no-overwrite rename with parent-directory sync (`engineering/conformance/ndc-v2-schema-profile-1/semantic-constraints.md:232-237`; `NDC-REGISTRY.md:54`). The label does not match the primitive. | **REMAINING** | B12 (P0, in progress): align `finalize_publication` with ratified Decision G, add failure/recovery evidence, and report exact commit, command and exit before any durability claim. `PUBLICATION_DURABILITY_VERIFIED` stays unachieved. |
+| 2. Publication atomicity | `finalize_publication` used `create_dir` plus `hard_link` with a mislabelled `AtomicNoReplaceRename` stage in the Batch B baseline. | **RESOLVED at Fieldbook `071da27` (PR #65).** `ndc_release.rs` now calls a platform-specific `atomic_no_replace_rename` (Linux `renameat2(RENAME_NOREPLACE)`, macOS `renamex_np(RENAME_EXCL)`, other targets fail closed) once, before the `AtomicNoReplaceRename` stage label; parent-directory sync, receipt commit and `AVAILABLE` follow in order. Stage-order, fault-injection and recovery tests pass (50 module tests, 822 all-targets); CI 45363967573. | **RESOLVED** | Independent receipt exchange and filesystem durability evidence remain a separate gate; `PUBLICATION_DURABILITY_VERIFIED` is not claimed. |
 | 3. Record ordering key trust | Producer trusts an independent caller-supplied ordering key. | Producer `derive_order_key` (`ndc_wire.rs:1297-1333`) takes the key from `record.derived_key` produced by parsing canonical bytes (`:1353-1355`), validates domain/epoch and profile, and never reads the caller's `order_key` member (doc `:1335-1340`; claimed key marked untrusted at `:2600`). Duplicate keys with differing payloads fail closed (`:1359-1363`) and sorting is byte-deterministic (`:1366`). Verifier `derive_key_from_bytes` (`canonical_wire.rs:2031-2069`) re-parses the received bytes, requires `canonical_bytes(&value) == bytes` at `:2048`, and derives the key from the raw `ordering` member (`:2054-2069`). Cross-execution: "Ordering key derived from record bytes — PASS" (`ndc-v2-cross-execution-2026-11-24.md:50`). | **RESOLVED** | No fix. Retain byte-derived keys and the canonical-byte equality check on both sides. |
 | 4. Operation evidence matching | Verifier matches action strings to `operation_ref`. | Verifier stage 8 (`verifier.rs:715-742`) builds a `HashSet` of `performed_operations[].operation_ref` and rejects evidence whose `operation_ref` is absent (`:722-738`), also checking event/run/decision-key presence, recording instant against `as_of`, and digest hex. Both sides carry typed records: `schema.rs:87-115` (`PerformedOperation` and `OperationEvidence` each with `operation_ref`); `canonical_wire.rs:1468-1497` rejects duplicate, unbound and missing evidence references with one-to-one cardinality. Schema: `manifest.schema.json` `$defs/PerformedOperation` and `$defs/OperationEvidence`. The cross-execution refused at stage 6, so stage 8 was **not** exercised there; conformance rests on source and the Nirnay PR #143 test evidence, not on a cross-execution PASS. | **RESOLVED** | No fix. A later acceptance run after rights admission should exercise stage 8 end to end. |
 | 5. Coverage cardinality/duplicates | `HashSet` collapses duplicate coverage dimensions. | `canonical_wire.rs:1536-1568` requires `dimensions.len() >= 9` (`:1536-1540`), then inserts each `dimension_id` into a `HashSet` and fails on duplicate (`:1541-1545`); non-zero denominator (`:1546-1551`), overflow-safe `numerator + missing_count + rejected_count == denominator` (`:1552-1562`), and per-dimension `as_of` equality with release `as_of` (`:1563-1567`). Closed vocabulary: `CoverageDimensionId` with exactly nine values at `:687-698`; schema enum at `coverage.schema.json:84-97` and required members at `:70-81`. No `HashSet` is used as the cardinality proof. Coverage stage 7 did not run in the recorded cross-execution because of the first refusal at stage 6. | **RESOLVED** | No fix. Preserve the len/duplicate/arithmetic checks; cover stage 7 in a post-rights acceptance run. |
@@ -48,10 +48,14 @@ exact files at those exact heads.
 
 ## Finding status counts
 
+The original read-only audit baseline is Fieldbook `dd90899`; finding 2 was
+re-evaluated at Fieldbook `071da27` after the B12 publication correction. Counts
+below reflect the current state.
+
 | Status | Count | Findings |
 |---|---|---|
-| RESOLVED | 8 | 1, 3, 4, 5, 6, 7, 8, 12 |
-| REMAINING | 2 | 2, 10 |
+| RESOLVED | 9 | 1, 2, 3, 4, 5, 6, 7, 8, 12 |
+| REMAINING | 1 | 10 |
 | OWNER-DECISION | 1 | 9 |
 | SEPARATE GATE | 1 | 11 |
 | **Total** | **12** | all reviewer findings mapped |
@@ -72,7 +76,7 @@ unachieved entries are not promoted by the wording above.
 | `VERIFIER_CONFORMANT` | **ACHIEVED (abstract wire scope)** | Nirnay `70716eb` independently parses and validates the canonical wire form (`schema.rs`, `canonical_wire.rs`, `verifier.rs` evidence in findings 3-6, 8, 12); the recorded verifier produced the dated diagnostic and detected the byte mutation (`ndc-v2-cross-execution-2026-11-24.md:38-71`). |
 | `BINARY_CROSS_EXECUTED` | **ACHIEVED** | Real `ndc-conformance-producer` output was processed by the real `ndc-conformance-verifier` through a filesystem release; no shared runtime, serializer or validator (`ndc-v2-cross-execution-2026-11-24.md:7-30,38-42`). |
 | `CRYPTOGRAPHICALLY_VERIFIED` | **ACHIEVED** | Manifest digest, signature and publisher key validity PASS (stages 2-4); one-byte manifest mutation rejected at stage 2 (`ndc-v2-cross-execution-2026-11-24.md:45-47,64-71`). |
-| `PUBLICATION_DURABILITY_VERIFIED` | **NOT ACHIEVED** | Finding 2 remains: `create_dir` plus `hard_link` with an `AtomicNoReplaceRename` label (`ndc_release.rs:2304,2326,2338`); B12 in progress; the verifier consumes no producer receipt (finding 11). |
+| `PUBLICATION_DURABILITY_VERIFIED` | **NOT ACHIEVED** | Finding 2 implementation is resolved at `071da27` (atomic no-replace rename, stage/fault/recovery tests). Independent receipt exchange and filesystem durability evidence remain a separate gate; the verifier consumes no producer receipt (finding 11). |
 | `RIGHTS_ADMITTED` | **NOT ACHIEVED** | Stage 6 `REJECT_RIGHTS_EVIDENCE`, `rights_state: UNKNOWN` (`ndc-v2-cross-execution-2026-11-24.md:52-59`). |
 | `DATASET_ACCEPTED` | **NOT ACHIEVED** | `dataset_accepted: false`, dataset BLOCKED; no receipt and no surviving snapshot (`ndc-v2-cross-execution-2026-11-24.md:53-59,80-81`). |
 | `OPERATIONALLY_QUALIFIED` | **NOT ACHIEVED** | No provider contact, market observation, rights decision, India implementation, accepted dataset, streaming qualification or live route; freeze unchanged (rights `UNKNOWN`, dataset `BLOCKED`, budget INR 0, collection `DISABLED`, experiments `BLOCKED`, live execution `DISABLED`, D11 strict). |
@@ -82,11 +86,11 @@ are not. This document changes none of those determinations.
 
 ## Sequenced remaining work
 
-1. **B12 — P0, in progress.** Publication atomicity. Bring `finalize_publication`
-   (`ndc_release.rs:2317-2362`) into agreement with ratified Decision G and
-   `semantic-constraints.md:232-237`; remove the misleading `AtomicNoReplaceRename` label or
-   implement the no-replace primitive it names; add failure and recovery evidence. Reported with
-   exact commit, command and exit. No durability state until verified.
+1. **B12 — P0, merged.** Publication atomicity corrected at Fieldbook `071da27`
+   (PR #65) with a platform-specific atomic no-replace rename, correct stage
+   ordering, fault injection and recovery tests. Independent receipt exchange and
+   filesystem durability evidence remain a separate gate; no durability state is
+   claimed from the in-process tests alone.
 2. **B15 / B16 — P1, separate work packages.** Streaming and bounded memory, one package per
    repository: Fieldbook producer path (`ndc_wire.rs:1346-1367,2596-2632`) and Nirnay verifier
    path (`verifier.rs:430-453,1071-1093`). Both stay open; the current bounded in-memory design is
