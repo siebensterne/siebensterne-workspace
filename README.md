@@ -29,6 +29,10 @@ by this repository's `.gitignore`.
 | `NDC-REGISTRY.md` | NDC version, active `v2` contract, approved digests, consumer-use proposal status and compatibility rules |
 | `engineering/conformance/ndc-v2-conformance-matrix.md` | W2.1 D paired 15-area NDC v2 matrix: normative source and digest, contract field, actual producer/consumer file, role, validation rule, failure code, abstract-only test category, evidence and per-side state; no shared crate |
 | `engineering/conformance/ndc-v2-release-format-design.md` | W2.1 D **design only**: exact manifest content, RFC 8785 JCS signed bytes, detached Ed25519 sidecar, artifact paths, record order, schema versioning, digests, correction links, immutability, size maxima and verification/use race policy; serializer and verifier not implemented; no transport/broker/database |
+| `engineering/conformance/ndc-v2-schema-digest.json` | WP-5 schema registration: final Profile 1 version, profile and D1 amendment digests, strict unknown-field policy and source of truth; no standalone published schema artifact exists; typed structs are the implementation authorities |
+| `engineering/conformance/ndc-v2-acceptance-matrix.md` | WP-5 ten-check acceptance matrix: exact producer and verifier implementation/test evidence at the merged PR heads, both sides' states and typed rejection codes; cross-execution NOT_STARTED; no shared validator crate |
+| `engineering/conformance/ndc-v2-conformance-vectors/VECTORS.md` | WP-5 abstract non-market vector index with SHA-256 for each vector: RFC 8785 JCS, RFC 8032 public test key, canonical manifest and sidecar examples, and described adversarial cases |
+| `scripts/check_ndc_conformance_vectors.py` | WP-5 workspace evidence checker: verifies vector digests, index literal scans and cited test names at exact heads when clones are present; not a producer, verifier or connector |
 | `W2.1-READINESS-REPORT.md` | W2.1 E readiness: exact heads, approved digests, PR #6/#137–#140 and Fieldbook #52–#55 review/CI record, head-tagged and D11 test disposition, abstract 600 ms lease measurement, one status per requirement, rights state, open defects, gates and India design status |
 | `engineering/decisions/WS-SCOPE-2026-11-24-001-global-reference-core-india-first.md` | owner-ratified scope: global reference core with India first; ownership, model rules and work ordering |
 | `engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md` | owner-ratified NDC v2 Release Serialization Profile 1 (2026-11-24): Decisions A–I on manifest digest, ordering, artifacts, data digest, corrections, limits, publication, keys and independence; docs only |
@@ -55,6 +59,7 @@ make consistency      read-only tool, canonical-file and lock audit
 make check-all        both static gate surfaces
 make check-nirnay     Nirnay's full local gate
 make audit            status + consistency + check-all
+python3 scripts/check_ndc_conformance_vectors.py   verify the WP-5 vector package
 ```
 
 `make check-fieldbook-static` and `make check-nirnay-static` share one meaning: static

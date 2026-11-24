@@ -1,0 +1,30 @@
+{
+  "vector_set": "Adversarial lineage, coverage and rights examples",
+  "note": "All identifiers and instants are abstract. No right is granted and no dataset is accepted by these examples.",
+  "cases": [
+    {
+      "id": "correction-cycle",
+      "release_id": "release-example",
+      "supersedes_release_id": "predecessor-example",
+      "cycle_condition": "the trusted predecessor chain returns to release-example",
+      "expected_verifier_rejection": "REJECT_SOURCE_LINEAGE",
+      "producer_evidence": "fieldbook:src/distribution/ndc_release.rs::lineage_cycle_is_rejected",
+      "verifier_evidence": "nirnay:crates/release-verifier/tests/verifier.rs::correction_cycle_is_refused"
+    },
+    {
+      "id": "absent-denominator",
+      "coverage_dimension": "dimension-example",
+      "denominator": null,
+      "expected_verifier_rejection": "REJECT_COVERAGE",
+      "producer_evidence": "not applicable at this head: the producer descriptor requires an unsigned denominator",
+      "verifier_evidence": "nirnay:crates/release-verifier/tests/verifier.rs::absent_denominator_is_refused"
+    },
+    {
+      "id": "rights-unknown",
+      "injected_decision": "UNKNOWN",
+      "expected_verifier_rejection": "REJECT_RIGHTS_EVIDENCE",
+      "producer_evidence": "not applicable at this head: rights evidence is carried as references and no admission decision is evaluated",
+      "verifier_evidence": "nirnay:crates/release-verifier/tests/verifier.rs::rights_unknown_is_refused"
+    }
+  ]
+}

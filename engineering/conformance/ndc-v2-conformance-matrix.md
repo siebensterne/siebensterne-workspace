@@ -209,3 +209,33 @@ recorded heads and are unchanged by this section.
 
 Final schema requirement under Profile 1: exact version, registered digest, strict unknown-field
 handling and conformance vectors. A schema that compiles is not a verified release.
+
+## 7. WP-5 / WS-NDC-INT-001 acceptance section (2026-11-24)
+
+WP-5 adds a cross-repository conformance package at the exact heads Fieldbook
+`2ef88a955f74a7c88e4573683267446e331465e9` (PR #62 producer merged), Nirnay
+`2dad4962b584c557237d219c1c5356fc58bc4b69` (PR #142 verifier merged) and Workspace
+`959143e8996960bfaee233e03cf40d063c47316e` (WP-2 ratified). The package comprises
+`ndc-v2-schema-digest.json`, `ndc-v2-acceptance-matrix.md`,
+`ndc-v2-conformance-vectors/VECTORS.md` with seven abstract vector files, and
+`scripts/check_ndc_conformance_vectors.py`.
+
+| WP-5 artifact | Purpose | State |
+|---|---|---|
+| `engineering/conformance/ndc-v2-schema-digest.json` | registers Profile 1 version, profile and D1 amendment digests, strict unknown-field policy and the source of truth; states that no standalone published schema artifact exists | CREATED; separate schema artifact NOT_STARTED |
+| `engineering/conformance/ndc-v2-acceptance-matrix.md` | ten WP-5 checks with exact producer and verifier test evidence, both sides' states and typed rejection codes | CREATED; no state promoted |
+| `engineering/conformance/ndc-v2-conformance-vectors/` | JCS, public Ed25519 test vector, canonical manifest and sidecar examples, and ten described adversarial cases | CREATED as workspace evidence |
+| `scripts/check_ndc_conformance_vectors.py` | hashes vectors against the index, scans index literals and verifies cited test names at exact heads when clones are present | CREATED; passes |
+
+Section 2 rows 1–15 above record the earlier paired W2.1 D/E work at older heads; their states
+are historical and unchanged. Section 7 and the WP-5 acceptance matrix describe the later
+producer and verifier at the exact heads named here. No row above is re-promoted by this
+section.
+
+**Cross-execution is NOT_STARTED.** No producer-generated release was verified by a Nirnay
+binary. The repositories have no shared invocation boundary and no connector was authorized;
+the workspace checker is evidence tooling only. Representation differences observed in the
+typed structs at these heads are listed in the WP-5 acceptance matrix, section 3. No wire
+compatibility claim is made. No approved D0/D1/D2 digest or consumer-use **Proposed** status is
+changed. Freeze unchanged: rights `UNKNOWN`, dataset `BLOCKED`, collection `DISABLED`,
+experiments `BLOCKED`, live execution `DISABLED`, budget INR 0 and D11 strict.
