@@ -103,3 +103,13 @@ procedure.
 - The vector package contains abstract examples and described mutations. The manifest example
   is hand-written, not producer output; the sidecar example carries a placeholder signature.
   Neither was executed by a producer or verifier binary.
+
+## 8. WS-NDC-INT-002 cross-execution outcome
+
+Actual producer and verifier executables were run over the filesystem at the exact
+commits recorded in `ndc-v2-cross-execution-2026-11-24.md`. The canonical wire
+representation, manifest digest, detached signature, artifact set, dataset digest
+and both ordering profiles passed. Rights admission refused at stage 6 with
+`REJECT_RIGHTS_EVIDENCE`; no admission receipt was issued and no dataset was
+accepted. Wire compatibility is now demonstrated for the abstract release; the
+statuses `RIGHTS_ADMITTED` and `DATASET_ACCEPTED` remain unachieved.
