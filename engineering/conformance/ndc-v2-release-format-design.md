@@ -24,6 +24,34 @@ files in a filesystem namespace; how that namespace is reached is outside this d
 repository keeps its own validator. Fieldbook publishes; Nirnay verifies an immutable
 release and keeps no competing raw archive.
 
+## Approved amendment — NDC v2 Release Serialization Profile 1 (ratified 2026-11-24)
+
+**This section is normative and governs over conflicting choices in the historical design
+below.** Owner ratification
+`engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md`
+(status **RATIFIED 2026-11-24**, Decisions A–I) approved NDC v2 Release Serialization Profile 1.
+The D1 circularity change is the separately approved revision
+`engineering/conformance/NDC-D1-AMENDMENT-001.md` (approved 2026-11-24,
+SHA-256 `a2087aff7bcadb5aae90eea3f7893ac3147e2e8cbecce9fcb9357481e7e49894`); D1's approved
+bytes and historical digest are unchanged.
+
+| Design section | Superseded design choice | Ratified Profile 1 rule |
+|---|---|---|
+| §2.1 | Remove `digests.manifest_sha256` before canonicalization; sign `JCS(M′)` | Decision A: `M` is the complete manifest, `M = JCS(manifest.json)`, `H_M = SHA256(M)`; no digest-exclusion rule; digest only in the sidecar |
+| §2, §3 | Manifest `digests.manifest_sha256`, `digests.artifact_digests[]`, `limits` and `record_order`; sidecar `domain` member | Decisions A/C/B/F: digest only in sidecar with exactly five fields; `artifacts[]` sole inventory with fixed descriptors; per-artifact `record_order_profile`; no manifest `limits`; sign with `D = UTF8("NDC-V2-RELEASE-MANIFEST-SHA256-V1") || 0x00` |
+| §4 | Event-time-first order key (`source_event_time_ns` first) and a single global deterministic order | Decision B: `K_sequence = (sequence_domain_id, sequence_epoch/session-reset identity, sequence_number)`; `K_reference = (object_id, revision, knowledge_time, assertion_id)`; no event-time fallback, no fabricated sequences, no cross-domain comparison, gaps stay visible |
+| §5 | Numeric maxima table as design policy values | Decision F: no manifest `limits`; versioned normative consumer resource policy enforced independently by producer and verifier; numerical maxima set only after workload qualification; no numbers invented here |
+| §7 | `lineage.corrections[]` array | Decision E: one canonical `lineage.supersedes` with one immediate predecessor and PROV `wasRevisionOf`; arrays only for genuine multi-predecessor releases |
+| §8 step 3 | "lock plus a no-overwrite existence check" alternative | Decision G: atomic no-replace rename only, sibling staging on the same filesystem, file and directory sync, parent-directory sync, durable receipt, uncertain-publication recovery; no existence-check-then-rename |
+| §10 | "No key issuance, rotation, custody or revocation channel is defined here" | Decision H: out-of-band trusted publisher registry with key states and revocation evidence; Batch B implements the trust interface and injected test keys only, no production key |
+| §11 | Status table recorded at the design heads | Unchanged as history; the conformance matrix carries the Profile 1 decision references. Ratification promotes no implementation state to `Verified` |
+
+The path rules in §1, the RFC 8785 JCS rules in §3, the byte-level rules in §5 and the
+verification/use race policy in §9 are **preserved** under Decision I, except where the
+table above records an amendment. Nothing in the historical sections below is rewritten; where
+they conflict with Profile 1, Profile 1 governs. No serializer, verifier, key, release,
+dataset, right, provider contact or experiment is created by this section.
+
 ## 1. Release directory and artifact paths
 
 A release is one directory containing exactly one manifest, one detached signature sidecar

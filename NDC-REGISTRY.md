@@ -18,11 +18,14 @@ one producer and one consumer. No transport, queue, shared crate or database is 
 | C0 semantic model digest (approved) | `3dace660c362e683790ba7e56a785ded8af836abda36f6eab06ed284de49eed2` |
 | Ownership decision | `NR-ARCH-ADR-0001` — **Accepted 2026-11-23** by owner ratification |
 | Ratification reference | `engineering/decisions/OWNER-RATIFICATION-2026-11-23.md` — Decision A (ownership) and Decision B (NDC v1/v2 semantics); roles named there |
+| Release serialization profile | **NDC v2 Release Serialization Profile 1 — Ratified 2026-11-24** |
+| Profile ratification | `engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md` — Decisions A–I; digest `fb8a4992d63aabb41f02286317d1d69aeaec9a0e35836bd8ce6eff2754cb01fc` |
+| Approved D1 amendment | `engineering/conformance/NDC-D1-AMENDMENT-001.md` — approved 2026-11-24; digest `a2087aff7bcadb5aae90eea3f7893ac3147e2e8cbecce9fcb9357481e7e49894`; D1 approved bytes and digest unchanged |
 | Contract status | NDC v2 **Approved 2026-11-23**; NDC v1 **historical**, superseded by v2 |
 | NDC v1 producer document (historical) | `engineering/ndc-producer-requirements-v1.md`, digest `592a1c9043ed2756a3f9d938dbe6e2ee80007166b440cf6f2709d5de11424c33` |
 | NDC v1 consumer document (historical) | `engineering/ndc-consumer-requirements-v1.md`, digest `25315c57de753bde33b0f8044e70646f24b19c8af7ca9fdbdd2e53682a53b8bd` |
 | Operation sets | producer (8) / consumer (5), distinct; extra grants imply nothing |
-| Trust model | detached Ed25519 via Nirnay `dataset-signature.v1.schema.json`; integrity is not authenticity |
+| Trust model | detached Ed25519 with `manifest_sha256` only in `signature.json`; out-of-band trusted publisher registry; integrity is not authenticity |
 | Rights state | all provider rights `UNKNOWN` |
 | Release state | no accepted dataset release |
 
@@ -40,10 +43,38 @@ component exists. These layers are recorded separately:
 | Approved semantic requirements | **Approved 2026-11-23** | v2 producer requirements, v2 consumer requirements and the C0 model above; six separable concepts (capability, permission, operation, data object, purpose, evidence) |
 | Approved implementation-conformance rules | **Approved as requirements** under W1.2 C1/C2 paired PRs #45/#46/#130; enforcement still to be proven | `CURRENT-STATE.json` `reviewed_commit_ids`; W2.1-B/C exists to close runtime gaps, not to reopen the approved semantics |
 | JSON schemas | Present as versioned repository artifacts (for example `schemas/research/dataset-manifest.v1.schema.json`), not part of the approved NDC v2 requirement bytes | A schema that compiles is not a verified release |
-| Canonical serialization rules | **Ratified as semantics**: RFC 8785 JCS canonical manifest bytes with a detached Ed25519 sidecar; proves publisher-key control and manifest integrity only | Decision B of the ratification record |
-| Final NDC serialization schema | **Not yet implemented** | No approved final schema artifact or digest is registered here |
+| Canonical serialization rules | **Ratified as semantics**: 2026-11-23 Decision B, refined by Profile 1 Decision A — RFC 8785 JCS over the complete manifest, SHA-256 digest only in the detached sidecar, Ed25519 domain-separated signature; proves publisher-key control and manifest integrity only | `OWNER-RATIFICATION-2026-11-23.md` Decision B; `WS-NDC-2026-11-24-002` Decision A; `NDC-D1-AMENDMENT-001.md` |
+| Final NDC serialization schema | **Profile 1 ratified; schema artifact not yet registered** | Final schema must have exact version, registered digest, strict unknown-field handling and conformance vectors |
+| Resource policy | **Ratified rule**: versioned normative consumer resource policy, no manifest `limits`, producer and verifier enforce independently; numerical maxima pending workload qualification | `WS-NDC-2026-11-24-002` Decision F |
+| Publication durability | **Ratified rule**: staged, synced, atomic no-replace rename with parent-directory sync and durable receipt; uncertain-publication recovery after rename before parent sync | `WS-NDC-2026-11-24-002` Decision G |
+| Trusted publisher registry | **Ratified rule**: out-of-band registry with key states and revocation evidence; Batch B trust interface with injected test keys only | `WS-NDC-2026-11-24-002` Decision H |
 | Runtime implementation | Exists in both repositories; **full semantic enforcement not yet demonstrated** | W2.1 Fieldbook authorization and Nirnay admission conformance work is outstanding |
 | Consumer verification capability | Partial; **full release verifier not implemented** | Nirnay admission code and the separate Proposed consumer-use document below are not an approved verifier |
+
+## NDC v2 Release Serialization Profile 1 (ratified 2026-11-24)
+
+Ratification: `engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md`
+(status RATIFIED by owner 2026-11-24, digest
+`fb8a4992d63aabb41f02286317d1d69aeaec9a0e35836bd8ce6eff2754cb01fc`). It approves exactly
+these nine decisions; no other profile is registered.
+
+| Decision | Subject | Ratified rule (summary) |
+|---|---|---|
+| A | Manifest digest / circularity | Complete manifest JCS, `H_M = SHA256(M)`; digest only in detached sidecar; domain-separated Ed25519; D1 amended by `NDC-D1-AMENDMENT-001.md` |
+| B | Record ordering | Per-artifact `record_order_profile`; sequence and reference keys; no event-time-first sorting or fallback |
+| C | Artifacts | `artifacts[]` sole inventory; fixed descriptor field set; canonical artifact order by `(logical_partition_id, shard_ordinal)`; canonical JSONL |
+| D | Dataset digest | SHA-256 over concatenated uncompressed canonical record streams in canonical artifact order; compression-independent |
+| E | Corrections | One `lineage.supersedes`, one immediate predecessor, PROV `wasRevisionOf`, traversable chain |
+| F | Limits | No manifest `limits`; versioned normative consumer resource policy; no unmeasured numeric maxima |
+| G | Publication | Eight-state publication machine with durable receipt and uncertain-publication recovery |
+| H | Keys | Out-of-band publisher registry, key-state rules; Batch B interface and injected test keys only |
+| I | Independence | Separate producer and verifier implementations; no shared validator/serializer/digest/rights crate; shared schema and vectors only |
+
+The design file `engineering/conformance/ndc-v2-release-format-design.md` remains a historical
+design record with a prominent approved-amendment section. Its superseded choices (excluded
+digest field, sidecar `domain` field, event-time-first order key, `record_order` and
+`limits` manifest fields, `digests.artifact_digests[]`, `lineage.corrections[]`, design numeric
+limits and the existence-check-then-rename alternative) are not adopted under Profile 1.
 
 ## Separate consumer-use proposal (not approved)
 
@@ -54,7 +85,8 @@ component exists. These layers are recorded separately:
 The 2026-11-23 ratification explicitly names the C0 model and the v2 producer/consumer
 requirements. It does not ratify every separate consumer-use implementation proposal. This
 document's semantics are not silently included in the ratified NDC v2 set, and its status is
-not changed by approval of the requirement documents.
+not changed by approval of the requirement documents or by NDC v2 Release Serialization
+Profile 1.
 
 ## Structural rule
 
@@ -83,4 +115,6 @@ repository's NDC document. Compatibility is decided by those rules, not by a tra
 4. Obtain independent review for each PR and record CI runs.
 5. Register the resulting commits in `REVIEW-LOG.md`.
 6. Change an approved digest only through a separately approved revision; never edit the
-   approved bytes silently.
+   approved bytes silently. An amendment is a new dated revision document with its own digest
+   (as `NDC-D1-AMENDMENT-001.md` does for D1); the historical digest and approved bytes stay
+   unchanged.
