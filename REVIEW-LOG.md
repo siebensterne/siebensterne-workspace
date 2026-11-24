@@ -79,3 +79,8 @@ evidence or review archive.
 - Fieldbook owns authoritative identity, reference assertions, revisions and publication; Nirnay consumes; Workspace owns contracts and governance.
 - First code-bearing work package: FB-REF-001 canonical object and identity core in Fieldbook.
 - India design ratification, provider rights and dataset acceptance remain separate owner gates. Freeze unchanged: rights UNKNOWN, dataset BLOCKED, budget INR 0, collection DISABLED, experiments BLOCKED, live execution DISABLED, D11 strict.
+
+## 2026-11-24 — Global reference core programme start
+
+- Workspace PR #9: WS-SCOPE-2026-11-24-001 "Global Reference Core, India First" ratified by owner direction. One scope decision, not 16 ADRs; India design/rights/dataset remain separate gates. APPROVE. Workspace main 773f21f.
+- Fieldbook PR #57: FB-REF-001 canonical financial object and identity core. 21 object classes, opaque derived IDs, identifier assertions, four-way resolution, bitemporal ledger, denominator-bearing coverage. 20 abstract tests; 624 passed; full sweeps before gates. CI 45309465082 success. APPROVE. Fieldbook main 4c82802; main CI 45310771854 2/2 after stale-branch rerun.

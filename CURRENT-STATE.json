@@ -14,7 +14,7 @@
     "note": "RRP-001 review and measurement heads: manifests were built with git ls-files + shasum -a 256 + stat at these heads. Historical; not the current or tested heads."
   },
   "current_source_heads": {
-    "fieldbook": "f27f4a442494de02fb7b7dc5c9d620e5664a70f9",
+    "fieldbook": "4c8280239dd5b260f999f829f5b696113d1a8cd5",
     "nirnay": "7324925bb947fd20c32a77eed00c5bfc9d22ede9"
   },
   "tested_source_heads": {
@@ -23,8 +23,8 @@
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45293427722",
-      "head_sha": "f27f4a442494de02fb7b7dc5c9d620e5664a70f9",
+      "run_id": "45310771854",
+      "head_sha": "4c8280239dd5b260f999f829f5b696113d1a8cd5",
       "conclusion": "success",
       "jobs": "2/2",
       "note": "Rerun after merged remote-tracking branch cleared git-policy check"
@@ -219,5 +219,6 @@
     "Define India venue/product coverage beyond the I1-I6 register"
   ],
   "w21_status": "W2.1 complete: conformance matrix, release-format design and readiness report merged in workspace PR #7",
-  "style_standard": "Adopted 2026-11-24: engineering/style/DOCUMENTATION-STANDARD.md in workspace; mirrored into Fieldbook STYLES.md/docs/style-standards.md/docs/coding-standard.md and Nirnay STYLES.md/engineering/style-policy.md. PRs workspace #8, Fieldbook #56, Nirnay #141. Full-tree sweep before gates; one dated exception in frozen Nirnay RRP-004 path crates/market-archive/src/journal.rs."
+  "style_standard": "Adopted 2026-11-24: engineering/style/DOCUMENTATION-STANDARD.md in workspace; mirrored into Fieldbook STYLES.md/docs/style-standards.md/docs/coding-standard.md and Nirnay STYLES.md/engineering/style-policy.md. PRs workspace #8, Fieldbook #56, Nirnay #141. Full-tree sweep before gates; one dated exception in frozen Nirnay RRP-004 path crates/market-archive/src/journal.rs.",
+  "fb_ref_programme": "WS-SCOPE-2026-11-24-001 ratified (workspace 773f21f). FB-REF-001 canonical object and identity core merged (Fieldbook PR #57, head 93d9a09), 624 tests passed; FB-REF-002 in progress."
 }
