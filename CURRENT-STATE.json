@@ -14,7 +14,7 @@
     "note": "RRP-001 review and measurement heads: manifests were built with git ls-files + shasum -a 256 + stat at these heads. Historical; not the current or tested heads."
   },
   "current_source_heads": {
-    "fieldbook": "071da27ed6512fb38c29ada679d76dd0e30ddb6b",
+    "fieldbook": "932e34ffc87273340b3e681b6e73d6f03ae8b612",
     "nirnay": "70716ebf66289a86335641847724fd92bf6bcce7"
   },
   "tested_source_heads": {
@@ -23,11 +23,10 @@
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45365803281",
-      "head_sha": "071da27ed6512fb38c29ada679d76dd0e30ddb6b",
+      "run_id": "45399871079",
+      "head_sha": "932e34ffc87273340b3e681b6e73d6f03ae8b612",
       "conclusion": "success",
-      "jobs": "2/2",
-      "note": "Rerun after merged remote-tracking branch cleared git-policy check"
+      "jobs": "2/2"
     },
     "nirnay": {
       "run_id": "45357742748",
@@ -267,5 +266,6 @@
     },
     "note": "Production-path binary cross-execution heads. They do not replace the conformance-path current/tested heads and CI above, which retain their own evidence."
   },
-  "evidence_audit_status": "9 RESOLVED, 1 REMAINING (B15/B16 streaming), 1 OWNER-DECISION (compression codec), 1 SEPARATE GATE (publication receipt). B12 atomic publication merged at 071da27. PUBLICATION_DURABILITY_VERIFIED not achieved. Production-builder parity covered at Fieldbook 5703185 (PR #66) / Nirnay 70716eb; counts unchanged."
+  "evidence_audit_status": "9 RESOLVED, 1 REMAINING (B15/B16 streaming), 1 OWNER-DECISION (compression codec), 1 SEPARATE GATE (publication receipt). B12 atomic publication merged at 071da27. PUBLICATION_DURABILITY_VERIFIED not achieved. Production-builder parity covered at Fieldbook 5703185 (PR #66) / Nirnay 70716eb; counts unchanged.",
+  "release_correctness": "FB-NDC-013 production builder parity merged (PR #66); FB-PUB-014/015/016 recovery correctness merged (PR #67). Actual production builder output verified by real Nirnay verifier: stages 1-5 PASS, stage 6 REJECT_RIGHTS_EVIDENCE. FB-PUB-017 journal durability in progress."
 }
