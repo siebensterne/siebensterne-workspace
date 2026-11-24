@@ -50,12 +50,13 @@ component exists. These layers are recorded separately:
 | Canonical serialization rules | **Ratified as semantics**: 2026-11-23 Decision B, refined by Profile 1 Decision A — RFC 8785 JCS over the complete manifest, SHA-256 digest only in the detached sidecar, Ed25519 domain-separated signature; proves publisher-key control and manifest integrity only | `OWNER-RATIFICATION-2026-11-23.md` Decision B; `WS-NDC-2026-11-24-002` Decision A; `NDC-D1-AMENDMENT-001.md` |
 | Canonical wire schema authority | **Ratified 2026-11-24**: one language-independent canonical wire schema for Profile 1; B8 package and cross-execution still NOT_STARTED | `WS-NDC-2026-11-24-003` (`417bd4e5…`): strict UTF-8/RFC 8785 JCS, decimal-string nanosecond instants, byte-derived tagged record ordering, typed operations/evidence, source scope, rights, coverage, lineage, registered compression versions, versioned schema package with one digest; DP-01..DP-30 resolved; no shared runtime crate |
 | Final NDC serialization schema | **Profile 1 version and digests registered; canonical schema package published by WP-B8 (2026-11-24)** | `engineering/conformance/ndc-v2-schema-digest.json` registers the exact version, profile and D1 amendment digests, strict unknown-field policy and the source of truth. The B8 canonical schema package at `engineering/conformance/ndc-v2-schema-profile-1/` is the standalone published wire artifact (digest `6e8c1e48…`, 26 files). At the WP-5 recorded heads no such file existed and the typed structs in both repositories were the implementation authorities; those heads are historical evidence, not the normative wire representation. Cross-execution remains NOT_STARTED |
-| Resource policy | **Ratified rule**: versioned normative consumer resource policy, no manifest `limits`, producer and verifier enforce independently; numerical maxima pending workload qualification | `WS-NDC-2026-11-24-002` Decision F |
+| Resource policy | **Ratified rule**: versioned normative consumer resource policy, no manifest `limits`, producer and verifier enforce independently; numerical maxima pending workload qualification | `WS-NDC-2026-11-24-002` Decision F; `WS-STREAM-001` (2026-11-25) adds the normative immutable versioned `ResourceProfile` contract with role-specific profiles, trusted local selection, consumer local ceiling and stricter-of effective limits, but approves no number or profile digest |
 | Publication durability | **Ratified rule**: staged, synced, atomic no-replace rename with parent-directory sync and durable receipt; uncertain-publication recovery after rename before parent sync | `WS-NDC-2026-11-24-002` Decision G |
 | Publication durability failure model | **Ratified rule (WS-DUR-001)**: five tiers D0–D4 with profile-scoped booleans, an error-only sync acknowledgement contract, per-platform primitive qualification and no global durability Boolean; not a D1 claim | `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` — **RATIFIED 2026-11-24** by owner direction; current digest `931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` (FB-DUR-002 full-matrix evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` preserved as historical in `REVIEW-LOG.md`) |
 | Trusted publisher registry | **Ratified rule**: out-of-band registry with key states and revocation evidence; Batch B trust interface with injected test keys only | `WS-NDC-2026-11-24-002` Decision H |
 | Runtime implementation | Producer and independent verifier implemented at the exact PR heads; **cross-execution NOT_STARTED** | WP-5 acceptance matrix records exact test evidence at Fieldbook `2ef88a9` and Nirnay `2dad496`; no shared invocation boundary or connector, no verification promotion |
 | Consumer verification capability | Independent `release-verifier` crate implemented at Nirnay `2dad496`; **Proposed consumer-use proposal unchanged** | Twelve-stage verifier with abstract tests; no shared crate; the separate consumer-use document below is not approved and is not an authority for this capability |
+| B15/B16 streaming architecture | **RATIFIED 2026-11-25** by owner direction (`WS-STREAM-001`): bounded interfaces and pipelines, two-intent lifecycle, byte-derived ordering, Profile 1 digests, incremental digests, bounded parsing and decompression, typed failure semantics, descriptor-relative snapshots, independent implementations and separate receipts | Contract only; numeric resource maxima and codec identifier deferred; `STREAM_RESOURCE_PROFILE_RATIFIED` pending; both design documents remain PROPOSED |
 
 ## NDC v2 Release Serialization Profile 1 (ratified 2026-11-24)
 
@@ -152,6 +153,31 @@ in-process fault injection remains a separate evidence class.
 D2–D4 are unqualified; no global durability claim is made. See
 `engineering/conformance/d0-full-matrix-evidence-2026-11-24.md`. No approved capability state,
 right, dataset or freeze term is changed by this rule.
+
+## B15/B16 streaming architecture ratification (2026-11-25)
+
+Ratification: `engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md`
+(status **RATIFIED by owner direction 2026-11-25**). It approves exactly twelve architecture
+and interface-contract items (A-01..A-12) and resolves all twenty open decisions individually:
+OD-01..OD-10 from B15 §10.2 and D1..D10 from B16 §10. No numeric maximum from B15 §6.2,
+production memory budget, concurrency setting, throughput or CPU target, codec identifier,
+PERF-001 assignment or operational qualification is approved.
+
+| Item | Registered state |
+|---|---|
+| Architecture and contracts | **RATIFIED NOW** for bounded record-source interfaces, streaming producer/verifier pipelines, the two-intent lifecycle, byte-derived ordering, Profile 1 digest compatibility, deterministic streaming compression, incremental stored/expanded digests, bounded decompression and parsing, cancellation/backpressure/failure semantics, descriptor-relative private snapshot writing and cleanup, independent implementations and separate publication/admission receipts |
+| Implementation | **MAY PROCEED with finite, explicitly marked `TEST_ONLY` profiles**; no production invocation without an approved role profile selected by trusted local policy; producer declarations never raise the consumer ceiling |
+| `STREAM_RESOURCE_PROFILE_RATIFIED` | **PENDING**: requires owner approval of every numeric limit and one profile digest per `ProcessingRole` (`PRODUCER`, `VERIFIER`, `RECOVERY`, `SNAPSHOT`) |
+| `PERF_001_QUALIFIED`, `OPERATIONALLY_QUALIFIED` | **BLOCKED** |
+| `PUBLICATION_DURABILITY_VERIFIED` | **false**, unchanged under WS-DUR-001 |
+| Design documents | Both remain **PROPOSED / AWAITING OWNER APPROVAL**; a pointer records the architecture ratification and the deferred numbers |
+
+The `ResourceProfile` contract is immutable and versioned: `ResourceProfileId {name, version}`
+and `ResourceProfile {id, digest, role, limits}` with private validated fields, a digest over
+canonical fields, and role-specific budgets. Trusted local policy selects the profile; the
+effective limit is the stricter of consumer local ceiling, consumer role profile and any
+producer declaration. Caller-supplied raw limits are not normative. No approved digest, schema
+version, rejection code or historical record was edited by this decision.
 
 ## B8 canonical schema package (published 2026-11-24)
 
