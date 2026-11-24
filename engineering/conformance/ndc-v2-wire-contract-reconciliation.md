@@ -154,6 +154,16 @@ Workspace vectors and acceptance matrix are those registered in
 
 ## 4. Decision summary — points requiring owner ratification
 
+> **Owner disposition (2026-11-24):** all thirty points below (**DP-01..DP-30**) are resolved by
+> the owner ratification record
+> `engineering/decisions/WS-NDC-2026-11-24-003-canonical-profile-1-wire-schema.md` (status
+> RATIFIED by owner direction 2026-11-24, digest
+> `417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119`). That decision ratifies a
+> third, language-independent canonical wire authority and gives the disposition of every DP in
+> its section 15. This reconciliation stays a PROPOSED review record; the pointer does not edit,
+> re-digest or re-status any historical content here, and neither Rust representation becomes
+> normative.
+
 All items are **PROPOSED / AWAITING OWNER DECISION**. No item below is ratified by this record.
 Owner recommendations stated in the work directive are recorded as recommendations, not as
 decisions. Neither Rust representation is selected as normative.
