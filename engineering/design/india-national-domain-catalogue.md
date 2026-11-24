@@ -3,9 +3,16 @@
 - **Status:** PROPOSED. Awaiting owner ratification. This document fixes the domain work
   breakdown and ontology rules only. It ratifies no contract, grants no right, qualifies no
   provider and accepts no dataset.
-- **Task / branch / base:** IN-CAT-001 · branch `docs/india-domain-catalogue` · workspace base
-  `14afdfd`. Documentation only: one new Markdown file in the Workspace worktree. No source
-  repository, schema, contract version, release, dataset, experiment or gate policy is edited.
+- **Task / branch / base:** IN-CAT-001 created this catalogue; amended in place under
+  IN-CAT-002/003/004 · branch `docs/india-catalogue-amendments` · workspace base `7b0eb2e`.
+  Documentation only: this catalogue and its companion decision are edited in place. No second
+  catalogue or decision is created; no source repository, schema, contract version, release,
+  dataset, experiment or gate policy is edited.
+- **Amendment record (2026-11-24, PROPOSED):** explicit listed/OTC and four-way interest-rate
+  subpopulations (IN-12, IN-13); three IN-20 subdomains with published observations kept distinct
+  from derived indicators; independent statement, rating and credit-event object contracts
+  (IN-19); a mandatory 20-question cross-domain set answered for every cohort (§6); and an
+  explicit not-approved section (§9). Status remains PROPOSED pending owner ratification.
 - **Authority read:** `engineering/decisions/WS-SCOPE-2026-11-24-001-global-reference-core-india-first.md`
   (ratified: global reference core, India first; one identity system; bitemporal assertions;
   declared denominators), `engineering/coverage/india-coverage-register.md` (I1–I6 migration
@@ -59,6 +66,10 @@ it. A violation is a concept conflation, not a naming preference.
 | Derivative family is not an individual contract | `ContractFamily` is a reusable template; `ContractInstance` adds expiry and multiplier. An option is distinct by underlying, expiry, strike, right and specification. | Treating a product family as one contract with a mutable expiry, or counting a family as one contract instance. |
 | No generic `Other` family | Every family is named and typed by a versioned contract. The `IdentifierScheme` string escape hatch is not a completeness device. | Introducing a generic `Other`, `Misc` or catch-all family to make a universe look complete. |
 | I6 is a migration register, not a bucket | I1–I6 is an ordered qualification sequence. I6 names domains that must each receive a per-domain contract and denominator before entry. | Using I6 as a permanent resting place for unclassified products or as a substitute for a typed extension. |
+| Listed and OTC subpopulations are distinct | A listed product is bounded by venue admission assertions and an exchange authority; an OTC product is bounded by counterparties and a declared source scope. Each subpopulation names its own authority, denominator and verdict inside one cohort. | Applying one `OTC-private` population model to a whole cohort, merging listed and OTC denominators, or inferring listed status from a fixing publication, a currency code or a rate name. |
+| Published observation is not a derived object | A published economic observation carries its source, release, vintage and knowledge time; a derived indicator is a separate object computed under a declared transformation version over a declared input universe. | Recording a released observation as a `wasDerivedFrom` transformation output, or counting a release in a derived-indicator denominator. |
+| Statement, rating and credit event are distinct objects | Each receives its own object contract with lifecycle, revision lineage and provenance: a statement is a reported period, a rating is an asserted opinion, a credit event is a typed occurrence. | Treating a rating as a financial statement, a credit event as merely an issuer observation, or collapsing all three into one `Source` record or one `CorporateAction` without a versioned contract. |
+| Pack evidence is mandatory on every component | Every country-pack component carries identity, version, source, source digest, valid interval, knowledge time, revision, predecessor and verification state, as specified in `IN-COUNTRY-001`. | Admitting a jurisdiction, venue, scheme, calendar or rule from a name, a code, an undated label or an unverified assertion. |
 
 These rules restate the ratified scope decision and existing crosswalk findings; they do not
 create a new instrument hierarchy. The catalogue groups work by domain, not by a competing
@@ -80,6 +91,12 @@ denominator would have to be established; it does not establish one.
 Any cohort whose population authority, as-of instant or denominator axis is undeclared remains
 `UNKNOWN` or `UNMEASURABLE`. Absent denominators grant nothing.
 
+A cohort may declare several **subpopulations**. Each subpopulation names its own population
+authority, denominator axis, as-of rule and verdict; the cohort keeps one identifier and one name,
+but no cohort-level verdict is formed by merging subpopulations. The population type recorded for
+a split cohort in §4 is the set of its subpopulation classes, not a single class. A subpopulation
+boundary is a work-breakdown declaration, not an admission of any source or population count.
+
 ## 4. Cohort register
 
 The exact identifiers and names below are fixed by this work package. The I-column is the
@@ -98,15 +115,15 @@ migration phase from the coverage register; it is a development order, not a cov
 | IN-09 | Securities lending, borrowing and collateral | OTC-private | I5 (extension) | FinancialInstrument, LegalEntity, ContractInstance, IdentifierAssertion |
 | IN-10 | Equity and index derivatives | Authority-bounded | I3 | ContractFamily, ContractInstance, FinancialInstrument, Index |
 | IN-11 | Commodity markets and derivatives | Authority-bounded | I4 | MarketProduct, ContractFamily, ContractInstance, MarketCalendar |
-| IN-12 | Currency markets and derivatives | OTC-private | I5 | FinancialInstrument, ContractFamily, ContractInstance, MarketProduct |
-| IN-13 | Interest-rate markets and derivatives | OTC-private | I5 (extension) | ContractFamily, ContractInstance, FinancialInstrument, Index |
+| IN-12 | Currency markets and derivatives | Listed: Authority-bounded; OTC: OTC-private (§5, IN-12) | I5 | FinancialInstrument, ContractFamily, ContractInstance, MarketProduct, Listing for the listed subpopulation |
+| IN-13 | Interest-rate markets and derivatives | Listed: Authority-bounded; bilateral: OTC-private; benchmark-linked: Provider-bounded; other: unclassified (§5, IN-13) | I5 (extension) | ContractFamily, ContractInstance, FinancialInstrument, Index, Listing for the listed subpopulation |
 | IN-14 | Indices and benchmarks | Officially enumerable | I2 | Index, ObjectRef edges, Source, Capability |
 | IN-15 | OTC and privately negotiated instruments | OTC-private | I6 | FinancialInstrument, ContractFamily, ContractInstance, LegalEntity |
 | IN-16 | Unlisted and private securities | OTC-private | I6 | Security, FinancialInstrument, LegalEntity, IdentifierAssertion |
 | IN-17 | IFSC products and facilities | Authority-bounded | I6 | Jurisdiction, Authority, Venue, Segment, MarketProduct |
 | IN-18 | Corporate actions and issuer information | Authority-bounded | I1 (I5 extension) | CorporateAction, LegalEntity, Security, Source |
-| IN-19 | Financial statements, ratings and credit events | Authority-bounded | I6 | LegalEntity, Source, CorporateAction, Capability |
-| IN-20 | Economic and commodity reference information | Derived | I6 | Source, DataProduct, Capability, MarketCalendar |
+| IN-19 | Financial statements, ratings and credit events | Statement: Authority-bounded; rating: Provider-bounded; credit event: authority-bounded where filed, OTC-private where privately declared (§5, IN-19) | I6 | LegalEntity, Source, Capability; three independent object contracts under typed extensions (§5, IN-19) |
+| IN-20 | Economic and commodity reference information | (a) Authority-bounded releases; (b) Provider-bounded reference objects and specifications; (c) Derived indicators (§5, IN-20) | I6 | Source, DataProduct, Capability, MarketCalendar; separate observation, specification and transformation payloads |
 
 ## 5. Cohort detail
 
@@ -381,7 +398,8 @@ as-of instant and denominator.
 
 ### IN-12 Currency markets and derivatives
 
-- **Population type:** OTC-private.
+- **Population type:** Two subpopulations inside one cohort: listed currency products and OTC
+  currency products. No single `OTC-private` model covers the cohort as a whole.
 
 | Attribute | Declaration |
 |---|---|
@@ -392,37 +410,62 @@ as-of instant and denominator.
 | Identifier schemes | ISO 4217 currency codes as asserted identifiers, domestic contract codes from a named venue where listed, source deal references for OTC; each scoped and effective dated. |
 | Terms and units | `FxTerms` base and quote units and pip scale; rates and points as `ExactMeasure` with declared scale and `Unit::PricePerUnit`; settlement date under dual-calendar rules. |
 | Lifecycle | Quotation, dealing, fixing, settlement, roll and cancellation, each with effective and knowledge times. |
-| Venue and segment applicability | OTC by default; any exchange-traded currency derivative requires a venue, operator and segment assertion. No venue inferred from a fixing publication. |
+| Venue and segment applicability | Listed currency products require an asserted venue, operator and segment; OTC products declare no venue. No venue inferred from a fixing publication or a currency code. |
 | Effective time | Half-open validity on currency and contract terms; fixing and value dates under the declared timezone and calendar rule. |
 | Knowledge time | Fixing publication and deal confirmation times distinct from `recorded_at_us`; corrections append revisions. |
-| Population authority | Counterparties and the applicable regulator; a named venue only for the exchange-traded subset. No complete public population for the cohort as a whole. |
-| Coverage denominator | Contract and instrument dimensions where a bounded source is declared; otherwise `UNMEASURABLE`. No combined FX-and-debt denominator. |
+| Population authority | Listed products: the admitting exchange and its regulator under a venue assertion. OTC products: counterparties and the applicable regulator with a declared bounded source scope. No population authority covers the whole cohort. |
+| Coverage denominator | Listed products: contract and listing/identity dimensions from exchange specifications and listing assertions at a declared venue date, currently `UNKNOWN`. OTC products: no cohort-level denominator; per-scope deal population only, `UNMEASURABLE` absent a declared scope. No combined listed-plus-OTC or FX-and-debt denominator. |
 | Data capabilities | `ReferenceData` for currency identity; trade and quote only under a separately admitted source release. |
 | Rights dependencies | Rights `UNKNOWN`; rate and deal sources require separate qualification. |
+
+**Subpopulation boundaries (§5, IN-12).** One programme cohort, two explicit subpopulations:
+
+| Subpopulation | Object boundary | Population authority | Denominator model | Current verdict |
+|---|---|---|---|---|
+| Listed currency products | Exchange-traded FX futures and options as `FinancialInstrument`, `ContractFamily`, `ContractInstance` plus a `Listing` to an asserted venue and segment. | Admitting exchange and its regulator; exchange contract-specification assertions. | Contract and listing/identity dimensions from those specifications and listing assertions at a declared venue trading date. | `UNKNOWN`; no count asserted. |
+| OTC currency products | Spot, forward, swap and NDF trades as counterparty-bounded `ContractInstance` objects; collateral and currency identities remain separate objects. | Counterparties and applicable regulator with a declared bounded source scope. | No cohort-level denominator; a per-scope deal population only when that scope is admitted with an as-of instant. | `UNMEASURABLE` absent a declared scope. |
+
+Listed status is never inferred from a fixing publication, a currency pair label or a venue code,
+and an OTC deal reference is never promoted to a listed-product identifier.
 
 Not a population or provider claim; measure `UNKNOWN`/`UNMEASURABLE` absent an admitted source,
 as-of instant and denominator.
 
 ### IN-13 Interest-rate markets and derivatives
 
-- **Population type:** OTC-private.
+- **Population type:** Four separated subpopulations inside one cohort: listed contracts,
+  bilateral instruments, benchmark-linked agreements and other interest-rate products. No single
+  population model is forced across them.
 
 | Attribute | Declaration |
 |---|---|
 | Legal/economic object classes | `ContractFamily`, `ContractInstance`, `FinancialInstrument`, `Index` for a referenced benchmark, `LegalEntity` for counterparties. |
 | Instrument families | Taxonomy family `Swap` plus `Future` and `Option` on rates or benchmarks; an Indian overnight-index swap or OIS tenor requires a named typed extension of the swap terms. |
 | Contract families and instances | A curve tenor or swap specification is a family; each trade, value date and fixing schedule is an instance. A benchmark index is not the swap. |
-| Entity relationships | `underlying_of` to a rate index or debt instrument, counterparty edges, clearing house edge where cleared; no identity merged with the benchmark administrator. |
+| Entity relationships | `underlying_of` to a rate index or debt instrument, counterparty edges, clearing house edge where cleared; no identity merged with the benchmark administrator. A benchmark-linked agreement points to the index through an asserted reference, not an identity merge. |
 | Identifier schemes | Source deal and confirmation references, ISIN where assigned to a listed instrument, benchmark identifier as a separate asserted object; LEI for parties. |
 | Terms and units | Fixed and floating legs, spread, notional, day-count and payment frequency as `ExactMeasure` with currency, percent, basis-points and time units; no global day-count assumption. |
 | Lifecycle | Trade, confirmation, fixing, reset, payment, compression, novation and termination as effective-dated events. |
-| Venue and segment applicability | OTC unless an exchange or clearing facility is asserted; cleared status is a separate assertion, not a property of the rate name. |
+| Venue and segment applicability | Listed contracts require an asserted venue, operator and segment; bilateral and benchmark-linked instruments declare no venue unless a reporting or clearing facility is asserted. Cleared status is a separate assertion, not a property of the rate name. |
 | Effective time | Half-open validity on terms and reset schedules; fixing and payment dates under the declared calendar and business-day convention. |
 | Knowledge time | Fixing publication and confirmation times separate from `recorded_at_us`; a corrected fixing appends a revision. |
-| Population authority | Counterparties and the applicable regulator; benchmark administrator for index identity only. No complete public population. |
-| Coverage denominator | `UNMEASURABLE` without a declared bounded source scope; benchmark identity coverage is a separate IN-14 claim. |
+| Population authority | Listed contracts: the admitting exchange and its regulator. Bilateral instruments: counterparties under a bounded source scope. Benchmark-linked agreements: the named source product after qualification; the benchmark administrator supplies index identity only (IN-14). Other products have no declared authority until typed. |
+| Coverage denominator | Listed contracts: contract and listing/identity dimensions from exchange specifications, currently `UNKNOWN`. Bilateral and benchmark-linked instruments: per-scope only, `UNMEASURABLE` absent a declared scope. Other products: no denominator. Benchmark identity coverage is a separate IN-14 claim; no cross-subpopulation roll-up. |
 | Data capabilities | `ReferenceData` for curve and benchmark identity; trade and quote only under separate admission. |
 | Rights dependencies | Rights `UNKNOWN`; no curve, fixing or dealer source is qualified. |
+
+**Ontology separation and subpopulation boundaries (§5, IN-13).** One programme cohort, four explicit
+subpopulations with distinct object contracts and population models:
+
+| Subpopulation | Object boundary | Population authority | Denominator model | Current verdict |
+|---|---|---|---|---|
+| Listed contracts | Exchange-traded rate futures and options as `ContractFamily`, `ContractInstance` and `Listing` on an asserted venue and segment. | Admitting exchange and its regulator. | Contract and listing/identity from exchange specifications and listing assertions at a declared venue date. | `UNKNOWN`; no count asserted. |
+| Bilateral instruments | Swaps and forwards as counterparty-bounded `ContractInstance` objects with their own confirmation and reset terms. | Counterparties and applicable regulator under a declared bounded source scope. | No cohort-level denominator; per-scope agreement population only when that scope is admitted. | `UNMEASURABLE` absent a declared scope. |
+| Benchmark-linked agreements | An agreement referencing a benchmark index, with an asserted reference edge; the benchmark identity is the IN-14 `Index`, not the agreement. | Named source product for the agreement population after qualification; benchmark administrator for index identity only. | Agreement population bounded by the named source scope; benchmark identity and membership are a separate IN-14 denominator. | `UNMEASURABLE` absent a declared scope. |
+| Other interest-rate products | No single model: each product requires a named typed extension and its own authority, terms and denominator declaration. | None declared until the typed extension is admitted; I6 is not an authority. | None until a per-product contract declares an axis and as-of instant. | `UNMEASURABLE`; no catch-all family or I6 roll-up. |
+
+Cleared status, benchmark membership and listed admission are separate assertions; none is inferred
+from a rate name, a tenor label or a currency code.
 
 Not a population or provider claim; measure `UNKNOWN`/`UNMEASURABLE` absent an admitted source,
 as-of instant and denominator.
@@ -550,53 +593,414 @@ as-of instant and denominator.
 
 ### IN-19 Financial statements, ratings and credit events
 
-- **Population type:** Authority-bounded.
+- **Population type:** Three independent object contracts with separate population models:
+  statements are authority-bounded from filing systems; ratings are provider-bounded on a qualified
+  publisher; credit events are authority-bounded where filed and OTC-private where privately
+  declared. A rating is not a statement and a credit event is not merely an issuer observation.
 
 | Attribute | Declaration |
 |---|---|
-| Legal/economic object classes | `LegalEntity` for issuer, `Source` for the filing or rating publisher, `Capability` for evidence-bound claims; credit events are typed events and are not forced into `CorporateAction` unless a versioned contract declares that mapping. |
+| Legal/economic object classes | `LegalEntity` for issuer, `Source` for the filing or rating publisher, `Capability` for evidence-bound claims. Three independent object contracts — financial statement, rating and credit event — each with its own lifecycle, revision lineage and provenance; no class is forced into `CorporateAction` without a versioned contract. |
 | Instrument families | Not applicable: statements, ratings and credit events describe issuers or instruments; they are not securities. Any related debt instrument belongs to IN-05 or IN-06. |
-| Contract families and instances | Not applicable; no derivative contract shape is assumed for a filing, rating or credit event. |
-| Entity relationships | Statement or rating to `LegalEntity`, optionally to a specific instrument; event to issuer; `hadPrimarySource` to the filing or publisher; no entity identity from a company name. |
+| Contract families and instances | Not applicable; no derivative contract shape is assumed for a statement, rating or credit event. |
+| Entity relationships | Statement to issuer and reported period; rating to issuer or rated instrument and publisher; credit event to issuer or instrument and its declaring source; `hadPrimarySource` on each object; no entity identity from a company name. |
 | Identifier schemes | LEI for the entity, ISIN for the rated instrument where present, source document identifier and publication reference as scoped effective-dated assertions. |
 | Terms and units | Statement figures and rating scales as `ExactMeasure` with declared unit, scale, currency and accounting or rating standard; ratios never inherit a cross-cohort unit. |
-| Lifecycle | Filing, publication, restatement, rating action, watch placement, default and recovery as effective-dated events with revision lineage. |
+| Lifecycle | Each object contract has its own transitions: statement filing, publication, restatement and withdrawal; rating initiation, review, action, watch and withdrawal; credit-event occurrence, announcement, verification and resolution. |
 | Venue and segment applicability | Filing venues are reporting facilities, not trading venues; only an asserted reporting facility identity may be recorded, and no trading segment is inferred. |
-| Effective time | Half-open validity on reported period and rating; reporting period and publication instant declared separately. |
-| Knowledge time | Publication and restatement times distinct from `recorded_at_us`; a restatement or rating correction appends a revision. |
-| Population authority | Regulator filing systems and rating publishers; a rating-population boundary also needs a qualified provider and is `Provider-bounded` for that subset. |
-| Coverage denominator | Instrument coverage is not a denominator here; a separate per-issuer or per-instrument observation denominator must be declared. Counts `UNKNOWN`. |
+| Effective time | Half-open validity on reported period, rating and event interval; reported period, event occurrence and publication instant declared separately. |
+| Knowledge time | Publication, disclosure and restatement times distinct from `recorded_at_us` on each object contract; a restatement, rating correction or event correction appends a revision. |
+| Population authority | Statements: regulator filing systems. Ratings: a qualified publisher, so `Provider-bounded`. Credit events: the filing authority where filed, counterparties and a bounded source scope where privately declared. |
+| Coverage denominator | Instrument coverage is not a denominator here; each object contract declares a per-issuer or per-instrument observation denominator. Counts `UNKNOWN` or `UNMEASURABLE` per object contract; no statement-plus-rating roll-up. |
 | Data capabilities | `Fundamentals` for filings and `ReferenceData` for ratings identity only where separately admitted; capability is not permission. |
-| Rights dependencies | Rights `UNKNOWN`; filing or rating data requires separate written evidence before any qualification. |
+| Rights dependencies | Rights `UNKNOWN`; filing, rating and credit-event data each require separate written evidence before any qualification. |
+
+**Independent object contracts (§5, IN-19).** A rating is not a statement and a credit event is not
+merely an issuer observation. Each contract below needs a versioned typed payload; none is an
+implemented core class and none may be collapsed into another without a separate contract.
+
+| Object contract | Identity and lifecycle | Revision and correction | Provenance and population |
+|---|---|---|---|
+| Financial statement | Platform-assigned identity; reported period, filing, publication, restatement, withdrawal as distinct states; issuer LEI and source document id as assertions. | Restatement or correction appends a new revision with predecessor link; the prior reported value stays addressable at its original knowledge time. | `hadPrimarySource` to the filing, publication time and source digest; authority-bounded from regulator filing systems; per-issuer observation denominator. |
+| Rating | Platform-assigned identity distinct from the issuer and the statement; initiation, review, rating action, watch placement and withdrawal as distinct states; issuer LEI and rated-instrument ISIN as assertions. | Rating action or correction appends a revision with supersession; prior rating and its methodology version remain addressable. | `hadPrimarySource` to the publisher, methodology version, publication time and source digest; provider-bounded on a qualified publisher; no statement population is reused. |
+| Credit event | Platform-assigned identity for a typed occurrence (default, recovery, restructuring); occurrence, announcement, verification and resolution as distinct states; issuer or instrument reference only. | Correction appends a new revision with predecessor link; earlier verification state stays addressable. | `hadPrimarySource` to the filing or declaring source, occurrence and disclosure times, source digest; authority-bounded where filed, OTC-private where privately declared; no issuer-observation denominator substituted. |
 
 Not a population or provider claim; measure `UNKNOWN`/`UNMEASURABLE` absent an admitted source,
 as-of instant and denominator.
 
 ### IN-20 Economic and commodity reference information
 
-- **Population type:** Derived.
+- **Population type:** Three subdomains inside one cohort: (a) economic observations and releases
+  are authority-bounded by the publishing authority; (b) commodity reference objects and
+  specifications are authority- or provider-bounded by a named publisher; (c) derived indicators
+  and transformations are Derived under a declared transformation version. A published economic
+  observation is not a derived object.
 
 | Attribute | Declaration |
 |---|---|
-| Legal/economic object classes | `Source`, `DataProduct`, `Capability`, `MarketCalendar` where release timing is asserted; observations are reference information and not securities. |
-| Instrument families | Taxonomy families `EconomicIndicator` and `CommodityAssessment`; an assessment is not a trade, quote or security even where it names a commodity contract. |
-| Contract families and instances | Not applicable; no derivative contract shape is assumed for an observation or assessment. |
-| Entity relationships | Observation to `Source` and `DataProduct`; `wasDerivedFrom` to declared inputs; release or publication event to source; no identity from a series name. |
-| Identifier schemes | Source series code, release identifier and assessment code as scoped assertions with named authority and effective intervals; domestic codes are not global keys. |
-| Terms and units | Value, unit, scale, frequency, vintage and revision as `ExactMeasure` with declared unit and timezone; assessment methodology and location declared with the observation. |
-| Lifecycle | Scheduled release, publication, revision, correction and discontinuation as effective-dated events with vintage and knowledge times. |
+| Legal/economic object classes | `Source`, `DataProduct`, `Capability`, `MarketCalendar` where release timing is asserted. Three separate object contracts: published economic observation, commodity reference object or specification, and derived indicator; all are reference information, not securities. |
+| Instrument families | Taxonomy families `EconomicIndicator` and `CommodityAssessment` as scoping labels only; an assessment is not a trade, quote or security even where it names a commodity contract. A published observation is not a derived object. |
+| Contract families and instances | Not applicable; no derivative contract shape is assumed for an observation, specification or assessment. |
+| Entity relationships | Published observation to `Source`, `DataProduct` and a release event; specification to its publisher and methodology; derived indicator to declared inputs by `wasDerivedFrom` under a transformation version; no identity from a series name. |
+| Identifier schemes | Source series code, release identifier, specification code and assessment code as scoped assertions with named authority and effective intervals; domestic codes are not global keys. |
+| Terms and units | Value, unit, scale, frequency, vintage and revision as `ExactMeasure` with declared unit and timezone; assessment methodology, grade and location declared with the specification, not inferred from a contract. |
+| Lifecycle | Separate transitions by subdomain: scheduled release, publication, revision and discontinuation for observations; specification publication, supersession and withdrawal for reference objects; transformation run, output publication and correction for derived indicators. |
 | Venue and segment applicability | No venue or segment; an exchange is provenance only when a reference value is explicitly sourced from it. |
-| Effective time | Observation and reference periods declared separately from publication; half-open validity on series definitions and revision intervals. |
-| Knowledge time | Release and correction publication times distinct from `recorded_at_us`; a revised vintage appends a revision and preserves the prior value. |
-| Population authority | The publishing authority or assessment source; a derived population exists only under a declared transformation version and input universe. |
-| Coverage denominator | `UNMEASURABLE` without a declared observation universe, vintage rule and transformation version; never counted as instrument or trade coverage. |
-| Data capabilities | `EconomicRelease` and `ReferenceData` where admitted; an assessment is not `Trades`, BBO or MBP evidence. |
+| Effective time | Observation and reference periods declared separately from publication; half-open validity on series and specification definitions, revision intervals and transformation versions. |
+| Knowledge time | Release, specification and correction publication times distinct from `recorded_at_us`; a revised vintage appends a revision and preserves the prior value. |
+| Population authority | (a) the publishing authority for releases; (b) the named specification publisher or assessment source; (c) no authority for a derived population except a declared transformation version and input universe. |
+| Coverage denominator | (a) observation/release universe from the publishing authority; (b) specification universe from the named publisher; (c) transformation input universe under the declared version. No cross-subdomain denominator; never counted as instrument or trade coverage. Counts `UNKNOWN` or `UNMEASURABLE` by subdomain. |
+| Data capabilities | `EconomicRelease` and `ReferenceData` where admitted; an assessment or derived indicator is not `Trades`, BBO or MBP evidence. |
 | Rights dependencies | Rights `UNKNOWN`; publication or public display grants no retention, replay or redistribution right. |
+
+**Three subdomains (§5, IN-20).** One cohort name and identifier; three non-conflated object contracts:
+
+| Subdomain | Object contract | Population model and denominator | Non-conflation rule |
+|---|---|---|---|
+| (a) Economic observations and releases | A published observation with source, series code, release event, reference period, vintage and knowledge time. | Authority-bounded from the publishing authority; denominator is the declared release/observation universe at a stated vintage. | A published economic observation is not a derived object and is never counted in a derived-indicator denominator. |
+| (b) Commodity reference objects and specifications | A reference object or specification with grade, unit, location, methodology and publisher. | Authority-bounded for official specifications, provider-bounded for assessments; denominator is the named publisher's specification universe. | Not a contract instance, trade, quote or security even where it names a commodity contract; no roll into IN-11 contract coverage. |
+| (c) Derived indicators and transformations | A computed indicator carrying `wasDerivedFrom`, a declared transformation version and a declared input universe. | Derived; denominator exists only from that transformation version and its inputs, never from the output alone. | A transformation cannot convert a published observation into an observation of a different authority; no release is treated as a transformation output without an asserted mapping. |
 
 Not a population or provider claim; measure `UNKNOWN`/`UNMEASURABLE` absent an admitted source,
 as-of instant and denominator.
 
-## 6. Migration sequence: I1–I6 to the twenty cohorts
+## 6. Mandatory cross-domain question set
+
+Every cohort answers Q01–Q20 below. The answers are compact and point to the declarations in §5;
+they add no source, count, right or admission. *Not applicable* is an answer only when a reason is
+given. A split cohort answers per subpopulation (§5, IN-12, §5, IN-13, §5, IN-19, §5, IN-20).
+
+### 6.1 The twenty questions
+
+The user directive names nineteen items with identifier schemes and assigning authorities as one
+item; they are separated here so that the mandatory set has exactly twenty questions (Q03, Q04).
+
+| ID | Mandatory question | Required answer shape |
+|---|---|---|
+| Q01 | What is the legal/economic object? | Named object class or declared object contract, not a label. |
+| Q02 | What is the identity authority? | Opaque platform identity plus external identity evidence; no name-derived identity. |
+| Q03 | Which external identifier schemes appear? | Named schemes only; no generic `Other` escape hatch. |
+| Q04 | Which assigning authorities issue them? | Authority, scope and jurisdiction on each scheme assertion. |
+| Q05 | What defines the population? | Population class, authority, as-of rule and subpopulations, or `UNMEASURABLE`. |
+| Q06 | How are revisions represented? | Append-only, nonzero revision, predecessor link, addressable prior state. |
+| Q07 | What is effective time? | Half-open interval and declared market-date rule. |
+| Q08 | What is knowledge time? | `recorded_at_us` with publication and receive instants held apart. |
+| Q09 | What lifecycle transitions apply? | Named, effective-dated states and events. |
+| Q10 | What relationships apply? | Typed edges; no identity merge or symbol-as-key. |
+| Q11 | What instrument terms apply? | Typed terms payload or explicit not-applicable with reason. |
+| Q12 | What units and currencies apply? | Exact measures, scale and currency context; no global defaults. |
+| Q13 | What market-calendar dependencies apply? | Venue, timezone, rule version and asserted calendar sessions. |
+| Q14 | What is the coverage denominator? | Dimension, source, as-of instant and verdict; no count without one. |
+| Q15 | What source capabilities are claimed? | Evidence-bound capability claims; capability is not permission. |
+| Q16 | What is the rights state? | `UNKNOWN` plus the qualification dependency. |
+| Q17 | What retention is granted? | None by this design; separate written evidence and owner approval. |
+| Q18 | What is the correction mechanism? | New revision with supersession; no overwrite. |
+| Q19 | What is the canonical payload schema? | Named typed payload or a required NEW typed extension. |
+| Q20 | How may future country packs reuse it? | Only through the global core and a jurisdiction-scoped pack version. |
+
+### 6.2 Per-cohort answers
+
+#### IN-01 Equity and equity-linked securities
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `Security`, `FinancialInstrument`, `LegalEntity` issuer, `Listing`; opaque platform identity, issuer identity by LEI evidence. |
+| Q03 / Q04 | ISIN, exchange symbol, token and name; each names its assigning authority and scope. |
+| Q05 / Q06 | Authority-bounded listed equity; append-only revisions with nonzero revision and predecessor. |
+| Q07 / Q08 | Half-open `[valid_from, valid_to)` under `Asia/Kolkata`; `recorded_at_us` apart from publication and receive times. |
+| Q09 / Q10 | Issue, admit, trade, suspend, delist, cancel; `issued_by`, listing, identifier and action edges. |
+| Q11 / Q12 | `EquityTerms` voting, fractional and par value; exact currency measure with declared scale. |
+| Q13 / Q14 | Declared venue session rule; instrument and listing/identity, counts `UNKNOWN`. |
+| Q15 / Q16 | `ReferenceData`, `CorporateActions`, `MarketStatus` on admission; rights `UNKNOWN`. |
+| Q17 / Q18 | Retention and replay not granted; correction appends a revision with supersession. |
+| Q19 / Q20 | `EquityTerms` or named typed extension; reuse only via the core and a scoped pack version. |
+
+#### IN-02 Depositary receipts, rights and warrants
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `Security`, `FinancialInstrument`, issuer or depositary `LegalEntity`, `Listing`; opaque identity, no name key. |
+| Q03 / Q04 | ISIN, exchange symbol, token, domestic series id; each names its assigning authority. |
+| Q05 / Q06 | Authority-bounded on regulator and admitting exchange or depositary; append-only revisions. |
+| Q07 / Q08 | Half-open validity on instrument, listing and terms; announcement time apart from `recorded_at_us`. |
+| Q09 / Q10 | Issue, entitlement record date, exercise, conversion or lapse, delist; issuer, underlying and depositary edges. |
+| Q11 / Q12 | Ratio, subscription or conversion price, exercise window as exact measures with declared units. |
+| Q13 / Q14 | Venue rule for entitlement and exercise dates; instrument and listing/identity, plus action where applicable. |
+| Q15 / Q16 | `ReferenceData`, `CorporateActions`, `MarketStatus`; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention or replay grant; corrections append revisions with their own knowledge time. |
+| Q19 / Q20 | Named receipt, right or warrant payload; cross-pack reuse requires a jurisdiction-scoped assertion. |
+
+#### IN-03 ETFs, mutual funds and collective investment products
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `FinancialInstrument`, `Security`, `MarketProduct`, scheme `LegalEntity`; scheme code is an identifier, not identity. |
+| Q03 / Q04 | ISIN where assigned, exchange symbol, scheme code, AMFI-style id; each names its assigning authority. |
+| Q05 / Q06 | Authority-bounded on scheme registration; corrections append revisions. |
+| Q07 / Q08 | Half-open terms and listing intervals; NAV publication time apart from `recorded_at_us`. |
+| Q09 / Q10 | Launch, NAV publication, creation or redemption, merger, wind-up; scheme, manager, index and listing edges. |
+| Q11 / Q12 | `FundTerms` NAV frequency and redemption mode; exact currency NAV and `Unit::Ratio` measures. |
+| Q13 / Q14 | Exchange venue rule for listed products only; instrument, listing/identity and session/time where listed. |
+| Q15 / Q16 | `ReferenceData`, `Fundamentals` where admitted; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention by this design; corrected NAV or terms append a revision. |
+| Q19 / Q20 | `FundTerms` plus typed scheme, plan and option extension; no automatic cross-pack scheme reuse. |
+
+#### IN-04 REITs and InvITs
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `Security`, `FinancialInstrument`, trust and sponsor `LegalEntity`, `Listing`; opaque platform identity. |
+| Q03 / Q04 | ISIN, exchange symbol, token; trust and sponsor LEI asserted separately with named authorities. |
+| Q05 / Q06 | Authority-bounded on regulator and admitting exchange; append-only revisions. |
+| Q07 / Q08 | Half-open listing and terms intervals; distribution times apart from `recorded_at_us`. |
+| Q09 / Q10 | Registration, listing, distribution, unit or sponsor change, delist; issued-by, sponsor and listing edges. |
+| Q11 / Q12 | Distribution frequency, face value and redemption mode in a typed payload; exact currency amounts. |
+| Q13 / Q14 | Declared venue rule for ex, record and payment dates; instrument, listing/identity, corporate action. |
+| Q15 / Q16 | `ReferenceData`, `CorporateActions`; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention or replay grant; each correction appends a revision. |
+| Q19 / Q20 | REIT family or NEW typed InvIT extension; no automatic mainland-to-IFSC product reuse. |
+
+#### IN-05 Government securities
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `Security`, `FinancialInstrument`, sovereign or agency `LegalEntity`, `Listing` where listed. |
+| Q03 / Q04 | ISIN, domestic scrip code, exchange symbol; sovereign identity asserted independently. |
+| Q05 / Q06 | Officially enumerable only after an admitted enumeration; re-auction appends a revision. |
+| Q07 / Q08 | Half-open terms validity; auction publication and result times apart from `recorded_at_us`. |
+| Q09 / Q10 | Auction, issue, list, coupon, buyback, rollover, redeem, mature; issued-by, coupon and listing edges. |
+| Q11 / Q12 | `DebtTerms` principal, coupon, maturity, seniority; exact currency or percent measures with day count. |
+| Q13 / Q14 | Declared debt-market calendar; instrument and listing/identity where listed, counts `UNKNOWN`. |
+| Q15 / Q16 | `ReferenceData`, `MarketStatus`; rights `UNKNOWN` despite public issuance. |
+| Q17 / Q18 | No retention, replay or analytics grant; revised results append revisions. |
+| Q19 / Q20 | Declared bond, bill or inflation-linked payload; typed extension for other sovereign paper. |
+
+#### IN-06 Corporate and municipal debt
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `Security`, `FinancialInstrument`, issuer and guarantor `LegalEntity`, `Listing`, action events. |
+| Q03 / Q04 | ISIN, exchange symbol, domestic serial, foreign identifiers; issuer LEI asserted separately. |
+| Q05 / Q06 | Authority-bounded on regulator, issuer filings and admitting facility; corrections append revisions. |
+| Q07 / Q08 | Half-open terms; filing or trustee notice time apart from `recorded_at_us`. |
+| Q09 / Q10 | Placement, list, coupon, redeem, restructure, default, delist; issued-by, successor, guarantor edges. |
+| Q11 / Q12 | `DebtTerms` with declared seniority; exact principal, coupon and percent measures. |
+| Q13 / Q14 | Declared business-day and day-count rule; instrument, listing/identity and action dimensions. |
+| Q15 / Q16 | `ReferenceData`, `CorporateActions`, `Fundamentals` on admitted filings; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention grant; restructuring corrections append revisions. |
+| Q19 / Q20 | Declared debt payload; typed extension for securitisation and municipal structures. |
+
+#### IN-07 Commercial paper and certificates of deposit
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `Security`, `FinancialInstrument`, issuer `LegalEntity`, `IdentifierAssertion`; opaque identity. |
+| Q03 / Q04 | ISIN where assigned, domestic serial, programme reference; each scoped by issuer and series. |
+| Q05 / Q06 | Provider-bounded on a named source product; rollover is a new assertion, not a rewrite. |
+| Q07 / Q08 | Half-open instrument and terms intervals; disclosure time apart from `recorded_at_us`. |
+| Q09 / Q10 | Programme establishment, issue, rollover, redeem, mature; issued-by, programme and terms edges. |
+| Q11 / Q12 | Principal, discount or coupon, tenor as exact measures with currency and time units. |
+| Q13 / Q14 | Declared money-market calendar; instrument and listing/identity only if an admitted source defines them. |
+| Q15 / Q16 | `ReferenceData`; rights `UNKNOWN` until the source is rights-qualified. |
+| Q17 / Q18 | No retention or replay grant; revised programmes append revisions. |
+| Q19 / Q20 | CP/CD payload with programme terms; typed extension for dealer-specific variants. |
+
+#### IN-08 Money markets and repo
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `FinancialInstrument` for repo, counterparty `LegalEntity`, `ContractInstance`; collateral remains separate. |
+| Q03 / Q04 | Source-scoped deal and programme references, collateral ISIN, counterparty LEI; no global deal keys. |
+| Q05 / Q06 | OTC-private with no complete public register; trade amendments append revisions. |
+| Q07 / Q08 | Half-open contract and collateral intervals; confirmation and disclosure times apart from `recorded_at_us`. |
+| Q09 / Q10 | Initiate, substitute collateral, reset, margin call, close, fail; counterparty and `collateral_of` edges. |
+| Q11 / Q12 | Notional, repo rate, haircut and term with declared currency, percent, ratio and time units. |
+| Q13 / Q14 | Declared money-market calendar; `UNMEASURABLE` at cohort level, per-scope only. |
+| Q15 / Q16 | `ReferenceData` for contract specs; rights `UNKNOWN`, no trade source qualified. |
+| Q17 / Q18 | No retention or replay grant; corrections append revisions. |
+| Q19 / Q20 | NEW typed repo contract, never a debt-security subtype; cross-pack reuse needs its own assertion. |
+
+#### IN-09 Securities lending, borrowing and collateral
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `FinancialInstrument` arrangement, `LegalEntity` parties and agent, `ContractInstance`, loaned `Security`. |
+| Q03 / Q04 | Source-scoped loan and programme references, security ISINs and party LEIs; authority on each. |
+| Q05 / Q06 | OTC-private with no complete public population; amended loans append revisions. |
+| Q07 / Q08 | Half-open loan and collateral intervals; confirmation time apart from `recorded_at_us`. |
+| Q09 / Q10 | Open, recall, return, substitute, pass through action, close, fail; distinct lender, borrower and agent edges. |
+| Q11 / Q12 | Fee or rebate, quantity, collateral value, haircut with declared currency, percent, ratio and count units. |
+| Q13 / Q14 | Declared recall and return calendar; `UNMEASURABLE` without a bounded declared scope. |
+| Q15 / Q16 | `ReferenceData`; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention grant; amendments append revisions with supersession. |
+| Q19 / Q20 | NEW typed lending extension; loaned security identity is copied, never reused by name. |
+
+#### IN-10 Equity and index derivatives
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `ContractFamily`, `ContractInstance`, derivative `FinancialInstrument`, `Security` or `Index` underlying. |
+| Q03 / Q04 | Exchange product code, contract symbol, ISIN where assigned; underlying id from admitted release. |
+| Q05 / Q06 | Authority-bounded on exchange specifications; revised specs append revisions. |
+| Q07 / Q08 | Half-open terms and contract life; publication time apart from `recorded_at_us`. |
+| Q09 / Q10 | Specify, list, trade, expire, exercise, assign, settle, withdraw; underlying and deliverable edges. |
+| Q11 / Q12 | `DerivativeTerms` tick, lot, multiplier, settlement and expiry; exact strike measures. |
+| Q13 / Q14 | Declared derivative-segment calendar; contract primary, instrument and listing/identity same release. |
+| Q15 / Q16 | `ReferenceData`, `MarketStatus`; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention or replay grant; corrected spec appends a revision. |
+| Q19 / Q20 | NEW versioned derivative contract; cash-only surface is not widened in another pack. |
+
+#### IN-11 Commodity markets and derivatives
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `MarketProduct`, `ContractFamily`, `ContractInstance`, `FinancialInstrument`, `MarketCalendar`, `Source`. |
+| Q03 / Q04 | Exchange product and contract codes, MIC, source assessment symbol; each declares its authority. |
+| Q05 / Q06 | Authority-bounded for contracts; assessment coverage separate; corrections append revisions. |
+| Q07 / Q08 | Half-open contract and session intervals; specification time apart from `recorded_at_us`. |
+| Q09 / Q10 | List, trade, expire, deliver, settle, withdraw; product, instance and deliverable edges. |
+| Q11 / Q12 | `CommodityTerms` grade, location and unit; declared weight, volume or price-per-unit measures. |
+| Q13 / Q14 | MCX venue calendar under a versioned rule; contract and session/time, counts `UNKNOWN`. |
+| Q15 / Q16 | `ReferenceData`, `MarketStatus`; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention grant; roll and continuous series are projections, not identity rewrites. |
+| Q19 / Q20 | NEW typed commodity contract; assessments stay in IN-20(b) in any pack. |
+
+#### IN-12 Currency markets and derivatives
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | Listed FX derivatives as contract objects plus `Listing`; OTC spot, forward, swap and NDF as counterparty-bounded instances. |
+| Q03 / Q04 | ISO 4217 codes as assertions, exchange codes for listed, source deal references for OTC; authorities declared per scope. |
+| Q05 / Q06 | Two subpopulations: listed authority-bounded, OTC OTC-private; corrections append revisions. |
+| Q07 / Q08 | Half-open terms with dual-calendar value dates; fixing and deal confirmation times held apart. |
+| Q09 / Q10 | Quote, deal, fix, settle, roll, cancel; base and quote identities, underlying and counterparty edges. |
+| Q11 / Q12 | `FxTerms` base and quote units, pip scale; exact rate and points with declared currency context. |
+| Q13 / Q14 | Listed venue calendar; listed denominator contract and listing/identity (`UNKNOWN`), OTC per-scope only (`UNMEASURABLE`). |
+| Q15 / Q16 | `ReferenceData`; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention or replay grant; corrections append revisions. |
+| Q19 / Q20 | Listed contract under a declared exchange payload; OTC tenor and settlement under NEW typed extension; no cross-pack listed inference. |
+
+#### IN-13 Interest-rate markets and derivatives
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | Listed IR contracts, bilateral instruments, benchmark-linked agreements and other products kept as four object boundaries. |
+| Q03 / Q04 | Source deal and confirmation references, ISIN for listed, benchmark id as separate object, LEI for parties. |
+| Q05 / Q06 | Four population models (§5, IN-13); no forced single model; corrections append revisions. |
+| Q07 / Q08 | Half-open reset and terms intervals; fixing publication apart from confirmation and `recorded_at_us`. |
+| Q09 / Q10 | Trade, confirm, fix, reset, pay, compress, novate, terminate; benchmark reference edge, not identity merge. |
+| Q11 / Q12 | Fixed and floating legs, spread, notional, day count and frequency with exact currency and basis-point measures. |
+| Q13 / Q14 | Declared fixing and payment calendar; listed contract/listing denominators, others per-scope only. |
+| Q15 / Q16 | `ReferenceData` for curve and benchmark identity; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention grant; corrected fixings append revisions. |
+| Q19 / Q20 | NEW typed extension for OIS and resets; benchmark identity is reused only from IN-14 in a scoped pack. |
+
+#### IN-14 Indices and benchmarks
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `Index` reference object, `Source`, `Capability`, administrator `LegalEntity`; index is not a security. |
+| Q03 / Q04 | Administrator index id, index-family id, source symbol; optionally ISIN for a linked product. |
+| Q05 / Q06 | Officially enumerable identities with derived membership; restatements append revisions. |
+| Q07 / Q08 | Half-open membership and method intervals; announcement time apart from `recorded_at_us`. |
+| Q09 / Q10 | Launch, rebalance, add or remove constituent, method change, discontinue; `constituent_of` edges. |
+| Q11 / Q12 | `IndexTerms` count and rebalance frequency; weights as exact ratios, levels as observations. |
+| Q13 / Q14 | No venue calendar; index identities and membership intervals, counts `UNKNOWN`. |
+| Q15 / Q16 | `ReferenceData` for identity and membership; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention or series replay grant; restated membership appends a revision. |
+| Q19 / Q20 | `IndexTerms` payload; membership edges reused by packs only with an asserted jurisdiction reference. |
+
+#### IN-15 OTC and privately negotiated instruments
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `FinancialInstrument`, `ContractFamily`, `ContractInstance`, counterparty `LegalEntity`, `Source`. |
+| Q03 / Q04 | Source deal and confirmation references with named authority and scope; LEI for parties. |
+| Q05 / Q06 | OTC-private with no single bounding source; per-family denominators only; amendments append revisions. |
+| Q07 / Q08 | Half-open terms; fixing and settlement instants under declared calendars; confirmation apart from `recorded_at_us`. |
+| Q09 / Q10 | Negotiate, confirm, amend, fix, settle, exercise, unwind, terminate; underlying and source edges. |
+| Q11 / Q12 | Typed payoff, notional, tenor and settlement with exact measures; no universal unit. |
+| Q13 / Q14 | Declared calendar per family; `UNMEASURABLE` at cohort level, no I6 roll-up. |
+| Q15 / Q16 | `ReferenceData` for specs; rights `UNKNOWN` per family. |
+| Q17 / Q18 | No retention grant; amendments append revisions with supersession. |
+| Q19 / Q20 | Named typed family only, no generic `Other`; reuse requires a versioned contract in the pack. |
+
+#### IN-16 Unlisted and private securities
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `Security`, `FinancialInstrument`, issuer `LegalEntity`; no exchange status assumed. |
+| Q03 / Q04 | ISIN where assigned, registry and certificate numbers as source-scoped assertions, issuer LEI. |
+| Q05 / Q06 | OTC-private bounded only by a declared registry scope; identifier reuse creates separate intervals. |
+| Q07 / Q08 | Half-open identity and terms; filing time apart from `recorded_at_us`. |
+| Q09 / Q10 | Incorporate, allot, transfer, issue, buyback, cancel, dissolve; issuer and holder-record edges. |
+| Q11 / Q12 | Share class, face value, voting and transfer restrictions with exact currency amounts. |
+| Q13 / Q14 | Declared corporate-register date rule; `UNMEASURABLE` without a bounded source. |
+| Q15 / Q16 | `ReferenceData` only; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention grant; corrections append revisions. |
+| Q19 / Q20 | NEW typed extension for private families; no identity reuse from an ISIN text across packs. |
+
+#### IN-17 IFSC products and facilities
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `Jurisdiction`, `Authority`, `MarketOperator`, `Venue`, `Segment`, `MarketProduct` plus traded product classes. |
+| Q03 / Q04 | ISIN, LEI, MIC as global schemes; IFSC venue and domestic codes scoped with jurisdiction on each assertion. |
+| Q05 / Q06 | Authority-bounded in a distinct jurisdiction-scoped partition; rule changes append revisions. |
+| Q07 / Q08 | Half-open jurisdiction, authority, venue, segment and product intervals; regulatory publication apart from `recorded_at_us`. |
+| Q09 / Q10 | Admit, list, trade, settle, expire, withdraw; jurisdiction-checked and bitemporal edges only. |
+| Q11 / Q12 | Product terms from the typed payload; INR and offshore currencies distinct with no implied convertibility. |
+| Q13 / Q14 | IFSC venue calendar under its asserted rule; per-product denominators, no mainland-plus-IFSC roll-up. |
+| Q15 / Q16 | `ReferenceData` for jurisdiction, venue and product; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention grant; rule change appends a revision and preserves the prior interval. |
+| Q19 / Q20 | IFSC product family under its own versioned payload; no automatic mainland family reuse. |
+
+#### IN-18 Corporate actions and issuer information
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | `CorporateAction` event, `LegalEntity`, `Security`, `Source`; platform-assigned action identity. |
+| Q03 / Q04 | Issuer LEI, security ISIN, venue symbol as assertions; action identity never read from announcement text. |
+| Q05 / Q06 | Authority-bounded on filings and admitting venue; corrections are new revisions, not rewrites. |
+| Q07 / Q08 | Half-open action intervals; announcement and publication times apart from `recorded_at_us`. |
+| Q09 / Q10 | Announce, ex, record, effective, payment, correct, invalidate; affected-instrument and successor edges. |
+| Q11 / Q12 | Ratio, amount per unit, currency, tax basis and dates as exact measures. |
+| Q13 / Q14 | Declared venue calendar rule; corporate action per instrument and period, counts `UNKNOWN`. |
+| Q15 / Q16 | `CorporateActions` with lineage; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention or redistribution grant; earlier revision stays addressable. |
+| Q19 / Q20 | Named action-type payload; successor instrument is a separate object in any pack. |
+
+#### IN-19 Financial statements, ratings and credit events
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | Three independent object contracts (§5, IN-19): statement, rating, credit event; each platform-assigned. |
+| Q03 / Q04 | Issuer LEI, rated-instrument ISIN, source document and publisher reference; authority on each assertion. |
+| Q05 / Q06 | Statement authority-bounded, rating provider-bounded, event filing- or scope-bounded; each appends revisions. |
+| Q07 / Q08 | Half-open reported period, rating and event intervals; publication apart from `recorded_at_us` per object. |
+| Q09 / Q10 | Filing, restatement; rating initiation, action, watch; event occurrence, verification, resolution; distinct source edges. |
+| Q11 / Q12 | Statement figures and rating scales as exact measures with declared accounting or rating standard. |
+| Q13 / Q14 | Reporting facility, not trading venue; per-issuer or per-instrument observation denominator per object contract. |
+| Q15 / Q16 | `Fundamentals` and ratings identity where admitted; rights `UNKNOWN` for each object contract. |
+| Q17 / Q18 | No retention grant; restatement, rating correction or event correction appends a revision. |
+| Q19 / Q20 | Three typed extension payloads; a rating is never a statement and an event is never an issuer observation in another pack. |
+
+#### IN-20 Economic and commodity reference information
+
+| IDs | Answers |
+|---|---|
+| Q01 / Q02 | Three object contracts (§5, IN-20): published observation, commodity reference object, derived indicator. |
+| Q03 / Q04 | Series code, release id, specification and assessment codes; named publishing authority on each. |
+| Q05 / Q06 | (a) authority-bounded, (b) authority- or provider-bounded, (c) Derived; revised vintages append revisions. |
+| Q07 / Q08 | Reference and observation periods apart from publication; release and correction times apart from `recorded_at_us`. |
+| Q09 / Q10 | Release, publication, revision, discontinuation; specification supersession; transformation run and correction; `wasDerivedFrom` for (c) only. |
+| Q11 / Q12 | Exact measures with declared unit, scale, timezone, methodology, grade and location. |
+| Q13 / Q14 | No venue calendar; denominators per subdomain, no roll-up and no observation counted as derived output. |
+| Q15 / Q16 | `EconomicRelease` and `ReferenceData` where admitted; rights `UNKNOWN`. |
+| Q17 / Q18 | No retention or replay grant; a revised vintage appends a revision and preserves the prior value. |
+| Q19 / Q20 | Observation, specification and transformation payloads under separate typed contracts; no cross-subdomain reuse. |
+
+## 7. Migration sequence: I1–I6 to the twenty cohorts
 
 I1–I6 remains the single migration register from the coverage register. It is reused here as an
 ordering of qualification work; it is not a second instrument hierarchy and it is not a coverage
@@ -609,14 +1013,14 @@ declarations, rights scope and per-dimension denominator are admitted.
 | I2 | IN-14 | Index identities and effective-dated `constituent_of` edges in an admitted release; index family distinct from any tracked instrument | Index level or return series is a separate observation claim; no index derivative counted here |
 | I3 | IN-10 | New versioned derivative contract with family, expiry, strike, option kind, underlying canonical ID and effective terms | No widening of the cash-only v2 surface; no enum variant counted as a contract |
 | I4 | IN-11 | New MCX venue/operator assertion, commodity product identities, contract specifications, units and grades in a versioned release | No closed-enum venue reuse; an assessment is not a contract |
-| I5 | IN-05, IN-06, IN-07, then IN-08, IN-09, IN-12, IN-13 under typed extensions | Entity/issuer and currency identities, debt specifications and per-family terms in versioned releases | No repo treated as debt security; no OTC population inferred from a listed subset |
-| I6 | IN-15, IN-16, IN-17, IN-19, IN-20, each admitted case by case | Per-domain versioned contract, typed payload, declared units, rights scope, as-of instant and denominator | I6 is never a permanent catch-all; no domain enters by roll-up from another cohort or phase |
+| I5 | IN-05, IN-06, IN-07, then IN-08, IN-09, IN-12, IN-13 under typed extensions | Entity/issuer and currency identities, debt specifications and per-family terms in versioned releases; IN-12 enters by listed and OTC subpopulation, IN-13 by its four separated subpopulations | No repo treated as debt security; no OTC population inferred from a listed subset; no single population model forced across IN-12 or IN-13 |
+| I6 | IN-15, IN-16, IN-17, IN-19, IN-20, each admitted case by case | Per-domain versioned contract, typed payload, declared units, rights scope, as-of instant and denominator; IN-19 by its three object contracts and IN-20 by its three subdomains | I6 is never a permanent catch-all; no domain enters by roll-up from another cohort or phase; no published observation counted as a derived object |
 
 Retirement of I6 as a phase occurs when every remaining domain has its own admitted typed
 contract and denominator. Until then I6 is a list of pending qualifications, not a claim that an
 unclassified population exists or is complete.
 
-## 7. Coverage-measurement discipline
+## 8. Coverage-measurement discipline
 
 The nine dimensions and their denominators remain distinct:
 
@@ -637,7 +1041,7 @@ as *not applicable* for that cohort; that is neither a pass nor a zero and does 
 dimension's denominator. Physical line counts are not logical record counts and never serve as a
 denominator.
 
-## 8. Boundaries and non-claims
+## 9. Not approved (boundaries and non-claims)
 
 - This is a documentation and owner-decision package. No provider is contacted and no provider,
   exchange, venue, facility, feed or dataset is qualified by naming it here.
@@ -652,13 +1056,22 @@ denominator.
   strategy return is created or used as evidence. No capability claim is a permission claim.
 - No second identity system is introduced. All identities remain opaque and platform-assigned
   under the global core; external identifiers remain provenance-bearing assertions.
+- **No reference ingestion.** No reference-data ingestion, source qualification, rights approval,
+  admission receipt or dataset acceptance is performed or implied. Reference observations in this
+  catalogue are declarations of future object contracts, not ingested values.
+- **W2.3 remains gated.** W2.3 India implementation stays gated on separate owner ratification of
+  the design and of every country-pack version. These documentation amendments do not open it.
+- **Design amendments are not authorization.** The subpopulation boundaries, the twenty-question
+  set and the three-object contracts record design intent only; they grant no right and admit no
+  source, contract, pack version or coverage count.
 - This document does not ratify the country pack, a contract version or a coverage number. Those
   remain separate owner decisions.
 
-## 9. Connections
+## 10. Connections
 
 - `engineering/decisions/IN-COUNTRY-001-india-country-pack-design.md` — proposed versioned India
-  extension of the global core, with the cohort crosswalk and population-completeness policy.
+  extension of the global core, with the component evidence model, mainland/IFSC partition rules,
+  cohort crosswalk and population-completeness policy.
 - `engineering/decisions/WS-SCOPE-2026-11-24-001-global-reference-core-india-first.md` — ratified
   scope, ownership, model rules and execution order.
 - `engineering/coverage/india-coverage-register.md` — I1–I6 migration sequence and the nine
