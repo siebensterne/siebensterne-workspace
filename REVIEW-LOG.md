@@ -174,3 +174,15 @@ evidence or review archive.
 - Manifest byte mutation rejected at stage 2 with REJECT_SIGNATURE_INTEGRITY.
 - Statuses: SCHEMA_CONFORMANT, CROSS_EXECUTED and CRYPTOGRAPHICALLY_VERIFIED achieved; RIGHTS_ADMITTED and DATASET_ACCEPTED not achieved.
 - Exact commits and commands recorded in engineering/conformance/ndc-v2-cross-execution-2026-11-24.md.
+
+## 2026-11-24 — Canonical wire schema and cross-execution (B6-B11)
+
+- B6 PR #12: 102-row field-level contract reconciliation, 30 decision points (PROPOSED). APPROVE.
+- India PR #13/#14: IN-CAT-001 20-cohort national catalogue and IN-COUNTRY-001 country pack design (both PROPOSED). PR #13 closed on branch deletion after conflict; content rebased and merged as PR #14. APPROVE.
+- B7 PR #15: WS-NDC-2026-11-24-003 ratified a third language-independent canonical wire schema; DP-01..DP-30 resolved. APPROVE.
+- B8 PR #16: canonical schema package (8 strict schemas, semantic constraints, 16 vectors, digest 6e8c1e48e27289b8c3d3e959a06a805e736d0759b4fb244edbb074f65e107bab). APPROVE.
+- B9 PR #63: Fieldbook producer wire mapping and conformance producer executable. Rejected once on added-line style; fixed at 45908a3. CI 45356688004 success. APPROVE.
+- B10 PR #143: Nirnay independent canonical wire mapping and conformance verifier executable; 71 tests. CI 45355451452 success. APPROVE.
+- Cross-execution spec PR #64: abstract spec made internally consistent; CI 45358321495 success. APPROVE.
+- B11 PR #17: actual producer binary output verified by the actual Nirnay verifier binary. Stages 1-5 PASS; stage 6 REJECT_RIGHTS_EVIDENCE under UNKNOWN rights; no receipt, no surviving snapshot, dataset BLOCKED. Mutation rejected at stage 2. APPROVE.
+- Final heads: Fieldbook dd90899, Nirnay 70716eb, Workspace 481d951. Main CI Fieldbook 45358955592 2/2 after stale-branch rerun, Nirnay 45357742748 12/12.

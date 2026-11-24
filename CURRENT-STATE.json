@@ -14,24 +14,24 @@
     "note": "RRP-001 review and measurement heads: manifests were built with git ls-files + shasum -a 256 + stat at these heads. Historical; not the current or tested heads."
   },
   "current_source_heads": {
-    "fieldbook": "2ef88a955f74a7c88e4573683267446e331465e9",
-    "nirnay": "2dad4962b584c557237d219c1c5356fc58bc4b69"
+    "fieldbook": "dd90899b896263314bfb2a588a0e41b094b8619f",
+    "nirnay": "70716ebf66289a86335641847724fd92bf6bcce7"
   },
   "tested_source_heads": {
-    "fieldbook": "2ef88a955f74a7c88e4573683267446e331465e9",
-    "nirnay": "2dad4962b584c557237d219c1c5356fc58bc4b69"
+    "fieldbook": "dd90899b896263314bfb2a588a0e41b094b8619f",
+    "nirnay": "70716ebf66289a86335641847724fd92bf6bcce7"
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45333516324",
-      "head_sha": "2ef88a955f74a7c88e4573683267446e331465e9",
+      "run_id": "45358955592",
+      "head_sha": "dd90899b896263314bfb2a588a0e41b094b8619f",
       "conclusion": "success",
       "jobs": "2/2",
       "note": "Rerun after merged remote-tracking branch cleared git-policy check"
     },
     "nirnay": {
-      "run_id": "45335149677",
-      "head_sha": "2dad4962b584c557237d219c1c5356fc58bc4b69",
+      "run_id": "45357742748",
+      "head_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
       "conclusion": "success",
       "jobs": "12/12"
     }
@@ -222,5 +222,16 @@
   "style_standard": "Adopted 2026-11-24: engineering/style/DOCUMENTATION-STANDARD.md in workspace; mirrored into Fieldbook STYLES.md/docs/style-standards.md/docs/coding-standard.md and Nirnay STYLES.md/engineering/style-policy.md. PRs workspace #8, Fieldbook #56, Nirnay #141. Full-tree sweep before gates; one dated exception in frozen Nirnay RRP-004 path crates/market-archive/src/journal.rs.",
   "fb_ref_programme": "Batch A COMPLETE: FB-REF-001 (PR #57), FB-REF-002 (PR #58), FB-REF-004 (PR #59), FB-REF-005 (PR #60) merged. 710 all-targets tests. Next gate: NDC v2 serialization profile ratification (owner decision) before Batch B.",
   "batch_b_status": "WP-1 identity correction (FB #61), WP-2 ratification (WS #10), WP-3 producer (FB #62), WP-4 verifier (NZ #142), WP-5 conformance (WS #11) merged.",
-  "batch_b_blocking_defect": "Wire incompatibility between producer and verifier typed manifests (7 divergent field representations listed in engineering/conformance/ndc-v2-acceptance-matrix.md section 3). Cross-execution NOT_STARTED. Requires owner decision on canonical wire representation before paired remediation."
+  "batch_b_blocking_defect": "RESOLVED: canonical third wire schema ratified (WS-NDC-003), schema package published, both sides mapped, real producer/verifier cross-execution passed structural and cryptographic stages with rights refusal.",
+  "ndc_profile_status": {
+    "schema_package_digest": "6e8c1e48e27289b8c3d3e959a06a805e736d0759b4fb244edbb074f65e107bab",
+    "statuses": {
+      "SCHEMA_CONFORMANT": true,
+      "CROSS_EXECUTED": true,
+      "CRYPTOGRAPHICALLY_VERIFIED": true,
+      "RIGHTS_ADMITTED": false,
+      "DATASET_ACCEPTED": false
+    },
+    "cross_execution_refusal": "stage 6 REJECT_RIGHTS_EVIDENCE under UNKNOWN rights; no receipt, no dataset acceptance"
+  }
 }
