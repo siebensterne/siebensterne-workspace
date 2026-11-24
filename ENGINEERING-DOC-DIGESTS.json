@@ -107,5 +107,21 @@
     "status": "Dated evidence manifest entry for PR 0 reconciliation",
     "command": "shasum -a 256 engineering/conformance/ndc-v2-evidence-manifest-2026-11-24.md",
     "note": "Records exact heads, evidence digests, commands and make consistency / make audit exit 0. Does not digest CURRENT-STATE.json or itself; no circular evidence claim."
+  },
+  "ws_dur_001_failure_model": {
+    "path": "engineering/decisions/WS-DUR-001-publication-durability-failure-model.md",
+    "sha256": "931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb",
+    "date": "2026-11-24",
+    "status": "Ratified by owner direction 2026-11-24; amended for FB-DUR-002 full D0 evidence",
+    "command": "shasum -a 256 engineering/decisions/WS-DUR-001-publication-durability-failure-model.md",
+    "note": "HISTORICAL digests preserved: d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6 (WS-EVIDENCE-026 correction) and 2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71 (original ratification). No D1/D1b qualification, capability promotion or global durability claim."
+  },
+  "d0_full_matrix_evidence_2026_11_24": {
+    "path": "engineering/conformance/d0-full-matrix-evidence-2026-11-24.md",
+    "sha256": "0f4a90c550efddcd342f0a45f9270a3a8b97407fcaecb856d5fc0fed77a80315",
+    "date": "2026-11-24",
+    "status": "Dated D0 evidence record — docs only",
+    "command": "shasum -a 256 engineering/conformance/d0-full-matrix-evidence-2026-11-24.md",
+    "note": "Fieldbook DUR-002 at 4e0f2f5 (PR #74): 28 exit points, 24 owner boundary names, outcomes 1/17/2/7/1, idempotent second recovery, in-process fault injection separate, D1/D1b and D2-D4 unqualified."
   }
 }
