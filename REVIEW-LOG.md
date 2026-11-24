@@ -237,3 +237,9 @@ evidence or review archive.
 - Actual production-builder output verified by Nirnay binary at FB 5703185 / NZ 70716eb: correct artifacts/ layout; stages 1-5 PASS; stage 6 REJECT_RIGHTS_EVIDENCE; no receipt/snapshot; dataset BLOCKED. Recorded in WS PR #21.
 - Fieldbook PR #67 at 96546d4: recovery parent sync, full receipt fidelity, strict operation ownership, journal stage validation and eight-crash-boundary tests. Rejected at 1e96baa on assertion context style; fixed at 96546d4; CI 45398549731 success. APPROVE. Fieldbook main 932e34f; main CI 45399871079 2/2.
 - India catalogue amendments (WS PR #20) merged: IN-12/IN-13 subpopulations, IN-19 separate object contracts, IN-20 three subdomains, Q01-Q20, CountryPack evidence model. Still PROPOSED.
+
+## 2026-11-24 — publication journal durability and final release-correctness baseline
+
+- Fieldbook PR #68 at 2f9fbd4: digest-chained immutable stage records with ledger-dir fsync after every committed transition, provisioning parent sync/fail-closed, canonical validation of sequence records, restart/crash tests at every stage. CI 45405116775 success. APPROVE. Fieldbook main 475dc34f; main CI 45406722498 2/2 after stale-branch rerun.
+- Final cross-execution at FB 475dc34f / NZ 70716eb through the production builder: structural/manifest/signature/publisher/artifact/ordering PASS; stage 6 REJECT_RIGHTS_EVIDENCE; no receipt, no snapshot, dataset BLOCKED.
+- Remaining: B15/B16 bounded streaming, durability qualification P-D1..P-D5, publication receipt consumer gate, India CountryPack ratification. PUBLICATION_DURABILITY_VERIFIED, RIGHTS_ADMITTED, DATASET_ACCEPTED and OPERATIONALLY_QUALIFIED remain unachieved.
