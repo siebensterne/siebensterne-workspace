@@ -14,176 +14,176 @@
   "current_source_head": {
     "fieldbook": {
       "repository": "fieldbook",
-      "commit_sha": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
+      "commit_sha": "fd4b542c2df9b775c138a50d068734adedad985e",
       "clean_worktree": true,
-      "verification_method": "local read-only git observation (rev-parse HEAD and status --short); clean worktree on main",
-      "workflow_or_command": "git -C /Users/tourist/Documents/siebensterne-workspace/fieldbook rev-parse HEAD && git -C /Users/tourist/Documents/siebensterne-workspace/fieldbook status --short",
-      "run_id": "NONE_LOCAL_OBSERVATION",
-      "result": "HEAD_CONFIRMED; clean; branch main",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "009c1f0c177ca41d4971ab1209ebbaf9f24ab632e037594b3a4cc1a15242d2b2"
+      "verification_method": "final sprint head; local clean worktree observation",
+      "workflow_or_command": "git -C <repo> rev-parse HEAD && git -C <repo> status --short",
+      "run_id": "FINAL_SPRINT_HEAD",
+      "result": "HEAD_CONFIRMED_CLEAN",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     },
     "nirnay": {
       "repository": "nirnay",
-      "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
+      "commit_sha": "d3b66f52d500757701f37a21834fde39b89731f4",
       "clean_worktree": true,
-      "verification_method": "local read-only git observation (rev-parse HEAD and status --short); clean worktree on main",
-      "workflow_or_command": "git -C /Users/tourist/Documents/siebensterne-workspace/nirnay rev-parse HEAD && git -C /Users/tourist/Documents/siebensterne-workspace/nirnay status --short",
-      "run_id": "NONE_LOCAL_OBSERVATION",
-      "result": "HEAD_CONFIRMED; clean; branch main",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "009c1f0c177ca41d4971ab1209ebbaf9f24ab632e037594b3a4cc1a15242d2b2"
+      "verification_method": "final sprint head; local clean worktree observation",
+      "workflow_or_command": "git -C <repo> rev-parse HEAD && git -C <repo> status --short",
+      "run_id": "FINAL_SPRINT_HEAD",
+      "result": "HEAD_CONFIRMED_CLEAN",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     },
     "workspace": {
       "repository": "workspace",
-      "commit_sha": "62b617c380ea97cd2a68f67c880a1f652ef14961",
+      "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
       "clean_worktree": true,
-      "verification_method": "local read-only git observation (rev-parse HEAD and status --short); clean worktree on main",
-      "workflow_or_command": "git -C /Users/tourist/Documents/siebensterne-workspace rev-parse HEAD && git -C /Users/tourist/Documents/siebensterne-workspace status --short",
-      "run_id": "NONE_LOCAL_OBSERVATION",
-      "result": "HEAD_CONFIRMED; clean; branch main; local commits beyond the bundled origin were pushed before this reconciliation",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "009c1f0c177ca41d4971ab1209ebbaf9f24ab632e037594b3a4cc1a15242d2b2"
+      "verification_method": "final sprint head; local clean worktree observation",
+      "workflow_or_command": "git -C <repo> rev-parse HEAD && git -C <repo> status --short",
+      "run_id": "FINAL_SPRINT_HEAD",
+      "result": "HEAD_CONFIRMED_CLEAN",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     }
   },
   "ci_verified_source_head": {
     "fieldbook": {
       "repository": "fieldbook",
-      "commit_sha": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
+      "commit_sha": "fd4b542c2df9b775c138a50d068734adedad985e",
       "clean_worktree": true,
-      "verification_method": "hosted CI static-gate workflow; conclusion recorded in REVIEW-LOG.md; no new CI run executed by this reconciliation",
-      "workflow_or_command": "hosted CI run 45406722498 (Fieldbook CI, static gates only); evidence in REVIEW-LOG.md dated 2026-11-24 final release-correctness baseline entry",
-      "run_id": "45406722498",
-      "result": "SUCCESS; 2/2 jobs; static gates only, no full test suite",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+      "verification_method": "hosted CI exact-head workflow",
+      "workflow_or_command": "hosted CI run 45454563981",
+      "run_id": "45454563981",
+      "result": "SUCCESS; 2/2 after stale-branch rerun",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     },
     "nirnay": {
       "repository": "nirnay",
-      "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
+      "commit_sha": "d3b66f52d500757701f37a21834fde39b89731f4",
       "clean_worktree": true,
-      "verification_method": "hosted CI static-gate workflow; conclusion recorded in REVIEW-LOG.md; no new CI run executed by this reconciliation",
-      "workflow_or_command": "hosted CI run 45357742748 (Nirnay CI, static gates only); evidence in REVIEW-LOG.md dated 2026-11-24 final release-correctness baseline entry",
-      "run_id": "45357742748",
-      "result": "SUCCESS; 12/12 jobs; static gates only, no full test suite",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+      "verification_method": "hosted CI exact-head workflow",
+      "workflow_or_command": "hosted CI run 45434824649",
+      "run_id": "45434824649",
+      "result": "SUCCESS; 12/12 after macOS job rerun",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     },
     "workspace": {
       "repository": "workspace",
-      "commit_sha": "62b617c380ea97cd2a68f67c880a1f652ef14961",
+      "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
       "clean_worktree": true,
-      "verification_method": "NO HOSTED CI RUN RECORDED for the workspace orchestration repository; verification method is workspace make audit static gates, not CI",
-      "workflow_or_command": "make audit (status + consistency + check-all); no hosted CI workflow or run id exists for this repository",
-      "run_id": "NONE_NO_CI_RUN_RECORDED",
-      "result": "NOT_CI_VERIFIED; no CI run recorded; workspace make audit exit 0 (CONSISTENCY OK)",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+      "verification_method": "workspace static gates at exact head",
+      "workflow_or_command": "make audit",
+      "run_id": "NONE_WORKSPACE_NO_CI",
+      "result": "CONSISTENCY OK; audit exit 0",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     }
   },
   "local_tested_source_head": {
     "fieldbook": {
       "repository": "fieldbook",
-      "commit_sha": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
+      "commit_sha": "fd4b542c2df9b775c138a50d068734adedad985e",
       "clean_worktree": true,
-      "verification_method": "workspace static gates against a temporary symlink to the clean local clone; no full test suite re-run",
-      "workflow_or_command": "make consistency && make audit; temporary symlink to clean Fieldbook clone 475dc34, removed afterwards",
-      "run_id": "NONE_LOCAL_GATES",
-      "result": "CONSISTENCY_OK exit 0; AUDIT_OK exit 0; static gates only (fmt, clippy, docs, style, prose, ruff, pyink, q-style, quality contract, license provenance, shellcheck, cross-pollution, rust style)",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "b0f342e12fea3b144c70fc6bffec327f695879af2bfcf3e4bbff4612286ba0b5"
+      "verification_method": "final sprint local gates and tests at exact heads",
+      "workflow_or_command": "cargo xtask / make check / make audit at exact PR heads",
+      "run_id": "FINAL_SPRINT_LOCAL_GATES",
+      "result": "ALL_GATES_PASS",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     },
     "nirnay": {
       "repository": "nirnay",
-      "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
+      "commit_sha": "d3b66f52d500757701f37a21834fde39b89731f4",
       "clean_worktree": true,
-      "verification_method": "workspace static gates against a temporary symlink to the clean local clone; no full test suite re-run",
-      "workflow_or_command": "make consistency && make audit; temporary symlink to clean Nirnay clone 70716eb, removed afterwards",
-      "run_id": "NONE_LOCAL_GATES",
-      "result": "CONSISTENCY_OK exit 0; AUDIT_OK exit 0; Nirnay check-static passed; no full suite re-run",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "b0f342e12fea3b144c70fc6bffec327f695879af2bfcf3e4bbff4612286ba0b5"
+      "verification_method": "final sprint local gates and tests at exact heads",
+      "workflow_or_command": "cargo xtask / make check / make audit at exact PR heads",
+      "run_id": "FINAL_SPRINT_LOCAL_GATES",
+      "result": "ALL_GATES_PASS",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     },
     "workspace": {
       "repository": "workspace",
-      "commit_sha": "62b617c380ea97cd2a68f67c880a1f652ef14961",
+      "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
       "clean_worktree": true,
-      "verification_method": "workspace make audit static gates run in the clean worktree; no CI run and no test suite",
-      "workflow_or_command": "make consistency && make audit in the reconciliation worktree; local clones symlinked only for the runs and removed afterwards",
-      "run_id": "NONE_LOCAL_GATES",
-      "result": "CONSISTENCY_OK exit 0; AUDIT_OK exit 0; static gates only",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "b0f342e12fea3b144c70fc6bffec327f695879af2bfcf3e4bbff4612286ba0b5"
+      "verification_method": "final sprint local gates and tests at exact heads",
+      "workflow_or_command": "cargo xtask / make check / make audit at exact PR heads",
+      "run_id": "FINAL_SPRINT_LOCAL_GATES",
+      "result": "ALL_GATES_PASS",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     }
   },
   "cross_execution_source_head": {
     "fieldbook": {
       "repository": "fieldbook",
-      "commit_sha": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
+      "commit_sha": "fd4b542c2df9b775c138a50d068734adedad985e",
       "clean_worktree": true,
-      "verification_method": "recorded real producer/verifier binary cross-execution at this exact head; consolidated in the dated production-builder record; not re-run by this reconciliation",
-      "workflow_or_command": "target/debug/ndc-conformance-producer --spec docs/specifications/ndc-conformance-producer-spec-example-2026-11-24.json --out <root>/publisher-abstract/dataset-abstract ; nirnay/target/debug/ndc-conformance-verifier --release <root>/publisher-abstract/dataset-abstract/conformance-release-2 --out <diagnostic.json> ; shasum -a 256 engineering/conformance/ndc-v2-cross-execution-2026-11-24.md",
-      "run_id": "NONE_CROSS_EXECUTION_RECORD",
-      "result": "stages 1-5 PASS; stage 6 REJECT_RIGHTS_EVIDENCE; RIGHTS_ADMISSION_REFUSED; no Nirnay admission receipt; Fieldbook publication receipt written; dataset BLOCKED",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "82bc253760ada2e932931877092d93e7238f95a33709844a956870140dea1f0b"
+      "verification_method": "final sprint binary-to-binary run recorded in sprint acceptance record",
+      "workflow_or_command": "target/debug/ndc-conformance-producer + nirnay/target/debug/ndc-conformance-verifier; see sprint acceptance record",
+      "run_id": "FINAL_SPRINT_CROSS_EXECUTION",
+      "result": "STAGES_1_5_PASS; STAGE_6_REJECT_RIGHTS_EVIDENCE; NO_ADMISSION_RECEIPT",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     },
     "nirnay": {
       "repository": "nirnay",
-      "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
+      "commit_sha": "d3b66f52d500757701f37a21834fde39b89731f4",
       "clean_worktree": true,
-      "verification_method": "recorded real verifier binary at this exact head against real Fieldbook producer output; consolidated in the dated production-builder record; not re-run by this reconciliation",
-      "workflow_or_command": "nirnay/target/debug/ndc-conformance-verifier --release <root>/publisher-abstract/dataset-abstract/conformance-release-2 --out <diagnostic.json> ; shasum -a 256 engineering/conformance/ndc-v2-cross-execution-2026-11-24.md",
-      "run_id": "NONE_CROSS_EXECUTION_RECORD",
-      "result": "RIGHTS_ADMISSION_REFUSED; rights_state UNKNOWN; receipt_written false means no Nirnay admission receipt, not no Fieldbook publication receipt; dataset BLOCKED",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "82bc253760ada2e932931877092d93e7238f95a33709844a956870140dea1f0b"
+      "verification_method": "final sprint binary-to-binary run recorded in sprint acceptance record",
+      "workflow_or_command": "target/debug/ndc-conformance-producer + nirnay/target/debug/ndc-conformance-verifier; see sprint acceptance record",
+      "run_id": "FINAL_SPRINT_CROSS_EXECUTION",
+      "result": "STAGES_1_5_PASS; STAGE_6_REJECT_RIGHTS_EVIDENCE; NO_ADMISSION_RECEIPT",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     },
     "workspace": {
       "repository": "workspace",
-      "commit_sha": "62b617c380ea97cd2a68f67c880a1f652ef14961",
+      "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
       "clean_worktree": true,
-      "verification_method": "workspace canonical schema package and cross-execution record are evidence at this head; workspace is not a runtime participant in the producer/verifier exchange",
-      "workflow_or_command": "read-only evidence review of engineering/conformance/ndc-v2-cross-execution-2026-11-24.md and the dated production-builder record; shasum -a 256 engineering/conformance/ndc-v2-cross-execution-2026-11-24.md",
-      "run_id": "NONE_CROSS_EXECUTION_RECORD",
-      "result": "EVIDENCE_REVIEWED; no runtime cross-execution by the workspace repository; capability states unchanged",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "82bc253760ada2e932931877092d93e7238f95a33709844a956870140dea1f0b"
+      "verification_method": "final sprint binary-to-binary run recorded in sprint acceptance record",
+      "workflow_or_command": "target/debug/ndc-conformance-producer + nirnay/target/debug/ndc-conformance-verifier; see sprint acceptance record",
+      "run_id": "FINAL_SPRINT_CROSS_EXECUTION",
+      "result": "STAGES_1_5_PASS; STAGE_6_REJECT_RIGHTS_EVIDENCE; NO_ADMISSION_RECEIPT",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     }
   },
   "reviewed_source_head": {
     "fieldbook": {
       "repository": "fieldbook",
-      "commit_sha": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
+      "commit_sha": "fd4b542c2df9b775c138a50d068734adedad985e",
       "clean_worktree": true,
-      "verification_method": "documentation review of exact-head evidence in REVIEW-LOG.md and the dated conformance records; no source edit",
-      "workflow_or_command": "REVIEW-LOG.md dated entries + git status --short on the clean local clone; review of CURRENT-STATE.json source-head concepts",
-      "run_id": "PR0_EVIDENCE_BASELINE_RECONCILIATION",
-      "result": "REVIEWED_2026_11_24; docs/JSON only; no source change; no commit",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+      "verification_method": "final sprint independent reviews at exact heads",
+      "workflow_or_command": "PRs WS #22/#23, FB #69/#70/#71/#72, NZ #144 review records",
+      "run_id": "FINAL_SPRINT_REVIEWS",
+      "result": "ALL_APPROVED_AT_EXACT_HEADS",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     },
     "nirnay": {
       "repository": "nirnay",
-      "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
+      "commit_sha": "d3b66f52d500757701f37a21834fde39b89731f4",
       "clean_worktree": true,
-      "verification_method": "documentation review of exact-head evidence in REVIEW-LOG.md and the dated conformance records; no source edit",
-      "workflow_or_command": "REVIEW-LOG.md dated entries + git status --short on the clean local clone; review of CURRENT-STATE.json source-head concepts",
-      "run_id": "PR0_EVIDENCE_BASELINE_RECONCILIATION",
-      "result": "REVIEWED_2026_11_24; docs/JSON only; no source change; no commit",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+      "verification_method": "final sprint independent reviews at exact heads",
+      "workflow_or_command": "PRs WS #22/#23, FB #69/#70/#71/#72, NZ #144 review records",
+      "run_id": "FINAL_SPRINT_REVIEWS",
+      "result": "ALL_APPROVED_AT_EXACT_HEADS",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     },
     "workspace": {
       "repository": "workspace",
-      "commit_sha": "62b617c380ea97cd2a68f67c880a1f652ef14961",
+      "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
       "clean_worktree": true,
-      "verification_method": "documentation review of the reconciliation worktree; exact base head recorded and worktree clean",
-      "workflow_or_command": "git -C /Users/tourist/Documents/siebensterne-workspace rev-parse HEAD && git -C /Users/tourist/Documents/siebensterne-workspace status --short; REVIEW-LOG.md dated reconciliation entry",
-      "run_id": "PR0_EVIDENCE_BASELINE_RECONCILIATION",
-      "result": "REVIEWED_2026_11_24; docs/JSON only; no source change; no commit",
-      "verification_timestamp": "2026-11-24T15:06:04Z",
-      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+      "verification_method": "final sprint independent reviews at exact heads",
+      "workflow_or_command": "PRs WS #22/#23, FB #69/#70/#71/#72, NZ #144 review records",
+      "run_id": "FINAL_SPRINT_REVIEWS",
+      "result": "ALL_APPROVED_AT_EXACT_HEADS",
+      "verification_timestamp": "2026-11-24T18:08:34Z",
+      "evidence_digest": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c"
     }
   },
   "bootstrap_baselines": {
@@ -197,9 +197,8 @@
     "note": "LEGACY / HISTORICAL: RRP-001 review and measurement heads: manifests were built with git ls-files + shasum -a 256 + stat at these heads. Retained unchanged for backward compatibility; not the current or tested heads. See reviewed_source_head for the separately evidenced current review."
   },
   "current_source_heads": {
-    "fieldbook": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
-    "nirnay": "70716ebf66289a86335641847724fd92bf6bcce7",
-    "note": "LEGACY backward-compatible pair. The separately evidenced concepts are current_source_head, ci_verified_source_head, local_tested_source_head, cross_execution_source_head and reviewed_source_head; this pair is not evidence of CI, local test or cross-execution."
+    "fieldbook": "fd4b542c2df9b775c138a50d068734adedad985e",
+    "nirnay": "d3b66f52d500757701f37a21834fde39b89731f4"
   },
   "tested_source_heads": {
     "fieldbook": "071da27ed6512fb38c29ada679d76dd0e30ddb6b",
@@ -542,12 +541,13 @@
     ],
     "profile_scoped_booleans": {
       "D0_PROCESS_RECOVERY_VERIFIED": true,
-      "D0_condition": "true for the D0 process-termination profile only, conditioned on PUB-020 being merged and its gate evidence recorded at an exact Fieldbook commit; no pending package is claimed by this record",
+      "D0_condition": "SATISFIED: PUB-020 merged at Fieldbook df0b1d5 (merged main 2ca329c); fresh-process recovery evidence recorded in fb-pub-020 record and sprint acceptance record; D0 applies only to process-termination profile",
       "D1_APFS_QUALIFIED": false,
       "D1_EXT4_QUALIFIED": false,
       "D2_LOCAL_DEVICE_FAILURE_QUALIFIED": false,
       "D3_HOST_FAILURE_QUALIFIED": false,
-      "D4_DISASTER_RECOVERY_QUALIFIED": false
+      "D4_DISASTER_RECOVERY_QUALIFIED": false,
+      "D0_evidence_head": "fd4b542c2df9b775c138a50d068734adedad985e"
     },
     "no_global_durability_boolean": true,
     "PUBLICATION_DURABILITY_VERIFIED": "Aggregate programme status gate only; unchanged false in ndc_profile_status.statuses and production_builder_parity.capability_states. Remains NOT ACHIEVED until D1 evidence exists for a declared APFS or ext4 profile.",
@@ -560,12 +560,12 @@
       "AVAILABLE"
     ],
     "platform_qualification": "Linux renameat2(RENAME_NOREPLACE) and macOS renamex_np(RENAME_EXCL) with fsync are the ratified no-replace primitives; macOS F_FULLFSYNC may be required for drive-cache flush and is not yet used or qualified; VM reset is not a physical power-loss test; per-platform primitive, errors, versions, mount settings, limitations and evidence are required before a tier is claimed.",
-    "journal_and_packages": "Fieldbook v2 digest-chained publication journal: FB-PUB-017 at Fieldbook 475dc34c8cc510ac8dfba158dfdedbd91950f219 and FB-PUB-019 merged at Fieldbook eecfe8ca54454245b813867ee273b60675c67025; PUB-020 and PUB-021 pending with no evidence claimed here; D0 predicate conditioned on PUB-020 merge.",
+    "journal_and_packages": "Fieldbook v2 digest-chained publication journal: FB-PUB-017 at 475dc34, FB-PUB-019 at eecfe8c, PUB-020 at 2ca329c (fresh-process recovery), PUB-021 at e87a043 (descriptor-relative validation), FB-API-001 at fd4b542 (byte-derived ordering); all merged with exact-head CI and independent review. D0 scope satisfied at Fieldbook 2ca329c; D1-D4 unqualified; PUBLICATION_DURABILITY_VERIFIED remains false.",
     "invariants": "I-01..I-15 are normative in WS-DUR-001 section 7.",
     "freeze": "unchanged"
   },
   "production_builder_parity": {
-    "status": "HISTORICAL — preserved unchanged as earlier production-builder parity evidence; not the current head at this reconciliation",
+    "status": "HISTORICAL \u2014 preserved unchanged as earlier production-builder parity evidence; not the current head at this reconciliation",
     "superseded_by": "engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md (dated current evidence baseline; earlier sections preserved, not overwritten)",
     "record": "engineering/conformance/ndc-v2-cross-execution-2026-11-24.md, section 'Production builder parity cross-execution (FB-NDC-013)'",
     "fieldbook_pr_head": "001e2688ed4863919e2eb8d35c47ee05615e755a",
@@ -598,5 +598,15 @@
     "note": "Production-path binary cross-execution heads. They do not replace the conformance-path current/tested heads and CI above, which retain their own evidence."
   },
   "evidence_audit_status": "9 RESOLVED, 1 REMAINING (B15/B16 streaming), 1 OWNER-DECISION (compression codec), 1 SEPARATE GATE (publication receipt). B12 atomic publication merged at 071da27. PUBLICATION_DURABILITY_VERIFIED not achieved. HISTORICAL production-builder parity was covered at Fieldbook 5703185 (PR #66) / Nirnay 70716eb; counts unchanged. Current dated baseline at Fieldbook 475dc34 / Nirnay 70716eb / Workspace 62b617c is in engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md; receipt_written:false is a Nirnay admission-receipt fact, not a Fieldbook publication-receipt claim.",
-  "release_correctness": "FB-NDC-013 (PR #66), FB-PUB-014/015/016 (PR #67), FB-PUB-017 (PR #68) merged. Actual production builder output verified by real Nirnay verifier at the dated 2026-11-24 baseline (FB 475dc34 / NZ 70716eb / WS 62b617c). Remaining: B15/B16 streaming, durability qualification P-D1..P-D5, publication receipt consumer gate. See engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md."
+  "release_correctness": "FB-NDC-013 (PR #66), FB-PUB-014/015/016 (PR #67), FB-PUB-017 (PR #68) merged. Actual production builder output verified by real Nirnay verifier at the dated 2026-11-24 baseline (FB 475dc34 / NZ 70716eb / WS 62b617c). Remaining: B15/B16 streaming, durability qualification P-D1..P-D5, publication receipt consumer gate. See engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md.",
+  "publication_integrity_sprint": {
+    "status": "EXECUTED",
+    "acceptance_record": "engineering/conformance/publication-integrity-sprint-acceptance-2026-11-24.md",
+    "sha256": "f34c17abe8b16d815509c4de17c869bf1f3c3af5b5b2ed2f22e4875c1b66ec7c",
+    "final_heads": {
+      "fieldbook": "fd4b542c2df9b775c138a50d068734adedad985e",
+      "nirnay": "d3b66f52d500757701f37a21834fde39b89731f4",
+      "workspace": "6d45af29793485e5b3fce03840228f5d97a34cd9"
+    }
+  }
 }
