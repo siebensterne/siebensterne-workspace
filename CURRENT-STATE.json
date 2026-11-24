@@ -228,11 +228,44 @@
     "statuses": {
       "SCHEMA_CONFORMANT": true,
       "CROSS_EXECUTED": true,
+      "BINARY_CROSS_EXECUTED": true,
       "CRYPTOGRAPHICALLY_VERIFIED": true,
+      "PUBLICATION_DURABILITY_VERIFIED": false,
       "RIGHTS_ADMITTED": false,
-      "DATASET_ACCEPTED": false
+      "DATASET_ACCEPTED": false,
+      "OPERATIONALLY_QUALIFIED": false
     },
-    "cross_execution_refusal": "stage 6 REJECT_RIGHTS_EVIDENCE under UNKNOWN rights; no receipt, no dataset acceptance"
+    "cross_execution_refusal": "stage 6 REJECT_RIGHTS_EVIDENCE under UNKNOWN rights; no receipt, no dataset acceptance (conformance-path and production-builder binary cross-executions)"
   },
-  "evidence_audit_status": "9 RESOLVED, 1 REMAINING (B15/B16 streaming), 1 OWNER-DECISION (compression codec), 1 SEPARATE GATE (publication receipt). B12 atomic publication merged at 071da27. PUBLICATION_DURABILITY_VERIFIED not achieved."
+  "production_builder_parity": {
+    "record": "engineering/conformance/ndc-v2-cross-execution-2026-11-24.md, section 'Production builder parity cross-execution (FB-NDC-013)'",
+    "fieldbook_pr_head": "001e2688ed4863919e2eb8d35c47ee05615e755a",
+    "fieldbook_merged_main": "5703185d59b1ccfeaa310926f26e006abf8ac72c",
+    "nirnay_verifier_head": "70716ebf66289a86335641847724fd92bf6bcce7",
+    "release": "publisher-abstract/dataset-abstract/conformance-release-2",
+    "release_root_files": [
+      "manifest.json",
+      "signature.json",
+      "artifacts/sequenced-abstract.jsonl",
+      "artifacts/reference-abstract.jsonl.gz"
+    ],
+    "ledger": "publisher-abstract/dataset-abstract.ledger (beside the release root, not inside it)",
+    "post_publication_modification": false,
+    "verifier_outcome": "RIGHTS_ADMISSION_REFUSED",
+    "refusal": "stage 6 REJECT_RIGHTS_EVIDENCE under UNKNOWN rights",
+    "phases": "structural, manifest, signature, publisher, artifact and ordering PASS; stages 7-12 NOT_RUN",
+    "receipt_written": false,
+    "private_snapshot_survives": false,
+    "dataset_accepted": false,
+    "capability_states": {
+      "BINARY_CROSS_EXECUTED": true,
+      "CRYPTOGRAPHICALLY_VERIFIED": true,
+      "PUBLICATION_DURABILITY_VERIFIED": false,
+      "RIGHTS_ADMITTED": false,
+      "DATASET_ACCEPTED": false,
+      "OPERATIONALLY_QUALIFIED": false
+    },
+    "note": "Production-path binary cross-execution heads. They do not replace the conformance-path current/tested heads and CI above, which retain their own evidence."
+  },
+  "evidence_audit_status": "9 RESOLVED, 1 REMAINING (B15/B16 streaming), 1 OWNER-DECISION (compression codec), 1 SEPARATE GATE (publication receipt). B12 atomic publication merged at 071da27. PUBLICATION_DURABILITY_VERIFIED not achieved. Production-builder parity covered at Fieldbook 5703185 (PR #66) / Nirnay 70716eb; counts unchanged."
 }

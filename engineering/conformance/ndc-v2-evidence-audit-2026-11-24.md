@@ -84,6 +84,22 @@ unachieved entries are not promoted by the wording above.
 Five of nine states are achieved at the abstract wire and recorded cross-execution scope; four
 are not. This document changes none of those determinations.
 
+## Production-builder parity note
+
+The production-builder path was previously a separate concern: the recorded binary
+cross-execution covered the conformance producer helper only. That path is now
+covered at Fieldbook `5703185d59b1ccfeaa310926f26e006abf8ac72c` (PR #66 merged main;
+PR head `001e2688ed4863919e2eb8d35c47ee05615e755a`) with the unchanged Nirnay verifier
+`70716ebf66289a86335641847724fd92bf6bcce7`. The production builder writes `artifacts/`
+under the declared paths and the conformance producer calls `ndc_release::build_release`.
+The second binary cross-execution, its exact release layout and its result are recorded in
+`engineering/conformance/ndc-v2-cross-execution-2026-11-24.md` under "Production builder
+parity cross-execution (FB-NDC-013)". `BINARY_CROSS_EXECUTED` and `CRYPTOGRAPHICALLY_VERIFIED`
+now also hold for the production path; `PUBLICATION_DURABILITY_VERIFIED`,
+`RIGHTS_ADMITTED`, `DATASET_ACCEPTED` and `OPERATIONALLY_QUALIFIED` remain unachieved.
+The twelve-finding status counts above are unchanged; this note adds coverage, not a new
+finding or a state promotion.
+
 ## Sequenced remaining work
 
 1. **B12 — P0, merged.** Publication atomicity corrected at Fieldbook `071da27`
