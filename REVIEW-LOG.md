@@ -92,3 +92,9 @@ evidence or review archive.
 ## 2026-11-24 — FB-REF-004 jurisdiction venue product registry
 
 - Fieldbook PR #59 at 1a110b0: validated non-enum JurisdictionCode, bitemporal authority/venue/segment/product assertions with fail-closed reference checks, versioned data-extensible CountryPack, four-outcome resolution with no first match. 26 abstract tests with fictional jurisdictions; 673 passed. CI 45316505194 success. APPROVE. Fieldbook main c4bb2d9; main CI 45317373966 2/2.
+
+## 2026-11-24 — FB-REF-005 and Batch A completion
+
+- Fieldbook PR #60 at 49c8a0d: retained-proof EvidenceRef, separate CapabilityState/RightsState, evidence-bound capability verification, four-outcome resolution, explicit 12-state coverage promotion allow-list blocking stage skips and rights-Unknown qualification, denominator requirement. 37 abstract tests; 710 all-targets passed. CI 45319156070 success. APPROVE.
+- Batch A (universal reference core) complete at Fieldbook main 78b9d51; main CI 45320046580 2/2 after stale-branch rerun. Components: canonical object identity and bitemporal ledger, typed instrument terms and contract objects, versioned jurisdiction/venue/product registry, evidence-bound capability and coverage registry.
+- Next gate: NDC v2 serialization profile ratification (owner decision) before Batch B producer/verifier implementation. India design, rights and dataset acceptance remain separate gates.

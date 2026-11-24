@@ -14,7 +14,7 @@
     "note": "RRP-001 review and measurement heads: manifests were built with git ls-files + shasum -a 256 + stat at these heads. Historical; not the current or tested heads."
   },
   "current_source_heads": {
-    "fieldbook": "c4bb2d9f57140d3c8c7828cf5b2729d84cdc0a9e",
+    "fieldbook": "78b9d51e5e62f99d27b7c52a3d2007b04cf6a2be",
     "nirnay": "7324925bb947fd20c32a77eed00c5bfc9d22ede9"
   },
   "tested_source_heads": {
@@ -23,10 +23,11 @@
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45317373966",
-      "head_sha": "c4bb2d9f57140d3c8c7828cf5b2729d84cdc0a9e",
+      "run_id": "45320046580",
+      "head_sha": "78b9d51e5e62f99d27b7c52a3d2007b04cf6a2be",
       "conclusion": "success",
-      "jobs": "2/2"
+      "jobs": "2/2",
+      "note": "Rerun after merged remote-tracking branch cleared git-policy check"
     },
     "nirnay": {
       "run_id": "45293438172",
@@ -219,5 +220,5 @@
   ],
   "w21_status": "W2.1 complete: conformance matrix, release-format design and readiness report merged in workspace PR #7",
   "style_standard": "Adopted 2026-11-24: engineering/style/DOCUMENTATION-STANDARD.md in workspace; mirrored into Fieldbook STYLES.md/docs/style-standards.md/docs/coding-standard.md and Nirnay STYLES.md/engineering/style-policy.md. PRs workspace #8, Fieldbook #56, Nirnay #141. Full-tree sweep before gates; one dated exception in frozen Nirnay RRP-004 path crates/market-archive/src/journal.rs.",
-  "fb_ref_programme": "FB-REF-001/002/004 merged; FB-REF-005 capability and coverage registry in progress."
+  "fb_ref_programme": "Batch A COMPLETE: FB-REF-001 (PR #57), FB-REF-002 (PR #58), FB-REF-004 (PR #59), FB-REF-005 (PR #60) merged. 710 all-targets tests. Next gate: NDC v2 serialization profile ratification (owner decision) before Batch B."
 }
