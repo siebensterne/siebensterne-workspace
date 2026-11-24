@@ -88,3 +88,7 @@ evidence or review archive.
 ## 2026-11-24 — FB-REF-002 typed instrument terms
 
 - Fieldbook PR #58 at 399718d: Unit/ExactMeasure checked arithmetic, seven family-typed terms, ContractFamily/ContractInstance, InstrumentTermsRevision/TermsRegistry reusing BitemporalLedger. Rejected at 8447873 for a competing DerivativeKind classification; fixed as a validated newtype over taxonomy::InstrumentKind. 23 tests, 647 passed. CI 45314314973 success. APPROVE. Fieldbook main e747051; main CI 45315060744 2/2 after stale-branch rerun.
+
+## 2026-11-24 — FB-REF-004 jurisdiction venue product registry
+
+- Fieldbook PR #59 at 1a110b0: validated non-enum JurisdictionCode, bitemporal authority/venue/segment/product assertions with fail-closed reference checks, versioned data-extensible CountryPack, four-outcome resolution with no first match. 26 abstract tests with fictional jurisdictions; 673 passed. CI 45316505194 success. APPROVE. Fieldbook main c4bb2d9; main CI 45317373966 2/2.
