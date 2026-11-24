@@ -24,10 +24,28 @@ cross-executed. `IMPLEMENTED` means code is present without the named test evide
 head. No `VERIFIED`, `INTEGRATED` or `PRODUCTION_READY` state is claimed anywhere in this
 matrix.
 
-**Implementation authorities.** There is no standalone published NDC v2 schema artifact at
-these heads; the typed structs in `fieldbook:src/distribution/ndc_release.rs` and
-`nirnay:crates/release-verifier/src/schema.rs` are the implementation authorities. See
-`ndc-v2-schema-digest.json`. No shared validator, serializer, digest or rights crate exists.
+**Implementation authorities at the recorded heads.** At these heads there was no standalone
+published NDC v2 schema artifact; the typed structs in
+`fieldbook:src/distribution/ndc_release.rs` and `nirnay:crates/release-verifier/src/schema.rs`
+were the implementation authorities. See `ndc-v2-schema-digest.json`. No shared validator,
+serializer, digest or rights crate exists. These heads and their evidence remain historical and
+unchanged.
+
+**Canonical wire authority (WP-B8, 2026-11-24).** The normative wire representation for the
+checks below is now the versioned canonical schema package at
+`engineering/conformance/ndc-v2-schema-profile-1/`, ratified by
+`WS-NDC-2026-11-24-003` (digest
+`417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119`) and published as 26 files
+(8 JSON Schemas, 16 canonical vectors, 2 normative documents) with
+`SCHEMA-PACKAGE-DIGEST 6e8c1e48e27289b8c3d3e959a06a805e736d0759b4fb244edbb074f65e107bab`.
+Index: `engineering/conformance/ndc-v2-schema-profile-1/VECTORS.md`. Checker:
+`scripts/check_ndc_schema_package.py`. The typed structs cited in the rows below are producer
+and verifier implementation evidence at the recorded heads, not the normative wire format; the
+representation differences in section 3 are resolved by the ratified decision and the B8
+package. Structural validation alone is insufficient — apply
+`ndc-v2-schema-profile-1/semantic-constraints.md`. No implementation state is promoted and
+cross-execution remains NOT_STARTED. See also `ndc-v2-conformance-vectors/VECTORS.md` for the
+original WP-5 evidence package.
 
 ## 1. Acceptance rows
 
@@ -50,7 +68,7 @@ these heads; the typed structs in `fieldbook:src/distribution/ndc_release.rs` an
 |---|---|---|
 | Producer-generated release verified by a Nirnay verifier binary | **NOT_STARTED** | No shared invocation boundary and no authorized connector between the separate repositories. No cross-execution was run in this environment. The workspace checker is evidence tooling only and is not a producer or verifier. |
 | Wire compatibility between the two typed manifest representations at the exact heads | **NOT_STARTED** | No compatibility adaptation or paired decision was executed. Concrete representation differences were observed in read-only source inspection and are listed in section 3. No compatibility claim is made. |
-| Standalone published NDC v2 schema artifact | **NOT_STARTED** | No such artifact exists at the recorded heads. Typed structs in both repositories are the implementation authorities; see `ndc-v2-schema-digest.json`. |
+| Standalone published NDC v2 schema artifact | **PUBLISHED (WP-B8, 2026-11-24)** | No such artifact existed at the recorded heads; typed structs in both repositories were the implementation authorities there (`ndc-v2-schema-digest.json`). The canonical schema package is now published in Workspace at `engineering/conformance/ndc-v2-schema-profile-1/` (26 files, digest `6e8c1e48…`). It is documentation and canonical abstract evidence only, not a producer or verifier implementation and not cross-execution. |
 | Verification promotion of either implementation | **NOT_STARTED** | Abstract test evidence at an exact head is not independent verification, integration or real-data evidence. |
 
 ## 3. Observed representation differences at the exact heads

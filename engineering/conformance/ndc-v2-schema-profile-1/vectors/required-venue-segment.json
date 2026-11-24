@@ -1,0 +1,55 @@
+{
+  "vector_set": "Canonical NDC v2 Profile 1 — required source scope identifiers",
+  "authority": "WS-NDC-2026-11-24-003 digest 417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119 §7 and DP-04/DP-05",
+  "note": "Abstract identifier strings only. No venue, product, provider or dataset identity here refers to an external source.",
+  "cases": [
+    {
+      "id": "all-five-identifiers-present",
+      "source_scope": {
+        "provider_id": "provider-example",
+        "source_product_id": "product-example",
+        "venue_id": "venue-example",
+        "segment_id": "segment-example",
+        "dataset_id": "dataset-example"
+      },
+      "expected": "ACCEPT_SHAPE",
+      "rule": "All five identifiers are required non-empty valid identifiers in Profile 1."
+    },
+    {
+      "id": "venue-null",
+      "source_scope_delta": {"venue_id": null},
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "A null venue fails the required non-empty identifier rule; venue-less sources are outside Profile 1."
+    },
+    {
+      "id": "venue-empty-string",
+      "source_scope_delta": {"venue_id": ""},
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "An empty venue fails strict validation."
+    },
+    {
+      "id": "segment-null",
+      "source_scope_delta": {"segment_id": null},
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "A null segment fails the required non-empty identifier rule; no history or other placeholder default exists."
+    },
+    {
+      "id": "segment-placeholder",
+      "source_scope_delta": {"segment_id": "UNKNOWN"},
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "Placeholder literals UNKNOWN, ALL, NONE and null are rejected in every required scope identifier."
+    },
+    {
+      "id": "provider-placeholder",
+      "source_scope_delta": {"provider_id": "ALL"},
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "Placeholders are rejected in provider, product, venue, segment and dataset identifiers alike."
+    },
+    {
+      "id": "omitted-dataset-identifier",
+      "source_scope_delta": {"dataset_id": "<omitted>"},
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "Missing required members are rejected; there is no default dataset."
+    }
+  ]
+}

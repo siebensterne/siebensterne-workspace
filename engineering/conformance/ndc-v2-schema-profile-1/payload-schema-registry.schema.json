@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workspace.siebensterne.invalid/ndc/v2/profile-1/schemas/payload-schema-registry.schema.json",
+  "title": "Canonical NDC v2 Profile 1 versioned per-event-type payload schema registry — version 1",
+  "description": "Each event type declares an explicit schema identity, schema version and registered digest. A single manifest-wide scalar payload_schema_version and a silent positional array are both rejected. An event type with no registered entry fails closed. The same typed entry shape is used by schema_versions.payload_schemas in the manifest.",
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "Sha256Hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "PayloadSchemaEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_type",
+        "schema_id",
+        "schema_version",
+        "digest_sha256"
+      ],
+      "properties": {
+        "event_type": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "schema_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "digest_sha256": {
+          "$ref": "#/$defs/Sha256Hex",
+          "description": "Registered digest of the exact bytes of that event type's payload schema."
+        }
+      },
+      "description": "Explicit identity plus version plus registered digest. Entries are keyed by event_type value, not by array position."
+    },
+    "PayloadSchemaRegistry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "registry_id",
+        "entries"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "registry_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "entries": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/PayloadSchemaEntry"
+          }
+        }
+      },
+      "description": "Standalone registry document. event_type values must be unique; each digest must match the registered payload schema bytes (semantic constraint)."
+    },
+    "PayloadField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field_name",
+        "kind",
+        "value"
+      ],
+      "properties": {
+        "field_name": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "string",
+            "decimal_string",
+            "boolean",
+            "bytes_hex"
+          ]
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "Payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fields"
+      ],
+      "properties": {
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/PayloadField"
+          }
+        }
+      },
+      "description": "Strict abstract payload container used by the record envelope. Field names and scalar kinds for a given event type must match that event type's registered payload schema."
+    }
+  },
+  "$ref": "#/$defs/PayloadSchemaRegistry"
+}

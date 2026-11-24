@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workspace.siebensterne.invalid/ndc/v2/profile-1/schemas/lineage.schema.json",
+  "title": "Canonical NDC v2 Profile 1 PROV lineage — version 1",
+  "description": "One typed lineage structure carrying raw archive reference and digest, transformation identity and version, knowledge time, current revision, the full typed PROV relation set, qualified attribution, and an optional immediate-predecessor supersedes relation. invalidated_at_time is a canonical UTC string with exactly nine fractional digits and the Z designator.",
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "DecimalStringU64": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$",
+      "maxLength": 20
+    },
+    "U64Integer": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "Sha256Hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "UtcInstantString": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{9}Z$",
+      "description": "RFC 3339 profile restricted to Z, exactly nine fractional digits, proleptic Gregorian, no offset and no leap second; the decoded value must be a valid calendar instant."
+    },
+    "TransformationRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "version"
+      ],
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "ProvWasDerivedFrom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_entity_id",
+        "deriving_activity_id",
+        "knowledge_time_ns"
+      ],
+      "properties": {
+        "source_entity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "deriving_activity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        }
+      }
+    },
+    "ProvWasRevisionOf": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "predecessor_entity_id",
+        "revision_activity_id",
+        "knowledge_time_ns"
+      ],
+      "properties": {
+        "predecessor_entity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "revision_activity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        }
+      }
+    },
+    "ProvHadPrimarySource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_entity_id",
+        "attribution_activity_id",
+        "knowledge_time_ns"
+      ],
+      "properties": {
+        "source_entity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "attribution_activity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        }
+      }
+    },
+    "QualifiedAttribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_id",
+        "activity_id",
+        "role",
+        "knowledge_time_ns"
+      ],
+      "properties": {
+        "agent_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "activity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "role": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        }
+      }
+    },
+    "Supersedes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supersedes_release_id",
+        "supersedes_manifest_sha256",
+        "supersedes_data_sha256",
+        "revision",
+        "correction_reason",
+        "knowledge_time_ns",
+        "invalidated_at_time"
+      ],
+      "properties": {
+        "supersedes_release_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "supersedes_manifest_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "supersedes_data_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "revision": {
+          "$ref": "#/$defs/U64Integer"
+        },
+        "correction_reason": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        },
+        "invalidated_at_time": {
+          "$ref": "#/$defs/UtcInstantString"
+        }
+      },
+      "description": "One seven-member relation. revision is the IMMEDIATE PREDECESSOR revision, strictly less than the current lineage.revision. An array form is permitted only for a genuine multi-predecessor release, which Profile 1 does not model."
+    },
+    "Lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_archive_reference",
+        "raw_archive_sha256",
+        "transformation_record",
+        "knowledge_time_ns",
+        "revision",
+        "was_derived_from",
+        "was_revision_of",
+        "had_primary_source",
+        "generated_at_time",
+        "invalidated_at_time",
+        "qualified_attribution",
+        "supersedes"
+      ],
+      "properties": {
+        "raw_archive_reference": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "raw_archive_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "transformation_record": {
+          "$ref": "#/$defs/TransformationRecord"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        },
+        "revision": {
+          "$ref": "#/$defs/U64Integer"
+        },
+        "was_derived_from": {
+          "$ref": "#/$defs/ProvWasDerivedFrom"
+        },
+        "was_revision_of": {
+          "$ref": "#/$defs/ProvWasRevisionOf"
+        },
+        "had_primary_source": {
+          "$ref": "#/$defs/ProvHadPrimarySource"
+        },
+        "generated_at_time": {
+          "$ref": "#/$defs/UtcInstantString"
+        },
+        "invalidated_at_time": {
+          "$ref": "#/$defs/UtcInstantString"
+        },
+        "qualified_attribution": {
+          "$ref": "#/$defs/QualifiedAttribution"
+        },
+        "supersedes": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/Supersedes"
+            }
+          ]
+        }
+      },
+      "description": "revision is the current release revision. Event-level correction lineage stays separate and is not merged into supersedes. Cycle, missing-predecessor, regression, self-reference, identity-mismatch and future-knowledge-time rejection are semantic constraints."
+    }
+  },
+  "$ref": "#/$defs/Lineage"
+}

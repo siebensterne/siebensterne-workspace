@@ -1,0 +1,69 @@
+{
+  "vector_set": "Canonical NDC v2 Profile 1 — coverage denominator and arithmetic",
+  "authority": "WS-NDC-2026-11-24-003 digest 417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119 §9 and DP-10/DP-11/DP-12/DP-13",
+  "note": "All counts, identifiers and instants are abstract. No completeness result or aggregate percentage is claimed.",
+  "cases": [
+    {
+      "id": "exhaustive-arithmetic-accept",
+      "dimension": {
+        "dimension_id": "instrument_coverage",
+        "universe_id": "universe-example",
+        "denominator_identity": "denominator-example",
+        "count_basis": "count-basis-example",
+        "numerator": 3,
+        "denominator": 4,
+        "missing_count": 1,
+        "rejected_count": 0,
+        "as_of_ns": "2000",
+        "verdict": "UNKNOWN",
+        "evidence_reference": "evidence-example",
+        "gaps": [{"gap_id": "gap-example", "gap_kind": "MISSING", "component": "component-example", "count": 1, "description": "abstract-gap-description"}]
+      },
+      "expected": "ACCEPT_ARITHMETIC",
+      "rule": "accepted + missing + rejected = denominator with disjoint parts and typed gaps."
+    },
+    {
+      "id": "no-pass-without-denominator",
+      "dimension_delta": {"denominator": null, "verdict": "PASS"},
+      "expected_rejection": "REJECT_COVERAGE",
+      "rule": "No PASS without a declared denominator, universe, denominator identity, count basis, as-of instant and evidence reference."
+    },
+    {
+      "id": "zero-denominator",
+      "dimension_delta": {"denominator": 0, "verdict": "PASS"},
+      "expected_rejection": "REJECT_COVERAGE",
+      "rule": "Denominator is required and non-zero."
+    },
+    {
+      "id": "non-exhaustive-decomposition",
+      "dimension_delta": {"numerator": 2, "denominator": 4, "missing_count": 0, "rejected_count": 0},
+      "expected_rejection": "REJECT_COVERAGE",
+      "rule": "An undeclared or overlapping decomposition fails; any different arithmetic must be declared with component meanings."
+    },
+    {
+      "id": "producer-pass-does-not-promote",
+      "dimension_delta": {"verdict": "PASS", "evidence_reference": ""},
+      "expected_rejection": "REJECT_COVERAGE",
+      "rule": "A producer-supplied PASS is admitted only when all required evidence is present and the independent evaluation agrees."
+    },
+    {
+      "id": "as-of-mismatch",
+      "dimension_delta": {"as_of_ns": "9000", "verdict": "PASS"},
+      "release_as_of_ns": "2000",
+      "expected_rejection": "REJECT_PIT_CONSISTENCY",
+      "rule": "Each dimension as-of uses the ratified instant grammar and is consistent with the release as-of."
+    },
+    {
+      "id": "untyped-gaps",
+      "dimension_delta": {"gaps": ["gap-string-example"]},
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "Gaps are typed records, not free strings, and are never silently filled or interpolated."
+    },
+    {
+      "id": "nine-dimensions-required",
+      "condition": "only eight distinct dimension_id values are present in coverage.dimensions",
+      "expected_rejection": "REJECT_COVERAGE",
+      "rule": "All nine separate dimensions are required; passing one implies nothing about another."
+    }
+  ]
+}

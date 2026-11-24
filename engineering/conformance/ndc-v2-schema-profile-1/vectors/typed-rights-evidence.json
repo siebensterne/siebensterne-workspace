@@ -1,0 +1,100 @@
+{
+  "vector_set": "Canonical NDC v2 Profile 1 — typed source-rights evidence",
+  "authority": "WS-NDC-2026-11-24-003 digest 417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119 §8 and DP-06/DP-07/DP-08/DP-09",
+  "note": "All grant values are arbitrary abstract strings. No right is granted, no written agreement is represented and no dataset acceptance is implied.",
+  "cases": [
+    {
+      "id": "typed-grant-shape",
+      "grant": {
+        "grant_id": "grant-example",
+        "grant_revision": "grant-revision-1",
+        "granting_authority": {"authority_id": "granting-authority-example", "evidence_reference": "authority-evidence-example"},
+        "action": "internal_analytics",
+        "object_class": "object-class-example",
+        "decision": "PERMIT",
+        "actor": "actor-example",
+        "licensee": "licensee-example",
+        "recipient_class": "NAMED",
+        "recipient_identity": "recipient-example",
+        "purpose": "purpose-example",
+        "scope": {
+          "provider_id": "provider-example",
+          "source_product_id": "product-example",
+          "venue_id": "venue-example",
+          "segment_id": "segment-example",
+          "dataset_id": "dataset-example",
+          "subject_state": "NAMED",
+          "named_subjects": ["subject-example"],
+          "data_time_begin_ns": "1000",
+          "data_time_end_ns": "2000"
+        },
+        "validity": {"begin_ns": "1000", "end_ns": "3000", "clock_domain": "clock-domain-example"},
+        "delivery": {"method": "method-example", "approved_endpoint_identities": ["endpoint-example"]},
+        "retention": {"max_duration_ns": 1000, "purge_rule": "purge-rule-example"},
+        "supporting_document_references": [{"reference": "doc-example", "digest_sha256": "5555555555555555555555555555555555555555555555555555555555555555"}],
+        "contract_revision": "review-example-1",
+        "review_authority": "review-authority-example",
+        "reviewed_on": "2026-01-01T00:00:00.000000000Z",
+        "reviewed_attestation": {
+          "purpose": "purpose-example",
+          "usage_right": "usage-right-example",
+          "usage_mode": "usage-mode-example",
+          "territory": "territory-example",
+          "scope_assertions": ["scope-assertion-example"],
+          "reviewer": "reviewer-example",
+          "authority": "review-authority-example"
+        }
+      },
+      "expected": "ACCEPT_SHAPE",
+      "rule": "Full typed evidence with named authority, action, object class, decision, parties, scope, interval, delivery, retention, digests and attestation."
+    },
+    {
+      "id": "opaque-string-grant",
+      "grant": "grant-reference-example",
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "An opaque string reference cannot substitute for typed source-rights evidence."
+    },
+    {
+      "id": "decision-lowercase",
+      "grant_decision": "permit",
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "Decision is the exact uppercase enum value PERMIT or DENY."
+    },
+    {
+      "id": "deny-decision",
+      "grant_decision": "DENY",
+      "expected_rejection": "REJECT_RIGHTS_EVIDENCE",
+      "rule": "A DENY grant does not authorize an action; ambiguity or denial fails the decision closed."
+    },
+    {
+      "id": "signer-as-granting-authority",
+      "granting_authority_delta": {"authority_id": "key-example"},
+      "expected_rejection": "REJECT_RIGHTS_EVIDENCE",
+      "rule": "The granting authority is distinct from the publisher signing key and from the reviewer."
+    },
+    {
+      "id": "document-digest-uppercase",
+      "document_sha256": "ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789",
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "Document digests are lowercase hex SHA-256 values bound to exact bytes."
+    },
+    {
+      "id": "attestation-not-permission",
+      "condition": "an attestation exists for purpose-example but no PERMIT grant covers the requested action-object pair",
+      "expected_rejection": "REJECT_RIGHTS_EVIDENCE",
+      "rule": "An attestation records review; it is not permission for an action absent from a grant."
+    },
+    {
+      "id": "rights-section-absent",
+      "condition": "the rights section is omitted from the manifest",
+      "expected_rejection": "REJECT_RIGHTS_EVIDENCE",
+      "rule": "Rights evidence is an independent signed section and fails closed when absent."
+    },
+    {
+      "id": "signature-does-not-grant-right",
+      "condition": "a valid detached sidecar signature exists but source-rights evidence is absent",
+      "expected_rejection": "REJECT_RIGHTS_EVIDENCE",
+      "rule": "Publisher integrity proves key control and exact signed bytes only; it grants no right."
+    }
+  ]
+}

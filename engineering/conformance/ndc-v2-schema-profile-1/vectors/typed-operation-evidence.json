@@ -1,0 +1,77 @@
+{
+  "vector_set": "Canonical NDC v2 Profile 1 — typed operations and bound evidence",
+  "authority": "WS-NDC-2026-11-24-003 digest 417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119 §6 and DP-02/DP-03/DP-25",
+  "note": "Abstract operation, event and run identifiers only. No operation was executed by this vector file.",
+  "cases": [
+    {
+      "id": "structured-operation-accept",
+      "performed_operation": {
+        "operation_ref": "operation-example",
+        "action": "internal_analytics",
+        "data_object": {"kind": "object-class-example", "id": "object-example", "version": "1"}
+      },
+      "operation_evidence": {
+        "operation_ref": "operation-example",
+        "event_id": "event-example",
+        "run_id": "run-example",
+        "recorded_at_ns": "2050",
+        "decision_key": "decision-key-example",
+        "digest_sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+      },
+      "expected": "ACCEPT_BINDING",
+      "rule": "A structured operation using the producer enum value resolves exactly one typed evidence record by operation_ref."
+    },
+    {
+      "id": "opaque-operation-string",
+      "performed_operation": "operation-example",
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "Opaque string operations are rejected; operation_ref, action and data_object are required."
+    },
+    {
+      "id": "display-label-instead-of-enum-value",
+      "performed_operation_action": "Internal Analytics",
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "The producer enum value is stored, not a display label; the consumer vocabulary is separate."
+    },
+    {
+      "id": "missing-evidence",
+      "performed_operation_ref": "operation-example",
+      "operation_evidence_ref": null,
+      "expected_rejection": "REJECT_SCHEMA_ENVELOPE",
+      "rule": "Missing evidence rejects."
+    },
+    {
+      "id": "duplicate-evidence",
+      "performed_operation_ref": "operation-example",
+      "operation_evidence_refs": ["operation-example", "operation-example"],
+      "expected_rejection": "REJECT_SCHEMA_ENVELOPE",
+      "rule": "Duplicate evidence for one operation rejects."
+    },
+    {
+      "id": "evidence-reassignment",
+      "performed_operation_ref": "operation-example",
+      "operation_evidence_ref": "other-operation-example",
+      "expected_rejection": "REJECT_SCHEMA_ENVELOPE",
+      "rule": "Evidence cannot be reassigned to a different operation."
+    },
+    {
+      "id": "unbound-evidence",
+      "performed_operation_ref": null,
+      "operation_evidence_ref": "operation-example",
+      "expected_rejection": "REJECT_SCHEMA_ENVELOPE",
+      "rule": "An evidence record with no matching performed operation rejects."
+    },
+    {
+      "id": "evidence-instant-as-integer",
+      "recorded_at_ns": 2050,
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "The recorded instant is a decimal string matching the ratified grammar, never a coerced JSON integer."
+    },
+    {
+      "id": "operation-vocabulary-separation",
+      "condition": "a consumer-vocabulary action value is used in a producer performed_operation",
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "Producer and consumer action vocabularies remain separately owned; no producer-to-consumer mapping is implied by a wire value."
+    }
+  ]
+}

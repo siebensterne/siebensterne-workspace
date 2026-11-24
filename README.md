@@ -41,6 +41,11 @@ by this repository's `.gitignore`.
 | `engineering/conformance/NDC-D1-AMENDMENT-001.md` | approved 2026-11-24 amendment to D1 §5.8/§7.2 with its own digest; complete-manifest JCS and sidecar-only `manifest_sha256`; D1 approved bytes and historical digest unchanged |
 | `engineering/conformance/ndc-v2-wire-contract-reconciliation.md` | WP-B6 PROPOSED field-level wire reconciliation: single 102-row matrix across D0/D1/D2/Profile 1 and both exact-head typed implementations, with semantic invariants, recommended canonical forms, decision authority and test vectors; 30 owner decision points; DP-01..DP-30 resolved by WS-NDC-2026-11-24-003; no Rust type normative, no cross-execution |
 | `engineering/decisions/WS-NDC-2026-11-24-003-canonical-profile-1-wire-schema.md` | owner-ratified canonical NDC v2 Profile 1 wire schema (2026-11-24): one language-independent wire authority with independent per-repository internal representations and no shared crate; strict JCS/UTF-8, decimal-string instants, byte-derived tagged ordering, typed operations/evidence, source scope, rights, coverage, lineage, registered compression, versioned schema package with one digest; resolves DP-01..DP-30; docs only, B8 builds the package |
+| `engineering/conformance/ndc-v2-schema-profile-1/VECTORS.md` | WP-B8 canonical schema package index: SHA-256 of all 26 files (8 strict JSON Schemas, 16 canonical abstract vectors, 2 normative documents); package identity `6e8c1e48…`; no secret or external observation |
+| `engineering/conformance/ndc-v2-schema-profile-1/manifest.schema.json` | WP-B8 canonical manifest JSON Schema (draft 2020-12): single root `contract_version`, required scope identifiers, typed operations/evidence, rights, coverage, lineage and payload registry, sole `artifacts[]`, `additionalProperties:false` throughout; sidecar, envelope, ordering, rights, coverage, lineage and registry schemas alongside it |
+| `engineering/conformance/ndc-v2-schema-profile-1/semantic-constraints.md` | WP-B8 cross-field rules JSON Schema cannot express: manifest digest location, sidecar binding, byte-derived ordering, artifact and dataset digests, rights separation, coverage arithmetic, lineage cycles and revision, key lifecycle, resource policy, availability and receipt, five distinct status states; structural validation insufficient |
+| `engineering/conformance/ndc-v2-schema-profile-1/compatibility-and-evolution.md` | WP-B8 strictness baseline and evolution rules: unknown/missing/wrong-type/coercion reject, no unversioned extensions, explicit version bump rules and breaking semantic changes |
+| `scripts/check_ndc_schema_package.py` | WP-B8 workspace checker: verifies every indexed digest, JSON parseability, strict schema structure and vector patterns; prints the single reproducible `SCHEMA-PACKAGE-DIGEST`; not a producer, verifier, shared validator or connector |
 | `engineering/style/DOCUMENTATION-STANDARD.md` | adopted documentation standard: Markdown, rustdoc, source comments, official language references and sweep-before-gates rule |
 | `engineering/retirement/RRP-001.md` | owner directive D11, six dispositions, per-file record schema, P0/P1/P2 priorities and binding retirement rules |
 | `engineering/retirement/FIELD-BOOK-RETIREMENT-MANIFEST.csv` | measured Fieldbook retirement candidates with path, commit, SHA-256, size, disposition and reason (219 rows) |
@@ -64,6 +69,7 @@ make check-all        both static gate surfaces
 make check-nirnay     Nirnay's full local gate
 make audit            status + consistency + check-all
 python3 scripts/check_ndc_conformance_vectors.py   verify the WP-5 vector package
+python3 scripts/check_ndc_schema_package.py     verify the WP-B8 canonical schema package and print its digest
 ```
 
 `make check-fieldbook-static` and `make check-nirnay-static` share one meaning: static
