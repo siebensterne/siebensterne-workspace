@@ -202,3 +202,10 @@ evidence or review archive.
 - Fieldbook PR #65 at 9d6e471: replaced create_dir+hard_link with atomic no-replace directory rename (Linux renameat2/RENAME_NOREPLACE, macOS renamex_np/RENAME_EXCL, other targets fail closed), stage-order correctness, fault injection and recovery. 50 tests, 822 all-targets. CI 45363967573 success. APPROVE. Fieldbook main 071da27.
 - Cross-execution re-run at Fieldbook 071da27 / Nirnay 70716eb: stages 1-5 PASS, stage 6 REJECT_RIGHTS_EVIDENCE, no receipt/snapshot, dataset BLOCKED.
 - PUBLICATION_DURABILITY_VERIFIED remains unachieved: in-process crash tests pass, independent receipt and filesystem evidence are a separate gate.
+
+## 2026-11-24 — final evidence baseline after B12
+
+- Evidence-led audit (WS PR #18) and its B12 update (WS PR #19) merged. Nine of twelve reviewer findings RESOLVED at current heads; remaining items are streaming (B15/B16 P1), compression codec owner decision, and publication receipt consumer integration as a separate gate.
+- Final heads: Fieldbook 071da27, Nirnay 70716eb, Workspace 1b4df6b. Main CI Fieldbook 45365803281 2/2 after stale-branch rerun, Nirnay 45357742748 12/12.
+- Cross-execution re-run after atomic publication: structural, manifest, signature, publisher, artifact and ordering stages PASS; stage 6 REJECT_RIGHTS_EVIDENCE; no receipt, no snapshot, dataset BLOCKED.
+- PUBLICATION_DURABILITY_VERIFIED, RIGHTS_ADMITTED, DATASET_ACCEPTED and OPERATIONALLY_QUALIFIED remain unachieved.
