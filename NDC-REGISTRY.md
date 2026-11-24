@@ -44,12 +44,12 @@ component exists. These layers are recorded separately:
 | Approved implementation-conformance rules | **Approved as requirements** under W1.2 C1/C2 paired PRs #45/#46/#130; enforcement still to be proven | `CURRENT-STATE.json` `reviewed_commit_ids`; W2.1-B/C exists to close runtime gaps, not to reopen the approved semantics |
 | JSON schemas | Present as versioned repository artifacts (for example `schemas/research/dataset-manifest.v1.schema.json`), not part of the approved NDC v2 requirement bytes | A schema that compiles is not a verified release |
 | Canonical serialization rules | **Ratified as semantics**: 2026-11-23 Decision B, refined by Profile 1 Decision A — RFC 8785 JCS over the complete manifest, SHA-256 digest only in the detached sidecar, Ed25519 domain-separated signature; proves publisher-key control and manifest integrity only | `OWNER-RATIFICATION-2026-11-23.md` Decision B; `WS-NDC-2026-11-24-002` Decision A; `NDC-D1-AMENDMENT-001.md` |
-| Final NDC serialization schema | **Profile 1 ratified; schema artifact not yet registered** | Final schema must have exact version, registered digest, strict unknown-field handling and conformance vectors |
+| Final NDC serialization schema | **Profile 1 version and digests registered; standalone published schema artifact NOT_STARTED** | `engineering/conformance/ndc-v2-schema-digest.json` registers the exact version, profile and D1 amendment digests, strict unknown-field policy and the source of truth; no standalone schema file exists at the recorded heads, so the typed structs in both repositories are the implementation authorities |
 | Resource policy | **Ratified rule**: versioned normative consumer resource policy, no manifest `limits`, producer and verifier enforce independently; numerical maxima pending workload qualification | `WS-NDC-2026-11-24-002` Decision F |
 | Publication durability | **Ratified rule**: staged, synced, atomic no-replace rename with parent-directory sync and durable receipt; uncertain-publication recovery after rename before parent sync | `WS-NDC-2026-11-24-002` Decision G |
 | Trusted publisher registry | **Ratified rule**: out-of-band registry with key states and revocation evidence; Batch B trust interface with injected test keys only | `WS-NDC-2026-11-24-002` Decision H |
-| Runtime implementation | Exists in both repositories; **full semantic enforcement not yet demonstrated** | W2.1 Fieldbook authorization and Nirnay admission conformance work is outstanding |
-| Consumer verification capability | Partial; **full release verifier not implemented** | Nirnay admission code and the separate Proposed consumer-use document below are not an approved verifier |
+| Runtime implementation | Producer and independent verifier implemented at the exact PR heads; **cross-execution NOT_STARTED** | WP-5 acceptance matrix records exact test evidence at Fieldbook `2ef88a9` and Nirnay `2dad496`; no shared invocation boundary or connector, no verification promotion |
+| Consumer verification capability | Independent `release-verifier` crate implemented at Nirnay `2dad496`; **Proposed consumer-use proposal unchanged** | Twelve-stage verifier with abstract tests; no shared crate; the separate consumer-use document below is not approved and is not an authority for this capability |
 
 ## NDC v2 Release Serialization Profile 1 (ratified 2026-11-24)
 
@@ -87,6 +87,23 @@ requirements. It does not ratify every separate consumer-use implementation prop
 document's semantics are not silently included in the ratified NDC v2 set, and its status is
 not changed by approval of the requirement documents or by NDC v2 Release Serialization
 Profile 1.
+
+## WP-5 conformance package (2026-11-24)
+
+| Item | Record |
+|---|---|
+| Package | WS-NDC-INT-001 / WP-5 cross-repository NDC v2 conformance package |
+| Exact heads | Fieldbook `2ef88a955f74a7c88e4573683267446e331465e9` (PR #62 producer merged); Nirnay `2dad4962b584c557237d219c1c5356fc58bc4b69` (PR #142 verifier merged); Workspace `959143e8996960bfaee233e03cf40d063c47316e` (WP-2 ratified) |
+| Schema registration | `engineering/conformance/ndc-v2-schema-digest.json` — Profile 1 ratification digest `fb8a4992d63aabb41f02286317d1d69aeaec9a0e35836bd8ce6eff2754cb01fc`; D1 amendment digest `a2087aff7bcadb5aae90eea3f7893ac3147e2e8cbecce9fcb9357481e7e49894` |
+| Acceptance matrix | `engineering/conformance/ndc-v2-acceptance-matrix.md` — ten WP-5 checks with exact producer and verifier test evidence, both sides' states and typed rejection codes |
+| Vectors | `engineering/conformance/ndc-v2-conformance-vectors/VECTORS.md` — seven abstract non-market vector files with SHA-256 values |
+| Evidence checker | `scripts/check_ndc_conformance_vectors.py` — workspace evidence tool; not a producer, verifier, connector or shared runtime crate |
+| States | Producer and verifier: `TESTED_WITH_ABSTRACT_VALUES` at the exact heads. Cross-execution, wire compatibility and a standalone published schema artifact: **NOT_STARTED**. No implementation state promoted. |
+
+The WP-5 package does not change any approved digest. D0 `3dace660…`, D1 `215a5b55…`,
+D2 `22eaef7d…`, v1 digests and the separate consumer-use `4b9d1fe7…` **Proposed** status stay
+as recorded above. The consumer-use document is not an authority for the independent release
+verifier.
 
 ## Structural rule
 
