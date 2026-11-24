@@ -83,5 +83,29 @@
     "path": "W1.1-COMPLETION-RECORD.md",
     "sha256": "02e2e3cec965f0e90f084bf5e900fd6e533674930b17d5a986f77e313eba5100",
     "status": "Historical — preserved unchanged under D11"
+  },
+  "pr0_production_builder_cross_execution_2026_11_24": {
+    "path": "engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md",
+    "sha256": "a81b0f0256ac214db44a0843961f5c9a6c13db3d29fa9926558a588580e8fc58",
+    "date": "2026-11-24",
+    "status": "Current dated evidence reconciliation — docs only",
+    "command": "shasum -a 256 engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md",
+    "note": "Exact commits FB 475dc34 / NZ 70716eb / WS 62b617c; stage results and Fieldbook-publication-receipt vs Nirnay-admission-receipt distinction. Historical cross-execution records preserved unchanged."
+  },
+  "pr0_canonical_cross_execution_record_2026_11_24": {
+    "path": "engineering/conformance/ndc-v2-cross-execution-2026-11-24.md",
+    "sha256": "82bc253760ada2e932931877092d93e7238f95a33709844a956870140dea1f0b",
+    "date": "2026-11-24",
+    "status": "Current canonical record with HISTORICAL sections preserved",
+    "command": "shasum -a 256 engineering/conformance/ndc-v2-cross-execution-2026-11-24.md",
+    "note": "Used as cross_execution_source_head evidence_digest because the historical production-builder section publishes no separate SHA-256."
+  },
+  "pr0_evidence_manifest_2026_11_24": {
+    "path": "engineering/conformance/ndc-v2-evidence-manifest-2026-11-24.md",
+    "sha256": "b0f342e12fea3b144c70fc6bffec327f695879af2bfcf3e4bbff4612286ba0b5",
+    "date": "2026-11-24",
+    "status": "Dated evidence manifest entry for PR 0 reconciliation",
+    "command": "shasum -a 256 engineering/conformance/ndc-v2-evidence-manifest-2026-11-24.md",
+    "note": "Records exact heads, evidence digests, commands and make consistency / make audit exit 0. Does not digest CURRENT-STATE.json or itself; no circular evidence claim."
   }
 }

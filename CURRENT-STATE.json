@@ -1,25 +1,210 @@
 {
   "schema_version": 2,
-  "generated_utc_date": "2026-11-23",
+  "generated_utc_date": "2026-11-24",
   "purpose": "Coordination record. No field contains this record's own commit hash.",
   "workspace_state_commit_preceding_record": "cc5404296bd3f33156c0745d72bcabb0ee629c09",
+  "reconciliation_reference": {
+    "date": "2026-11-24",
+    "verification_timestamp": "2026-11-24T15:06:04Z",
+    "scope": "PR 0 evidence baseline reconciliation; docs/JSON only; no source, schema, right, data, provider, India implementation or experiment change; no commit",
+    "branch": "docs/evidence-baseline-reconciliation",
+    "base_commit": "62b617c380ea97cd2a68f67c880a1f652ef14961",
+    "note": "The five source-head concepts below are separately evidenced and must not be conflated. Legacy mixed head keys further down are retained only for backward compatibility with existing checkers and are explicitly HISTORICAL or legacy."
+  },
+  "current_source_head": {
+    "fieldbook": {
+      "repository": "fieldbook",
+      "commit_sha": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
+      "clean_worktree": true,
+      "verification_method": "local read-only git observation (rev-parse HEAD and status --short); clean worktree on main",
+      "workflow_or_command": "git -C /Users/tourist/Documents/siebensterne-workspace/fieldbook rev-parse HEAD && git -C /Users/tourist/Documents/siebensterne-workspace/fieldbook status --short",
+      "run_id": "NONE_LOCAL_OBSERVATION",
+      "result": "HEAD_CONFIRMED; clean; branch main",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "009c1f0c177ca41d4971ab1209ebbaf9f24ab632e037594b3a4cc1a15242d2b2"
+    },
+    "nirnay": {
+      "repository": "nirnay",
+      "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
+      "clean_worktree": true,
+      "verification_method": "local read-only git observation (rev-parse HEAD and status --short); clean worktree on main",
+      "workflow_or_command": "git -C /Users/tourist/Documents/siebensterne-workspace/nirnay rev-parse HEAD && git -C /Users/tourist/Documents/siebensterne-workspace/nirnay status --short",
+      "run_id": "NONE_LOCAL_OBSERVATION",
+      "result": "HEAD_CONFIRMED; clean; branch main",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "009c1f0c177ca41d4971ab1209ebbaf9f24ab632e037594b3a4cc1a15242d2b2"
+    },
+    "workspace": {
+      "repository": "workspace",
+      "commit_sha": "62b617c380ea97cd2a68f67c880a1f652ef14961",
+      "clean_worktree": true,
+      "verification_method": "local read-only git observation (rev-parse HEAD and status --short); clean worktree on main",
+      "workflow_or_command": "git -C /Users/tourist/Documents/siebensterne-workspace rev-parse HEAD && git -C /Users/tourist/Documents/siebensterne-workspace status --short",
+      "run_id": "NONE_LOCAL_OBSERVATION",
+      "result": "HEAD_CONFIRMED; clean; branch main; local commits beyond the bundled origin were pushed before this reconciliation",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "009c1f0c177ca41d4971ab1209ebbaf9f24ab632e037594b3a4cc1a15242d2b2"
+    }
+  },
+  "ci_verified_source_head": {
+    "fieldbook": {
+      "repository": "fieldbook",
+      "commit_sha": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
+      "clean_worktree": true,
+      "verification_method": "hosted CI static-gate workflow; conclusion recorded in REVIEW-LOG.md; no new CI run executed by this reconciliation",
+      "workflow_or_command": "hosted CI run 45406722498 (Fieldbook CI, static gates only); evidence in REVIEW-LOG.md dated 2026-11-24 final release-correctness baseline entry",
+      "run_id": "45406722498",
+      "result": "SUCCESS; 2/2 jobs; static gates only, no full test suite",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+    },
+    "nirnay": {
+      "repository": "nirnay",
+      "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
+      "clean_worktree": true,
+      "verification_method": "hosted CI static-gate workflow; conclusion recorded in REVIEW-LOG.md; no new CI run executed by this reconciliation",
+      "workflow_or_command": "hosted CI run 45357742748 (Nirnay CI, static gates only); evidence in REVIEW-LOG.md dated 2026-11-24 final release-correctness baseline entry",
+      "run_id": "45357742748",
+      "result": "SUCCESS; 12/12 jobs; static gates only, no full test suite",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+    },
+    "workspace": {
+      "repository": "workspace",
+      "commit_sha": "62b617c380ea97cd2a68f67c880a1f652ef14961",
+      "clean_worktree": true,
+      "verification_method": "NO HOSTED CI RUN RECORDED for the workspace orchestration repository; verification method is workspace make audit static gates, not CI",
+      "workflow_or_command": "make audit (status + consistency + check-all); no hosted CI workflow or run id exists for this repository",
+      "run_id": "NONE_NO_CI_RUN_RECORDED",
+      "result": "NOT_CI_VERIFIED; no CI run recorded; workspace make audit exit 0 (CONSISTENCY OK)",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+    }
+  },
+  "local_tested_source_head": {
+    "fieldbook": {
+      "repository": "fieldbook",
+      "commit_sha": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
+      "clean_worktree": true,
+      "verification_method": "workspace static gates against a temporary symlink to the clean local clone; no full test suite re-run",
+      "workflow_or_command": "make consistency && make audit; temporary symlink to clean Fieldbook clone 475dc34, removed afterwards",
+      "run_id": "NONE_LOCAL_GATES",
+      "result": "CONSISTENCY_OK exit 0; AUDIT_OK exit 0; static gates only (fmt, clippy, docs, style, prose, ruff, pyink, q-style, quality contract, license provenance, shellcheck, cross-pollution, rust style)",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "b0f342e12fea3b144c70fc6bffec327f695879af2bfcf3e4bbff4612286ba0b5"
+    },
+    "nirnay": {
+      "repository": "nirnay",
+      "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
+      "clean_worktree": true,
+      "verification_method": "workspace static gates against a temporary symlink to the clean local clone; no full test suite re-run",
+      "workflow_or_command": "make consistency && make audit; temporary symlink to clean Nirnay clone 70716eb, removed afterwards",
+      "run_id": "NONE_LOCAL_GATES",
+      "result": "CONSISTENCY_OK exit 0; AUDIT_OK exit 0; Nirnay check-static passed; no full suite re-run",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "b0f342e12fea3b144c70fc6bffec327f695879af2bfcf3e4bbff4612286ba0b5"
+    },
+    "workspace": {
+      "repository": "workspace",
+      "commit_sha": "62b617c380ea97cd2a68f67c880a1f652ef14961",
+      "clean_worktree": true,
+      "verification_method": "workspace make audit static gates run in the clean worktree; no CI run and no test suite",
+      "workflow_or_command": "make consistency && make audit in the reconciliation worktree; local clones symlinked only for the runs and removed afterwards",
+      "run_id": "NONE_LOCAL_GATES",
+      "result": "CONSISTENCY_OK exit 0; AUDIT_OK exit 0; static gates only",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "b0f342e12fea3b144c70fc6bffec327f695879af2bfcf3e4bbff4612286ba0b5"
+    }
+  },
+  "cross_execution_source_head": {
+    "fieldbook": {
+      "repository": "fieldbook",
+      "commit_sha": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
+      "clean_worktree": true,
+      "verification_method": "recorded real producer/verifier binary cross-execution at this exact head; consolidated in the dated production-builder record; not re-run by this reconciliation",
+      "workflow_or_command": "target/debug/ndc-conformance-producer --spec docs/specifications/ndc-conformance-producer-spec-example-2026-11-24.json --out <root>/publisher-abstract/dataset-abstract ; nirnay/target/debug/ndc-conformance-verifier --release <root>/publisher-abstract/dataset-abstract/conformance-release-2 --out <diagnostic.json> ; shasum -a 256 engineering/conformance/ndc-v2-cross-execution-2026-11-24.md",
+      "run_id": "NONE_CROSS_EXECUTION_RECORD",
+      "result": "stages 1-5 PASS; stage 6 REJECT_RIGHTS_EVIDENCE; RIGHTS_ADMISSION_REFUSED; no Nirnay admission receipt; Fieldbook publication receipt written; dataset BLOCKED",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "82bc253760ada2e932931877092d93e7238f95a33709844a956870140dea1f0b"
+    },
+    "nirnay": {
+      "repository": "nirnay",
+      "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
+      "clean_worktree": true,
+      "verification_method": "recorded real verifier binary at this exact head against real Fieldbook producer output; consolidated in the dated production-builder record; not re-run by this reconciliation",
+      "workflow_or_command": "nirnay/target/debug/ndc-conformance-verifier --release <root>/publisher-abstract/dataset-abstract/conformance-release-2 --out <diagnostic.json> ; shasum -a 256 engineering/conformance/ndc-v2-cross-execution-2026-11-24.md",
+      "run_id": "NONE_CROSS_EXECUTION_RECORD",
+      "result": "RIGHTS_ADMISSION_REFUSED; rights_state UNKNOWN; receipt_written false means no Nirnay admission receipt, not no Fieldbook publication receipt; dataset BLOCKED",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "82bc253760ada2e932931877092d93e7238f95a33709844a956870140dea1f0b"
+    },
+    "workspace": {
+      "repository": "workspace",
+      "commit_sha": "62b617c380ea97cd2a68f67c880a1f652ef14961",
+      "clean_worktree": true,
+      "verification_method": "workspace canonical schema package and cross-execution record are evidence at this head; workspace is not a runtime participant in the producer/verifier exchange",
+      "workflow_or_command": "read-only evidence review of engineering/conformance/ndc-v2-cross-execution-2026-11-24.md and the dated production-builder record; shasum -a 256 engineering/conformance/ndc-v2-cross-execution-2026-11-24.md",
+      "run_id": "NONE_CROSS_EXECUTION_RECORD",
+      "result": "EVIDENCE_REVIEWED; no runtime cross-execution by the workspace repository; capability states unchanged",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "82bc253760ada2e932931877092d93e7238f95a33709844a956870140dea1f0b"
+    }
+  },
+  "reviewed_source_head": {
+    "fieldbook": {
+      "repository": "fieldbook",
+      "commit_sha": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
+      "clean_worktree": true,
+      "verification_method": "documentation review of exact-head evidence in REVIEW-LOG.md and the dated conformance records; no source edit",
+      "workflow_or_command": "REVIEW-LOG.md dated entries + git status --short on the clean local clone; review of CURRENT-STATE.json source-head concepts",
+      "run_id": "PR0_EVIDENCE_BASELINE_RECONCILIATION",
+      "result": "REVIEWED_2026_11_24; docs/JSON only; no source change; no commit",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+    },
+    "nirnay": {
+      "repository": "nirnay",
+      "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
+      "clean_worktree": true,
+      "verification_method": "documentation review of exact-head evidence in REVIEW-LOG.md and the dated conformance records; no source edit",
+      "workflow_or_command": "REVIEW-LOG.md dated entries + git status --short on the clean local clone; review of CURRENT-STATE.json source-head concepts",
+      "run_id": "PR0_EVIDENCE_BASELINE_RECONCILIATION",
+      "result": "REVIEWED_2026_11_24; docs/JSON only; no source change; no commit",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+    },
+    "workspace": {
+      "repository": "workspace",
+      "commit_sha": "62b617c380ea97cd2a68f67c880a1f652ef14961",
+      "clean_worktree": true,
+      "verification_method": "documentation review of the reconciliation worktree; exact base head recorded and worktree clean",
+      "workflow_or_command": "git -C /Users/tourist/Documents/siebensterne-workspace rev-parse HEAD && git -C /Users/tourist/Documents/siebensterne-workspace status --short; REVIEW-LOG.md dated reconciliation entry",
+      "run_id": "PR0_EVIDENCE_BASELINE_RECONCILIATION",
+      "result": "REVIEWED_2026_11_24; docs/JSON only; no source change; no commit",
+      "verification_timestamp": "2026-11-24T15:06:04Z",
+      "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+    }
+  },
   "bootstrap_baselines": {
     "fieldbook": "28eb8779ea2aab67ce471d9d3e9f222faf8f7327",
     "nirnay": "437179a8fdd0b1935420d1467f9a5c8a60da824d",
-    "note": "Historical bootstrap pins in WORKSPACE.lock.json. Not current, reviewed or tested heads."
+    "note": "HISTORICAL bootstrap pins in WORKSPACE.lock.json. Not current, reviewed or tested heads."
   },
   "reviewed_source_heads": {
     "fieldbook": "3c3279bdaa8df6aa44018184fefb662e98b5e0c1",
     "nirnay": "f6842d2b6438c657c4d4eaec8edb3920193d2181",
-    "note": "RRP-001 review and measurement heads: manifests were built with git ls-files + shasum -a 256 + stat at these heads. Historical; not the current or tested heads."
+    "note": "LEGACY / HISTORICAL: RRP-001 review and measurement heads: manifests were built with git ls-files + shasum -a 256 + stat at these heads. Retained unchanged for backward compatibility; not the current or tested heads. See reviewed_source_head for the separately evidenced current review."
   },
   "current_source_heads": {
     "fieldbook": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
-    "nirnay": "70716ebf66289a86335641847724fd92bf6bcce7"
+    "nirnay": "70716ebf66289a86335641847724fd92bf6bcce7",
+    "note": "LEGACY backward-compatible pair. The separately evidenced concepts are current_source_head, ci_verified_source_head, local_tested_source_head, cross_execution_source_head and reviewed_source_head; this pair is not evidence of CI, local test or cross-execution."
   },
   "tested_source_heads": {
     "fieldbook": "071da27ed6512fb38c29ada679d76dd0e30ddb6b",
-    "nirnay": "70716ebf66289a86335641847724fd92bf6bcce7"
+    "nirnay": "70716ebf66289a86335641847724fd92bf6bcce7",
+    "note": "LEGACY / HISTORICAL: retained unchanged for backward compatibility. Deliberately NOT set to current_source_head merely because CI passed; see local_tested_source_head and cross_execution_source_head for the separately evidenced current heads."
   },
   "ci": {
     "fieldbook": {
@@ -36,11 +221,116 @@
       "jobs": "12/12"
     }
   },
+  "historical_source_head_evidence": {
+    "note": "Explicitly HISTORICAL. Preserved unchanged for traceability; none of these entries is a current, CI-verified, locally tested, cross-executed or reviewed head at this reconciliation. They supersede nothing and are not promoted by later CI results.",
+    "entries": [
+      {
+        "id": "HIST-CROSS-B12-071DA27",
+        "concept": "cross_execution_source_head",
+        "repository": "fieldbook",
+        "commit_sha": "071da27ed6512fb38c29ada679d76dd0e30ddb6b",
+        "clean_worktree": true,
+        "verification_method": "recorded conformance-path cross-execution after the B12 atomic-publication correction",
+        "workflow_or_command": "recorded in engineering/conformance/ndc-v2-cross-execution-2026-11-24.md, section 'Re-execution after the publication correction (B12)'",
+        "run_id": "NONE_HISTORICAL_RECORD",
+        "result": "HISTORICAL: stages 1-5 PASS; stage 6 REJECT_RIGHTS_EVIDENCE; no Nirnay admission receipt; dataset BLOCKED",
+        "verification_timestamp": "2026-11-24T15:06:04Z",
+        "evidence_digest": "82bc253760ada2e932931877092d93e7238f95a33709844a956870140dea1f0b"
+      },
+      {
+        "id": "HIST-CROSS-CONFORMANCE-PATH",
+        "concept": "cross_execution_source_head",
+        "repository": "fieldbook",
+        "commit_sha": "c0acffc323172f23f65dd2bf1b727478fde2b0a1",
+        "clean_worktree": true,
+        "verification_method": "recorded conformance producer and wire mapping (PR #63) in the canonical cross-execution record",
+        "workflow_or_command": "recorded in engineering/conformance/ndc-v2-cross-execution-2026-11-24.md, sections 'Exact commits' and 'Commands'",
+        "run_id": "NONE_HISTORICAL_RECORD",
+        "result": "HISTORICAL conformance-path head; together with 5b66336 and 071da27, preserved by the canonical record",
+        "verification_timestamp": "2026-11-24T15:06:04Z",
+        "evidence_digest": "82bc253760ada2e932931877092d93e7238f95a33709844a956870140dea1f0b"
+      },
+      {
+        "id": "HIST-PARITY-PR66-HEAD",
+        "concept": "production_builder_parity",
+        "repository": "fieldbook",
+        "commit_sha": "001e2688ed4863919e2eb8d35c47ee05615e755a",
+        "clean_worktree": true,
+        "verification_method": "recorded FB-NDC-013 PR #66 production-builder parity head",
+        "workflow_or_command": "recorded in engineering/conformance/ndc-v2-cross-execution-2026-11-24.md, section 'Production builder parity cross-execution (FB-NDC-013)'",
+        "run_id": "NONE_HISTORICAL_RECORD",
+        "result": "HISTORICAL production-builder parity PR head; superseded for current status by the dated 2026-11-24 record",
+        "verification_timestamp": "2026-11-24T15:06:04Z",
+        "evidence_digest": "a81b0f0256ac214db44a0843961f5c9a6c13db3d29fa9926558a588580e8fc58"
+      },
+      {
+        "id": "HIST-PARITY-PR66-MERGED",
+        "concept": "production_builder_parity",
+        "repository": "fieldbook",
+        "commit_sha": "5703185d59b1ccfeaa310926f26e006abf8ac72c",
+        "clean_worktree": true,
+        "verification_method": "recorded merged main head of FB-NDC-013 PR #66 production-builder parity cross-execution",
+        "workflow_or_command": "recorded in engineering/conformance/ndc-v2-cross-execution-2026-11-24.md and REVIEW-LOG.md dated 2026-11-24 production-builder parity entries",
+        "run_id": "NONE_HISTORICAL_RECORD",
+        "result": "HISTORICAL production-builder parity merged head; counts unchanged; superseded for current status by the dated 2026-11-24 record",
+        "verification_timestamp": "2026-11-24T15:06:04Z",
+        "evidence_digest": "a81b0f0256ac214db44a0843961f5c9a6c13db3d29fa9926558a588580e8fc58"
+      },
+      {
+        "id": "HIST-VERIFIER-70716EB",
+        "concept": "cross_execution_source_head",
+        "repository": "nirnay",
+        "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
+        "clean_worktree": true,
+        "verification_method": "verifier head in all recorded conformance-path and production-builder cross-executions",
+        "workflow_or_command": "recorded in engineering/conformance/ndc-v2-cross-execution-2026-11-24.md and REVIEW-LOG.md",
+        "run_id": "NONE_HISTORICAL_RECORD",
+        "result": "HISTORICAL verifier head in the older runs; the same SHA is separately evidenced as current in cross_execution_source_head",
+        "verification_timestamp": "2026-11-24T15:06:04Z",
+        "evidence_digest": "82bc253760ada2e932931877092d93e7238f95a33709844a956870140dea1f0b"
+      },
+      {
+        "id": "HIST-RRP001-REVIEW-FB",
+        "concept": "reviewed_source_head",
+        "repository": "fieldbook",
+        "commit_sha": "3c3279bdaa8df6aa44018184fefb662e98b5e0c1",
+        "clean_worktree": true,
+        "verification_method": "RRP-001 manifest measurement with git ls-files + shasum -a 256 + stat",
+        "workflow_or_command": "recorded in REVIEW-LOG.md RRP-001 entry and the legacy reviewed_source_heads key",
+        "run_id": "NONE_HISTORICAL_RECORD",
+        "result": "HISTORICAL review/measurement head; not current or tested",
+        "verification_timestamp": "2026-11-24T15:06:04Z",
+        "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+      },
+      {
+        "id": "HIST-RRP001-REVIEW-NZ",
+        "concept": "reviewed_source_head",
+        "repository": "nirnay",
+        "commit_sha": "f6842d2b6438c657c4d4eaec8edb3920193d2181",
+        "clean_worktree": true,
+        "verification_method": "RRP-001 manifest measurement with git ls-files + shasum -a 256 + stat",
+        "workflow_or_command": "recorded in REVIEW-LOG.md RRP-001 entry and the legacy reviewed_source_heads key",
+        "run_id": "NONE_HISTORICAL_RECORD",
+        "result": "HISTORICAL review/measurement head; not current or tested",
+        "verification_timestamp": "2026-11-24T15:06:04Z",
+        "evidence_digest": "9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c"
+      }
+    ]
+  },
+  "evidence_manifest": {
+    "date": "2026-11-24",
+    "path": "engineering/conformance/ndc-v2-evidence-manifest-2026-11-24.md",
+    "sha256": "b0f342e12fea3b144c70fc6bffec327f695879af2bfcf3e4bbff4612286ba0b5",
+    "command": "shasum -a 256 engineering/conformance/ndc-v2-evidence-manifest-2026-11-24.md",
+    "purpose": "Dated evidence manifest entry for the PR 0 evidence baseline reconciliation: exact commits, evidence digests, commands and gate results",
+    "note": "The manifest does not digest this file or itself; no circular evidence claim. Its SHA-256 is also the local_tested_source_head evidence_digest."
+  },
   "static_gate_results": {
     "workspace": {
-      "command": "make audit",
-      "result": "static gates only",
-      "note": "make check-all invokes check-static in both repositories. It does not execute either full test suite."
+      "command": "make consistency && make audit",
+      "result": "CONSISTENCY OK exit 0; AUDIT exit 0",
+      "note": "Verified at the 2026-11-24 reconciliation with temporary symlinks to clean Fieldbook 475dc34 and Nirnay 70716eb clones, removed afterwards. make check-all invokes check-static in both repositories. It does not execute either full test suite.",
+      "evidence": "engineering/conformance/ndc-v2-evidence-manifest-2026-11-24.md"
     },
     "fieldbook": {
       "command": "cargo xtask fmt/lint/docs/style",
@@ -235,9 +525,12 @@
       "DATASET_ACCEPTED": false,
       "OPERATIONALLY_QUALIFIED": false
     },
-    "cross_execution_refusal": "stage 6 REJECT_RIGHTS_EVIDENCE under UNKNOWN rights; no receipt, no dataset acceptance (conformance-path and production-builder binary cross-executions)"
+    "cross_execution_refusal": "stage 6 REJECT_RIGHTS_EVIDENCE under UNKNOWN rights; no receipt, no dataset acceptance (conformance-path and production-builder binary cross-executions)",
+    "receipt_note": "'no receipt' above means no Nirnay admission receipt (receipt_written:false in the verifier diagnostic). The Fieldbook production builder does write its publication receipt into the ledger beside the release. Clarified by engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md; capability states unchanged."
   },
   "production_builder_parity": {
+    "status": "HISTORICAL — preserved unchanged as earlier production-builder parity evidence; not the current head at this reconciliation",
+    "superseded_by": "engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md (dated current evidence baseline; earlier sections preserved, not overwritten)",
     "record": "engineering/conformance/ndc-v2-cross-execution-2026-11-24.md, section 'Production builder parity cross-execution (FB-NDC-013)'",
     "fieldbook_pr_head": "001e2688ed4863919e2eb8d35c47ee05615e755a",
     "fieldbook_merged_main": "5703185d59b1ccfeaa310926f26e006abf8ac72c",
@@ -255,6 +548,7 @@
     "refusal": "stage 6 REJECT_RIGHTS_EVIDENCE under UNKNOWN rights",
     "phases": "structural, manifest, signature, publisher, artifact and ordering PASS; stages 7-12 NOT_RUN",
     "receipt_written": false,
+    "receipt_written_note": "This is the Nirnay verifier diagnostic field: false means no Nirnay admission receipt was written. It does NOT mean Fieldbook wrote no publication receipt; the Fieldbook publication receipt conformance-release-2.receipt.json is written into the ledger beside the release. Clarified by the dated 2026-11-24 production-builder record; earlier 'no receipt' wording is superseded, not rewritten.",
     "private_snapshot_survives": false,
     "dataset_accepted": false,
     "capability_states": {
@@ -267,6 +561,6 @@
     },
     "note": "Production-path binary cross-execution heads. They do not replace the conformance-path current/tested heads and CI above, which retain their own evidence."
   },
-  "evidence_audit_status": "9 RESOLVED, 1 REMAINING (B15/B16 streaming), 1 OWNER-DECISION (compression codec), 1 SEPARATE GATE (publication receipt). B12 atomic publication merged at 071da27. PUBLICATION_DURABILITY_VERIFIED not achieved. Production-builder parity covered at Fieldbook 5703185 (PR #66) / Nirnay 70716eb; counts unchanged.",
-  "release_correctness": "FB-NDC-013 (PR #66), FB-PUB-014/015/016 (PR #67), FB-PUB-017 (PR #68) merged. Actual production builder output verified by real Nirnay verifier. Remaining: B15/B16 streaming, durability qualification P-D1..P-D5, publication receipt consumer gate."
+  "evidence_audit_status": "9 RESOLVED, 1 REMAINING (B15/B16 streaming), 1 OWNER-DECISION (compression codec), 1 SEPARATE GATE (publication receipt). B12 atomic publication merged at 071da27. PUBLICATION_DURABILITY_VERIFIED not achieved. HISTORICAL production-builder parity was covered at Fieldbook 5703185 (PR #66) / Nirnay 70716eb; counts unchanged. Current dated baseline at Fieldbook 475dc34 / Nirnay 70716eb / Workspace 62b617c is in engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md; receipt_written:false is a Nirnay admission-receipt fact, not a Fieldbook publication-receipt claim.",
+  "release_correctness": "FB-NDC-013 (PR #66), FB-PUB-014/015/016 (PR #67), FB-PUB-017 (PR #68) merged. Actual production builder output verified by real Nirnay verifier at the dated 2026-11-24 baseline (FB 475dc34 / NZ 70716eb / WS 62b617c). Remaining: B15/B16 streaming, durability qualification P-D1..P-D5, publication receipt consumer gate. See engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md."
 }

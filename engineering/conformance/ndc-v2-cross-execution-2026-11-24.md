@@ -4,6 +4,18 @@ Status: **EXECUTED** at the exact commits below. This record reports wire and
 cryptographic interoperability only. It does not grant rights, accept a dataset
 or authorize use.
 
+> **Reconciliation notice (2026-11-24, PR 0):** the conformance-path section below
+> (Fieldbook `071da27ed6512fb38c29ada679d76dd0e30ddb6b`) and the FB-NDC-013
+> production-builder parity section (Fieldbook PR head `001e2688…`, merged main
+> `5703185d59b1ccfeaa310926f26e006abf8ac72c`) are explicitly **HISTORICAL** and
+> are preserved unchanged. The current final cross-execution evidence at Fieldbook
+> `475dc34c8cc510ac8dfba158dfdedbd91950f219` / Nirnay
+> `70716ebf66289a86335641847724fd92bf6bcce7` / Workspace
+> `62b617c380ea97cd2a68f67c880a1f652ef14961` is consolidated in
+> `engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md`,
+> which supersedes stale head wording and clarifies the two distinct receipts.
+> Nothing in this record is rewritten by that notice.
+
 ## Exact commits
 
 | Component | Commit |
@@ -187,3 +199,64 @@ or a passing artifact check.
 | `RIGHTS_ADMITTED` | not achieved — rights `UNKNOWN` |
 | `DATASET_ACCEPTED` | not achieved — `dataset_accepted: false` |
 | `OPERATIONALLY_QUALIFIED` | not achieved — no provider, rights decision, accepted dataset, India implementation or live route |
+
+## Reconciliation 2026-11-24 — current evidence baseline (PR 0)
+
+This section is the canonical pointer for the current baseline. It does not
+re-run any binary, alter any source repository or claim any new capability.
+
+### Exact commits at this reconciliation
+
+| Repository | Commit | State |
+|---|---|---|
+| Fieldbook | `475dc34c8cc510ac8dfba158dfdedbd91950f219` | current, CI-verified, local-tested, cross-executed, reviewed; clean `main` |
+| Nirnay | `70716ebf66289a86335641847724fd92bf6bcce7` | current, CI-verified, local-tested, cross-executed, reviewed; clean `main` |
+| Workspace | `62b617c380ea97cd2a68f67c880a1f652ef14961` | current, local-tested (workspace `make audit`), reviewed; clean `main`; **no CI run recorded** |
+
+Fieldbook CI run `45406722498` (2/2 success) and Nirnay CI run `45357742748`
+(12/12 success) are recorded in `REVIEW-LOG.md`. No hosted CI run is recorded
+for the workspace orchestration repository; its verification method is the
+workspace `make audit` gate, not CI.
+
+### Historical entries preserved
+
+- Conformance-path cross-execution at Fieldbook `071da27` (PR #65) and Nirnay
+  `70716eb`, including its re-execution after the B12 atomic-publication
+  correction — **HISTORICAL**, sections above unchanged.
+- FB-NDC-013 production-builder parity at Fieldbook PR head `001e2688…`, merged
+  main `5703185`, Nirnay `70716eb` — **HISTORICAL**, section above unchanged.
+- Older conformance-path heads `c0acffc`, `5b66336` and the reviewed/tested
+  heads tied to RRP-001 and earlier programmes remain in the dated records that
+  first reported them; they are not promoted to current status here.
+
+### Current final cross-execution outcome
+
+The final production-builder cross-execution at Fieldbook `475dc34f` / Nirnay
+`70716eb` is recorded in `REVIEW-LOG.md` (2026-11-24 final release-correctness
+baseline entry): structural, manifest, signature, publisher, artifact and
+ordering stages PASS; stage 6 returns `REJECT_RIGHTS_EVIDENCE` under
+`rights_state: UNKNOWN`; outcome `RIGHTS_ADMISSION_REFUSED`; stages 7-12
+`NOT_RUN`; `dataset_accepted: false`; `private_snapshot_survives: false`.
+Exact commands, release layout, stage results and the two-receipt distinction
+are in `engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md`.
+
+**Two receipts are distinct.** The Fieldbook production builder writes its
+publication receipt (`conformance-release-2.receipt.json`) into the ledger
+beside the release as part of the publication state machine. The Nirnay
+verifier diagnostic field `receipt_written: false` means that **no Nirnay
+admission receipt was written**; it does **not** mean that Fieldbook wrote no
+publication receipt. Earlier wording such as "no receipt" in the historical
+sections above is superseded by this clarification; the historical text is
+preserved, not rewritten.
+
+### Evidence digest
+
+The evidence digest recorded for `cross_execution_source_head` in
+`CURRENT-STATE.json` is the SHA-256 of this canonical record, computed with:
+
+```
+shasum -a 256 engineering/conformance/ndc-v2-cross-execution-2026-11-24.md
+```
+
+No separate SHA-256 is published inside the historical production-builder
+section, so this canonical file digest is used as required.
