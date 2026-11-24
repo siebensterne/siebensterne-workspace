@@ -123,5 +123,21 @@
     "status": "Dated D0 evidence record — docs only",
     "command": "shasum -a 256 engineering/conformance/d0-full-matrix-evidence-2026-11-24.md",
     "note": "Fieldbook DUR-002 at 4e0f2f5 (PR #74): 28 exit points, 24 owner boundary names, outcomes 1/17/2/7/1, idempotent second recovery, in-process fault injection separate, D1/D1b and D2-D4 unqualified."
+  },
+  "ws_stream_001_architecture_ratification": {
+    "path": "engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md",
+    "sha256": "f74153024c1d526fe5c9d49b22e541263581c52c0dbae19a67e8d2ea841a4fe1",
+    "date": "2026-11-25",
+    "status": "Ratified by owner direction 2026-11-25; implementation completed at Phase 3 final heads under finite TEST_ONLY profiles",
+    "command": "shasum -a 256 engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md",
+    "note": "Contracts A-01..A-12 and all twenty source decisions ratified at contract level. Implemented at FB 8216197 (PR #75) / NZ c1c2f0d (PR #145) as STREAMING_IMPLEMENTATION_COMPLETE, not Verified. Numeric maxima, codec identifier, STREAM_RESOURCE_PROFILE_RATIFIED and PERF_001_QUALIFIED remain deferred or blocked. See phase3_acceptance_2026_11_25."
+  },
+  "phase3_acceptance_2026_11_25": {
+    "path": "engineering/conformance/phase-3-acceptance-2026-11-25.md",
+    "sha256": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4",
+    "date": "2026-11-25",
+    "status": "Accepted — docs/JSON evidence record only; no commit",
+    "command": "shasum -a 256 engineering/conformance/phase-3-acceptance-2026-11-25.md",
+    "note": "Final heads FB 8216197 / NZ c1c2f0d, hosted CI 45491963354 (2/2) and 45491893837 (12/12), merged package ledger, final binary cross-execution with stage 6 REJECT_RIGHTS_EVIDENCE and RIGHTS_ADMISSION_REFUSED, capability states and claim discipline. Numeric maxima deferred; no production invocation without an approved role ResourceProfile; PERF-001 and D1 not run."
   }
 }
