@@ -7,6 +7,10 @@ No implementation, schema, resource maximum, profile identifier, right, dataset,
 key, provider authority, India artefact or experiment is approved by this document. No
 implementation state is promoted.
 
+Ratification pointer (2026-11-25): `engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md`
+ratifies the B15/B16 architecture and interface contracts. All numeric resource maxima remain
+DEFERRED; this design keeps its PROPOSED status.
+
 Scope: documentation only. The worktree is `docs/b15-streaming-producer-design` on workspace
 base `95580f5`. No source file, schema file, right record, data file, provider record, India
 record, experiment, release, key, dataset or CI configuration was changed. No commit was

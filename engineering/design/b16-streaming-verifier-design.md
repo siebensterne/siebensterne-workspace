@@ -8,6 +8,10 @@ B15/B16 streaming finding. Status: **PROPOSED / AWAITING OWNER APPROVAL**. Branc
 specification only. It grants no implementation authority, accepts no dataset,
 changes no right and creates no admission receipt.
 
+Ratification pointer (2026-11-25): `engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md`
+ratifies the B15/B16 architecture and interface contracts. All numeric resource maxima remain
+DEFERRED; this design keeps its PROPOSED status.
+
 ## 1. Authority, scope and freeze
 
 ### 1.1 Governing documents
