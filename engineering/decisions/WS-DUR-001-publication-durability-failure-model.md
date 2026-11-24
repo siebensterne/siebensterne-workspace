@@ -23,12 +23,27 @@ experiments `BLOCKED`, live execution `DISABLED`, D11 strict.
 WS-EVIDENCE-026 terminology reconciliation (2026-11-24): the `tested_failure_cases` row in §2.1,
 the permissible D0 claim in §5 and the I-02 note in §7 were corrected to distinguish the three
 fresh-process (subprocess) D0 cases from in-process fault injection. The ratified failure model,
-tier booleans, acknowledgement contract and invariants are unchanged. The correction neither
-broadens D0 beyond its stated three-case scope nor narrows the achieved scope to false;
-`PUBLICATION_DURABILITY_VERIFIED` remains NOT ACHIEVED. The original ratification digest is
-preserved in `REVIEW-LOG.md`; the amended document digest is recorded in `CURRENT-STATE.json`,
-`NDC-REGISTRY.md` and `ADR-REGISTRY.md`. See
+tier booleans, acknowledgement contract and invariants are unchanged. At that time the correction
+neither broadened D0 beyond its then-stated three-case scope nor narrowed the achieved scope to
+false; `PUBLICATION_DURABILITY_VERIFIED` remains NOT ACHIEVED. The original ratification digest,
+the WS-EVIDENCE-026-era digest and the current amended digest are recorded in `REVIEW-LOG.md`,
+`CURRENT-STATE.json`, `NDC-REGISTRY.md` and `ADR-REGISTRY.md`. See
 `engineering/conformance/ws-evidence-026-provenance-2026-11-24.md`.
+
+FB-DUR-002 evidence extension (2026-11-24): Fieldbook PR #74 merged at
+`4e0f2f5c9ad9ea239b73fdedb3405c5a55f7abd6` and extends the fresh-process D0 harness to **28
+concrete exit points covering all 24 owner boundary names**, with a pre-declared expected-outcome
+table (`NO_EVIDENCE` 1, `UNCERTAIN_PUBLICATION_QUARANTINED` 17, `RECOVERED_STAGED` 2,
+`RECOVERED_PUBLISHED` 7, `ALREADY_AVAILABLE` 1) and an idempotent second recovery for every
+`RECOVERED_*` row. The earlier WS-EVIDENCE-026 three-case reconciliation is accurate for its own
+commit and is preserved as **HISTORICAL** evidence; it is now superseded for current D0 evidence
+by the full matrix. In-process fault injection remains a separate evidence class and is not
+counted as fresh-process evidence. D0 remains **process termination only**: D1 OS/filesystem
+crash, D1b physical power loss, D2 local device failure, D3 host failure and D4 disaster recovery
+remain unqualified, and no global durability claim is made. The amended decision digest is
+recorded in `CURRENT-STATE.json`, `NDC-REGISTRY.md` and `ADR-REGISTRY.md`; the prior WS-EVIDENCE-026
+digest `d3a18e62…` and the original ratification digest `2b04f9b…` are preserved as historical in
+`REVIEW-LOG.md`. See `engineering/conformance/d0-full-matrix-evidence-2026-11-24.md`.
 
 ## 1. Governing decision
 
@@ -53,7 +68,7 @@ The ratified predicates are:
 
 | Predicate | Value | Condition / scope |
 |---|---|---|
-| `D0_PROCESS_RECOVERY_VERIFIED` | `true` | Process-termination tier only; **condition: PUB-020 merged and its gate evidence recorded at an exact Fieldbook commit**. PUB-019 provides the journal-v2 and restart-fault evidence; PUB-020 is the owner-designated process-recovery verification package. Until the PUB-020 merge is evidenced, this predicate has no merged evidence despite its ratified value. |
+| `D0_PROCESS_RECOVERY_VERIFIED` | `true` | Process-termination tier only; **condition satisfied at exact commits**: PUB-019 provides journal-v2 and restart-fault evidence, PUB-020 is the owner-designated process-recovery verification package (merged main `2ca329c`, gate record `df0b1d5`), and DUR-002 extends fresh-process evidence to the 28-exit-point matrix at `4e0f2f5`. This predicate is profile-scoped: it implies no D1/D1b qualification and no global durability Boolean. |
 | `D1_APFS_QUALIFIED` | `false` | macOS/APFS OS-crash or filesystem-crash qualification absent. |
 | `D1_EXT4_QUALIFIED` | `false` | Linux/ext4 OS-crash or filesystem-crash qualification absent. |
 | `D2_LOCAL_DEVICE_FAILURE_QUALIFIED` | `false` | Local device failure (disk/SSD/NVMedia device fault) not qualified. |
@@ -78,15 +93,15 @@ or to any provider, market-data or India path.
 | `storage_device_class` | Local temporary backing store; device class not inspected or qualified |
 | `sync_primitive` | `fsync`/`sync_all` on each regular file, on the `artifacts/` child directory and on the staging directory; parent/root directory sync on provisioning, staging entry, rename, receipt and marker; `F_FULLFSYNC` **not** used (see §4) |
 | `acknowledgement_rule` | A publication state is acknowledged only after every sync required by that state succeeded; a failed sync returns a typed `ProducerError` and is never downgraded to a warning; no acknowledgement from in-memory state, directory presence or a manifest declaration |
-| `tested_failure_cases` | **D0 subprocess (fresh-process) evidence — exactly three cases:** `publish_before` (process restart after the rename syscall but before the rename journal commit), `publish_staging` (process restart after the durable staging-tree journal commit), and `publish_rename` (process restart after the durable rename journal commit). **All other boundaries are in-process fault injection only**, not fresh-process/subprocess evidence: journal directory sync failure withholds acknowledgement; boundary faults at staging mkdir, root sync, artifacts mkdir, each file write/sync, both directory syncs, rename, rename root sync, receipt write/sync/ledger sync, marker write/sync/ledger sync; recovery from staging and final directory; v1-record readability and mixed-version refusal. D0 is ACHIEVED for this stated three-case scope only; no process restart is claimed as verified at every journal stage. |
-| `known_limitations` | Process crash only. Not OS crash, power loss, device failure, host failure or disaster recovery. No drive-cache flush qualification. No replication, backup or restore. Local receipt is not consumer admission. |
-| `evidence_digest` | `c659dbb8d87369a9cd00e25aa07c8749d980e9d9237e62f44bc3b449620d0c561f` — SHA-256 of `docs/fb-pub-019-directory-durability-2026-11-24.md` at exact Fieldbook commit `eecfe8ca54454245b813867ee273b60675c67025` (PR #69, merged). This is a gate-record digest, not an independent durability certificate. `D0_PROCESS_RECOVERY_VERIFIED` is conditioned on the owner-designated PUB-020 merge, not satisfied by this digest alone. |
+| `tested_failure_cases` | **Current D0 subprocess (fresh-process) evidence — FB-DUR-002 at Fieldbook `4e0f2f5c9ad9ea239b73fdedb3405c5a55f7abd6` (PR #74): 28 concrete exit points covering all 24 owner boundary names**, with expected outcomes `NO_EVIDENCE` 1, `UNCERTAIN_PUBLICATION_QUARANTINED` 17, `RECOVERED_STAGED` 2, `RECOVERED_PUBLISHED` 7 and `ALREADY_AVAILABLE` 1, and an idempotent second recovery (`ALREADY_AVAILABLE` with byte-identical receipt and journal) for every `RECOVERED_*` row. Each exit ends a fresh publisher child with `process::exit`; a fresh recovery child reconciles from root, ledger, operation id and resource profile id alone. Full row-level table and gate-record digest: `engineering/conformance/d0-full-matrix-evidence-2026-11-24.md`. **HISTORICAL — WS-EVIDENCE-026 three-case scope, preserved and superseded for current evidence:** exactly three fresh-process cases were `publish_before` (process restart after the rename syscall but before the rename journal commit), `publish_staging` (process restart after the durable staging-tree journal commit), and `publish_rename` (process restart after the durable rename journal commit); these aliases remain in the harness. **In-process fault injection remains separate and is not D0 subprocess evidence:** journal directory sync failure withholding acknowledgement; boundary faults at staging mkdir, root sync, artifacts mkdir, each file write/sync, both directory syncs, rename, rename root sync, receipt write/sync/ledger sync, marker write/sync/ledger sync; recovery from staging and final directory; v1-record readability and mixed-version refusal. D0 is ACHIEVED for the process-termination profile and this staged evidence; no OS-crash, power-loss or global durability claim follows. |
+| `known_limitations` | Process termination only (D0). Not D1 OS/filesystem crash, not D1b physical power loss, not D2 device failure, D3 host failure or D4 disaster recovery. No drive-cache flush qualification. No replication, backup or restore. Local receipt is not consumer admission. No global durability claim. |
+| `evidence_digest` | Current D0 gate-record digest: `d8273f87dc9cc392f30edcfcb91d0817723060f84f5d47ea2bef8b8e84091e62` — SHA-256 of `docs/fb-dur-002-subprocess-matrix-2026-11-24.md` at exact Fieldbook commit `4e0f2f5c9ad9ea239b73fdedb3405c5a55f7abd6` (PR #74, merged). **HISTORICAL, preserved:** `c659dbb8d87369a9cd00e25aa07c8749d980e9d9237e62f44bc3b449620d0c561f` — SHA-256 of `docs/fb-pub-019-directory-durability-2026-11-24.md` at exact Fieldbook commit `eecfe8ca54454245b813867ee273b60675c67025` (PR #69, merged). Both are gate-record digests, not independent durability certificates. `D0_PROCESS_RECOVERY_VERIFIED` is a profile-scoped predicate; PUB-020 and DUR-002 merges are evidenced at exact commits, while no D1/D1b claim follows. |
 
 ### 2.2 D1 — OS crash / filesystem crash
 
 | Field | Record |
 |---|---|
-| `tier_id` | `D1` — OS crash / filesystem crash, including physical power loss where the storage device and its write cache are in scope |
+| `tier_id` | `D1` — OS crash / filesystem crash; **D1b** is the explicitly named physical-power-loss sub-case where the storage device and its write cache are in scope. Both remain unqualified; the D0 process-termination matrix says nothing about either. |
 | `failure_model` | The operating system or filesystem loses volatile state; unflushed page cache, directory entries or device write cache may be lost. Recovery must find only durability operations whose barriers completed before the fault. |
 | `supported_platforms` | macOS/APFS and Linux/ext4 are candidate profiles; neither is qualified. All other targets fail closed. |
 | `filesystem` | APFS (macOS candidate); ext4 (Linux candidate) |
@@ -97,7 +112,7 @@ or to any provider, market-data or India path.
 | `sync_primitive` | Per-platform `fsync` plus required directory syncs; on macOS a drive-cache flush primitive may be `F_FULLFSYNC`, which is **not yet used or qualified** (§4) |
 | `acknowledgement_rule` | Same rule as D0, evaluated under the declared OS/filesystem/device failure model; an acknowledgement is valid only for the exact qualified profile |
 | `tested_failure_cases` | None. No APFS or ext4 OS-crash or physical power-loss test exists. VM reset is not a D1 case (§4). |
-| `known_limitations` | Both `D1_APFS_QUALIFIED=false` and `D1_EXT4_QUALIFIED=false`. Source compilation, process-restart tests and a macOS temporary-filesystem exercise do not establish OS-crash behaviour. Other filesystems and drivers were not measured. |
+| `known_limitations` | Both `D1_APFS_QUALIFIED=false` and `D1_EXT4_QUALIFIED=false`; **D1b physical power loss remains unqualified**. Source compilation, process-restart tests (including the 28-boundary D0 subprocess matrix) and a macOS temporary-filesystem exercise do not establish OS-crash or power-loss behaviour. Other filesystems and drivers were not measured. No global durability claim is made. |
 | `evidence_digest` | `NONE` — no D1 evidence package exists; `PUBLICATION_DURABILITY_VERIFIED` remains `false` |
 
 ### 2.3 D2 — local device failure
@@ -209,7 +224,7 @@ or to any provider, market-data or India path.
 
 | Permitted | Not permitted |
 |---|---|
-| "Under the D0 process-termination profile on the declared temporary filesystem, the three fresh-process cases `publish_before`, `publish_staging` and `publish_rename` recover from durable journal evidence and an interrupted publication is reconciled; all other boundaries were exercised by in-process fault injection only." | "Zero data loss", or "every committed journal stage survives a fresh process restart". |
+| "Under the D0 process-termination profile on the declared temporary filesystem, the FB-DUR-002 matrix at Fieldbook `4e0f2f5` exercises 28 fresh-process exit points over all 24 owner boundary names: one no-evidence case, seventeen uncertain-publication quarantines, two staged recoveries, seven published recoveries and one already-available case, with idempotent second recovery for each recovered row. In-process fault injection is a separate evidence class." | "Zero data loss", "every committed journal stage survives a fresh process restart", any D1/D1b power-loss or global durability claim, or a `Verified` promotion of an `Implemented` package. |
 | "Under the D1 APFS profile at exact OS/filesystem/device versions, the following power-loss cases were exercised and the following limits remain." (only after `D1_APFS_QUALIFIED=true`) | "RPO = 0" without a declared failure class, or "durable" without a tier. |
 | "Local `fsync` and parent-directory sync completed before acknowledgement on this filesystem." | "Local `fsync` gives replicated durability" or "a qualified Mac or Linux filesystem justifies a global durability claim." |
 | "The publication receipt is a local acknowledgement; Nirnay admission is a separate decision under UNKNOWN rights." | "A receipt, an `AVAILABLE` declaration or directory presence proves durable publication or dataset admission." |
@@ -224,26 +239,32 @@ or one device class never transfers to another profile.
    `475dc34c8cc510ac8dfba158dfdedbd91950f219`, PR #68) added digest-chained immutable stage
    records with ledger-directory `fsync` after every committed transition, provisioning parent
    sync, canonical validation of sequence records and restart/crash tests at every stage (those
-   stage tests are in-process fault injection; fresh-process D0 evidence is limited to the three
-   subprocess cases in §2.1).
+   stage tests are in-process fault injection, not fresh-process evidence).
    `FB-PUB-019` (merged at Fieldbook commit `eecfe8ca54454245b813867ee273b60675c67025`, PR #69)
    added bottom-up directory durability: journal schema v2, five-record state machine, separate
    file/child-directory/root sync boundaries, receipt and marker fidelity, and process-restart
-   and injected-fault tests. `src/distribution/ndc_release.rs` remains the single producer
-   authority; the release layout stays `manifest.json`, `signature.json` and declared paths under
-   `artifacts/`.
-2. **Pending packages.** PUB-019 is merged at the exact commit above. PUB-020 (owner-designated
-   process-recovery verification package) and PUB-021 are pending; this workspace holds no
-   evidence of their content, merge state or tests, and this decision claims none of them.
-   `D0_PROCESS_RECOVERY_VERIFIED=true` is the ratified predicate **conditioned on PUB-020 being
-   merged and its gate evidence recorded at an exact commit**; until that merge is evidenced, no
-   D0 claim is made from this document. No pending package is treated as delivered, and no test
-   count from a pending package is added to an existing count.
+   and injected-fault tests. `FB-DUR-002` (merged at Fieldbook commit
+   `4e0f2f5c9ad9ea239b73fdedb3405c5a55f7abd6`, PR #74) extends fresh-process evidence to 28 exit
+   points over all 24 owner boundary names with the expected-outcome distribution and idempotent
+   second recovery recorded in §2.1 and in
+   `engineering/conformance/d0-full-matrix-evidence-2026-11-24.md`. `src/distribution/ndc_release.rs`
+   remains the single producer authority; the release layout stays `manifest.json`,
+   `signature.json` and declared paths under `artifacts/`.
+2. **Work-package evidence at exact commits.** PUB-019 is merged at `eecfe8c` (PR #69); PUB-020
+   (owner-designated process-recovery verification package) at merged main `2ca329c` with its
+   gate record at `df0b1d5`; PUB-021 at merged main `e87a043`; FB-API-001 at `fd4b542`; and
+   DUR-002 at merged main `4e0f2f5`. These commits are evidence pointers only: this documentation
+   work neither re-runs their gates nor changes a source head, and earlier ratification wording
+   that listed PUB-020/PUB-021 as pending is HISTORICAL and preserved in `REVIEW-LOG.md`.
+   `D0_PROCESS_RECOVERY_VERIFIED=true` is the profile-scoped predicate evidenced by the recorded
+   PUB-020 and DUR-002 merges; D1 OS/filesystem crash and D1b power loss stay unqualified, no
+   global durability claim is made, and no `Implemented` package is promoted to `Verified`.
 3. **Capability gate.** `PUBLICATION_DURABILITY_VERIFIED` stays `false` in both
    `ndc_profile_status.statuses` and `production_builder_parity.capability_states` of
    `CURRENT-STATE.json`. It remains **NOT ACHIEVED until D1 evidence exists** for a declared
-   APFS or ext4 profile (physical power-loss or equivalent qualified fault, exact versions and
-   mount settings, documented errors and limitations). The cross-execution record shows only
+   APFS or ext4 profile (D1b physical power-loss or equivalent qualified fault, exact versions and
+   mount settings, documented errors and limitations). D1 OS/filesystem crash and D1b power loss
+   remain unqualified; the 28-boundary D0 matrix changes no capability state. The cross-execution record shows only
    structural and cryptographic stages before `REJECT_RIGHTS_EVIDENCE`; the Fieldbook publication
    receipt written into the ledger is distinct from the absent Nirnay admission receipt.
 4. This decision changes no digest, no capability state, no release, no right and no freeze term.
@@ -274,8 +295,11 @@ gate has been re-run by this documentation work.
 | I-15 | No silent deletion of uncertain publication evidence. | Fieldbook producer owner (Kartik Jangid) | Fieldbook; Workspace (RRP) | `FB::recovery_without_evidence_is_empty`; `FB::rename_before_root_sync_crash_is_quarantined`; `FB::schema_v1_records_remain_readable_and_auditable`; `RETIREMENT-ACCEPTANCE.md` no-deletion-before-replacement rules |
 
 The `FB::every_committed_journal_stage_survives_a_process_restart` name cited for I-02 is an
-in-process fault-injection test pointer, not fresh-process evidence; the fresh-process D0
-evidence is exactly the three subprocess cases recorded in §2.1.
+in-process fault-injection test pointer, not fresh-process evidence. **HISTORICAL:** the
+WS-EVIDENCE-026 note recorded exactly three subprocess cases; current fresh-process D0 evidence is
+the 28-exit-point FB-DUR-002 matrix recorded in §2.1 and in
+`engineering/conformance/d0-full-matrix-evidence-2026-11-24.md`. In-process fault injection stays
+a separate evidence class.
 
 `FB::` names cite Fieldbook tests at or after the publication-journal work; `NZ::` names cite
 Nirnay verifier or domain tests. Exact commits, gate commands and exits belong in the dated
@@ -284,6 +308,9 @@ records and `REVIEW-LOG.md`; none is re-run, re-counted or promoted by this deci
 ## 8. Effect
 
 `NDC-REGISTRY.md`, `ADR-REGISTRY.md`, `CURRENT-STATE.json`, the `README.md` document map and
-`REVIEW-LOG.md` gain pointers to this decision. `CURRENT-STATE.json` gains a `durability_profiles`
-field; no existing source-head field, digest, capability state or freeze term is altered. No
-commit is created in any repository.
+`REVIEW-LOG.md` gain pointers to this decision and to the dated
+`engineering/conformance/d0-full-matrix-evidence-2026-11-24.md` record. `CURRENT-STATE.json`
+gains a `durability_profiles` field; the amended decision digest supersedes but does not delete the
+prior ratification digests, which remain historical in `REVIEW-LOG.md`. No existing source-head
+field, capability state, D1–D4 predicate, `PUBLICATION_DURABILITY_VERIFIED` value or freeze term is
+altered, and no commit is created in any repository.

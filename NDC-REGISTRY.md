@@ -52,7 +52,7 @@ component exists. These layers are recorded separately:
 | Final NDC serialization schema | **Profile 1 version and digests registered; canonical schema package published by WP-B8 (2026-11-24)** | `engineering/conformance/ndc-v2-schema-digest.json` registers the exact version, profile and D1 amendment digests, strict unknown-field policy and the source of truth. The B8 canonical schema package at `engineering/conformance/ndc-v2-schema-profile-1/` is the standalone published wire artifact (digest `6e8c1e48…`, 26 files). At the WP-5 recorded heads no such file existed and the typed structs in both repositories were the implementation authorities; those heads are historical evidence, not the normative wire representation. Cross-execution remains NOT_STARTED |
 | Resource policy | **Ratified rule**: versioned normative consumer resource policy, no manifest `limits`, producer and verifier enforce independently; numerical maxima pending workload qualification | `WS-NDC-2026-11-24-002` Decision F |
 | Publication durability | **Ratified rule**: staged, synced, atomic no-replace rename with parent-directory sync and durable receipt; uncertain-publication recovery after rename before parent sync | `WS-NDC-2026-11-24-002` Decision G |
-| Publication durability failure model | **Ratified rule (WS-DUR-001)**: five tiers D0–D4 with profile-scoped booleans, an error-only sync acknowledgement contract, per-platform primitive qualification and no global durability Boolean; not a D1 claim | `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` — **RATIFIED 2026-11-24** by owner direction; current digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` (WS-EVIDENCE-026 D0 terminology correction; original ratification digest `2b04f9b…` preserved in `REVIEW-LOG.md`) |
+| Publication durability failure model | **Ratified rule (WS-DUR-001)**: five tiers D0–D4 with profile-scoped booleans, an error-only sync acknowledgement contract, per-platform primitive qualification and no global durability Boolean; not a D1 claim | `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` — **RATIFIED 2026-11-24** by owner direction; current digest `931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` (FB-DUR-002 full-matrix evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` preserved as historical in `REVIEW-LOG.md`) |
 | Trusted publisher registry | **Ratified rule**: out-of-band registry with key states and revocation evidence; Batch B trust interface with injected test keys only | `WS-NDC-2026-11-24-002` Decision H |
 | Runtime implementation | Producer and independent verifier implemented at the exact PR heads; **cross-execution NOT_STARTED** | WP-5 acceptance matrix records exact test evidence at Fieldbook `2ef88a9` and Nirnay `2dad496`; no shared invocation boundary or connector, no verification promotion |
 | Consumer verification capability | Independent `release-verifier` crate implemented at Nirnay `2dad496`; **Proposed consumer-use proposal unchanged** | Twelve-stage verifier with abstract tests; no shared crate; the separate consumer-use document below is not approved and is not an authority for this capability |
@@ -117,8 +117,9 @@ below. This decision supersedes neither approved semantics nor the freeze; it cl
 
 Ratification: `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md`
 (status **RATIFIED by owner direction 2026-11-24**, current digest
-`d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` after the WS-EVIDENCE-026
-D0 terminology correction; original ratification digest `2b04f9b…` preserved in `REVIEW-LOG.md`).
+`931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` after the FB-DUR-002
+full-matrix D0 evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original
+ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` are preserved as historical in `REVIEW-LOG.md`).
 The owner directed that
 durability be scoped to a failure model rather than a test count. This is the governing programme
 contract for durability claims; it is not a new claim that D1 is achieved and it promotes no
@@ -126,7 +127,7 @@ implementation state.
 
 | Tier | Failure model | Ratified profile predicate |
 |---|---|---|
-| D0 | Process termination; OS, filesystem and device remain functional | `D0_PROCESS_RECOVERY_VERIFIED=true` (conditioned on PUB-020 merged and evidenced at an exact commit) |
+| D0 | Process termination; OS, filesystem and device remain functional | `D0_PROCESS_RECOVERY_VERIFIED=true` (PUB-020 and DUR-002 evidenced at exact commits; 28-exit-point matrix at `4e0f2f5`) |
 | D1 | OS crash / filesystem crash, including qualified physical power loss | `D1_APFS_QUALIFIED=false`; `D1_EXT4_QUALIFIED=false` |
 | D2 | Local device failure | `D2_LOCAL_DEVICE_FAILURE_QUALIFIED=false` |
 | D3 | Host failure | `D3_HOST_FAILURE_QUALIFIED=false` |
@@ -136,15 +137,21 @@ There is no single global durability Boolean. `PUBLICATION_DURABILITY_VERIFIED` 
 programme status gate and remains `false` until D1 evidence exists. Linux
 `renameat2(RENAME_NOREPLACE)` and macOS `renamex_np(RENAME_EXCL)` with `fsync` are the ratified
 no-replace primitives; macOS `F_FULLFSYNC` may be required for drive-cache flush and is not yet
-used or qualified. VM reset is not a physical power-loss test. Declaration is governed by
-Decision G; the Fieldbook v2 publication journal, the pending PUB-019/020/021 packages and the
-cross-cutting invariants I-01..I-15 are recorded in WS-DUR-001. D0 subprocess evidence is limited
-to exactly three fresh-process cases — `publish_before`, `publish_staging` and `publish_rename`;
-all other journal/filesystem boundaries were exercised by in-process fault injection only.
-`D0_PROCESS_RECOVERY_VERIFIED` is ACHIEVED for that stated scope only, and
-`PUBLICATION_DURABILITY_VERIFIED` remains NOT ACHIEVED. See
-`engineering/conformance/ws-evidence-026-provenance-2026-11-24.md`. No approved digest, capability
-state, right, dataset or freeze term is changed by this rule.
+used or qualified. VM reset is not a physical power-loss test; D1b physical power loss remains
+unqualified. Declaration is governed by Decision G; the Fieldbook v2 publication journal, the
+PUB-019/020/021 work packages and DUR-002, and the cross-cutting invariants I-01..I-15 are recorded
+in WS-DUR-001. Current D0 subprocess evidence is the FB-DUR-002 matrix at Fieldbook `4e0f2f5`
+(PR #74): **28 concrete exit points covering all 24 owner boundary names**, with expected outcomes
+`NO_EVIDENCE` 1, `UNCERTAIN_PUBLICATION_QUARANTINED` 17, `RECOVERED_STAGED` 2,
+`RECOVERED_PUBLISHED` 7 and `ALREADY_AVAILABLE` 1, plus idempotent second recovery for every
+`RECOVERED_*` row. The earlier three-case scope (`publish_before`, `publish_staging`,
+`publish_rename`) is preserved as HISTORICAL evidence and superseded for current evidence;
+in-process fault injection remains a separate evidence class.
+`D0_PROCESS_RECOVERY_VERIFIED` is ACHIEVED for the D0 process-termination profile only, and
+`PUBLICATION_DURABILITY_VERIFIED` remains NOT ACHIEVED. D1 OS/filesystem crash, D1b power loss and
+D2–D4 are unqualified; no global durability claim is made. See
+`engineering/conformance/d0-full-matrix-evidence-2026-11-24.md`. No approved capability state,
+right, dataset or freeze term is changed by this rule.
 
 ## B8 canonical schema package (published 2026-11-24)
 

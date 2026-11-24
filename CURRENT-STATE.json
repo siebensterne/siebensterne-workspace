@@ -32,7 +32,7 @@
   },
   "workspace_head_terminology": {
     "record": "engineering/conformance/ws-evidence-026-provenance-2026-11-24.md",
-    "note": "6d45af2 is the audited subject; 95580f5 is the evidence commit and packaged Git bundle main head. The five head concepts below are separately evidenced and are not interchangeable; see the dated terminology record."
+    "note": "6d45af2 is the audited subject; 95580f5 is the evidence commit and packaged Git bundle main head. The five head concepts below are separately evidenced and are not interchangeable; see the dated terminology record. Fieldbook DUR-002 at 4e0f2f5 is a D0 evidence commit only and does not replace any of the five head concepts or the packaged-head attestation."
   },
   "current_source_head": {
     "fieldbook": {
@@ -560,7 +560,12 @@
   "durability_profiles": {
     "decision": "engineering/decisions/WS-DUR-001-publication-durability-failure-model.md",
     "status": "RATIFIED 2026-11-24 by owner direction: publication durability is failure-model scoped, not a test count; governing programme contract for durability claims; not a claim that D1 is achieved and not a capability-state promotion",
-    "sha256": "d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6",
+    "sha256": "931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb",
+    "prior_ratification_sha256": "d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6",
+    "prior_digest_role": "HISTORICAL — WS-EVIDENCE-026 three-case terminology correction digest; superseded for current evidence by FB-DUR-002 full matrix, not deleted",
+    "original_ratification_sha256": "2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71",
+    "original_digest_role": "HISTORICAL — original 2026-11-24 owner ratification digest, preserved in REVIEW-LOG.md",
+    "d0_full_matrix_evidence_record": "engineering/conformance/d0-full-matrix-evidence-2026-11-24.md",
     "scope": "docs/JSON only; no source, schema, right, data, provider, India, experiment, release, key or dataset change; no commit",
     "tiers": [
       "D0 process termination",
@@ -571,23 +576,44 @@
     ],
     "profile_scoped_booleans": {
       "D0_PROCESS_RECOVERY_VERIFIED": true,
-      "D0_condition": "ACHIEVED for the stated scope only: PUB-020 merged at Fieldbook df0b1d5 (merged main 2ca329c); fresh-process recovery evidence recorded in fb-pub-020 record and sprint acceptance record; D0 applies only to the process-termination profile and the exact three subprocess cases below",
-      "D0_subprocess_cases": [
+      "D0_condition": "ACHIEVED for the D0 process-termination profile only: PUB-020 merged at Fieldbook df0b1d5 (merged main 2ca329c) and DUR-002 merged at 4e0f2f5 (PR #74) extend fresh-process recovery evidence to the full boundary matrix; D0 evidence is recorded in the fb-pub-020 and fb-dur-002 gate records and in the dated D0 full-matrix evidence record",
+      "D0_full_matrix": {
+        "fieldbook_commit": "4e0f2f5c9ad9ea239b73fdedb3405c5a55f7abd6",
+        "fieldbook_pr": 74,
+        "gate_record": "docs/fb-dur-002-subprocess-matrix-2026-11-24.md",
+        "gate_record_sha256": "d8273f87dc9cc392f30edcfcb91d0817723060f84f5d47ea2bef8b8e84091e62",
+        "concrete_exit_points": 28,
+        "owner_boundary_names": 24,
+        "expected_outcomes": {
+          "NO_EVIDENCE": 1,
+          "UNCERTAIN_PUBLICATION_QUARANTINED": 17,
+          "RECOVERED_STAGED": 2,
+          "RECOVERED_PUBLISHED": 7,
+          "ALREADY_AVAILABLE": 1
+        },
+        "idempotent_second_recovery": true,
+        "in_process_fault_injection_separate": true,
+        "workspace_record": "engineering/conformance/d0-full-matrix-evidence-2026-11-24.md"
+      },
+      "D0_historical_subprocess_cases": [
         "publish_before — process restart after the rename syscall but before the rename journal commit",
         "publish_staging — process restart after the durable staging-tree journal commit",
         "publish_rename — process restart after the durable rename journal commit"
       ],
-      "D0_other_boundaries": "In-process fault injection only, not fresh-process/subprocess evidence: journal directory sync failure, staging mkdir, root sync, artifacts mkdir, each file write/sync, both directory syncs, rename root sync, receipt and marker write/sync/ledger sync, recovery from staging and final directory, v1-record readability and mixed-version refusal",
-      "D0_scope_note": "D0 is neither narrowed to false nor broadened beyond these three cases; D1-D4 remain unqualified and PUBLICATION_DURABILITY_VERIFIED remains NOT ACHIEVED. See WS-DUR-001 section 2.1 and engineering/conformance/ws-evidence-026-provenance-2026-11-24.md.",
+      "D0_historical_scope_note": "HISTORICAL — the exactly-three-case WS-EVIDENCE-026 scope was accurate at its own commit; preserved, not deleted, and superseded for current D0 evidence by the 28-exit-point matrix above. The three modes remain as harness aliases.",
+      "D0_other_boundaries": "In-process fault injection only, not fresh-process/subprocess evidence and not counted in the 28 exit points: journal directory sync failure, staging mkdir, root sync, artifacts mkdir, each file write/sync, both directory syncs, rename root sync, receipt and marker write/sync/ledger sync, recovery from staging and final directory, v1-record readability and mixed-version refusal",
+      "D0_scope_note": "D0 is process termination only. D1 OS/filesystem crash, D1b physical power loss and D2-D4 remain unqualified; PUBLICATION_DURABILITY_VERIFIED remains NOT ACHIEVED and no global durability claim is made. See WS-DUR-001 section 2.1 and engineering/conformance/d0-full-matrix-evidence-2026-11-24.md.",
       "D1_APFS_QUALIFIED": false,
       "D1_EXT4_QUALIFIED": false,
+      "D1b_PHYSICAL_POWER_LOSS_QUALIFIED": false,
       "D2_LOCAL_DEVICE_FAILURE_QUALIFIED": false,
       "D3_HOST_FAILURE_QUALIFIED": false,
       "D4_DISASTER_RECOVERY_QUALIFIED": false,
-      "D0_evidence_head": "fd4b542c2df9b775c138a50d068734adedad985e"
+      "D0_evidence_head": "4e0f2f5c9ad9ea239b73fdedb3405c5a55f7abd6",
+      "D0_evidence_head_role": "D0 evidence commit only; not a new packaged, audited-subject, CI, local-tested, cross-execution or reviewed source head. The five separately evidenced head concepts elsewhere in CURRENT-STATE.json are unchanged."
     },
     "no_global_durability_boolean": true,
-    "PUBLICATION_DURABILITY_VERIFIED": "Aggregate programme status gate only; unchanged false in ndc_profile_status.statuses and production_builder_parity.capability_states. Remains NOT ACHIEVED until D1 evidence exists for a declared APFS or ext4 profile.",
+    "PUBLICATION_DURABILITY_VERIFIED": "Aggregate programme status gate only; unchanged false in ndc_profile_status.statuses and production_builder_parity.capability_states. Remains NOT ACHIEVED until D1 evidence exists for a declared APFS or ext4 profile; D1b physical power loss is also unqualified. The 28-boundary D0 matrix does not promote D1-D4 or make a global durability claim.",
     "acknowledgement_contract": "A publication state may be acknowledged only after every durability operation required by that state succeeded under the declared failure model; a failed sync is an error, never a warning.",
     "acknowledgement_states": [
       "STAGING_CREATED",
@@ -597,7 +623,7 @@
       "AVAILABLE"
     ],
     "platform_qualification": "Linux renameat2(RENAME_NOREPLACE) and macOS renamex_np(RENAME_EXCL) with fsync are the ratified no-replace primitives; macOS F_FULLFSYNC may be required for drive-cache flush and is not yet used or qualified; VM reset is not a physical power-loss test; per-platform primitive, errors, versions, mount settings, limitations and evidence are required before a tier is claimed.",
-    "journal_and_packages": "Fieldbook v2 digest-chained publication journal: FB-PUB-017 at 475dc34, FB-PUB-019 at eecfe8c, PUB-020 at 2ca329c (fresh-process recovery), PUB-021 at e87a043 (descriptor-relative validation), FB-API-001 at fd4b542 (byte-derived ordering); all merged with exact-head CI and independent review. D0 scope satisfied at Fieldbook 2ca329c; D1-D4 unqualified; PUBLICATION_DURABILITY_VERIFIED remains false.",
+    "journal_and_packages": "Fieldbook v2 digest-chained publication journal: FB-PUB-017 at 475dc34, FB-PUB-019 at eecfe8c, PUB-020 at 2ca329c (fresh-process recovery), PUB-021 at e87a043 (descriptor-relative validation), FB-API-001 at fd4b542 (byte-derived ordering), DUR-002 at 4e0f2f5 (PR #74, full 28-exit-point subprocess recovery matrix over 24 owner boundary names with idempotent second recovery); the earlier packages carry exact-head CI and independent review records, and DUR-002 is cited at its merged commit without re-running gates here. D0 scope evidenced at Fieldbook 4e0f2f5; the earlier 2ca329c/three-case scope is HISTORICAL and preserved. D1 OS/filesystem crash and D1b power loss, plus D2-D4, remain unqualified; PUBLICATION_DURABILITY_VERIFIED remains false and no global durability claim is made.",
     "invariants": "I-01..I-15 are normative in WS-DUR-001 section 7.",
     "freeze": "unchanged"
   },
