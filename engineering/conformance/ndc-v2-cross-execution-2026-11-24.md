@@ -98,3 +98,92 @@ signature, publisher key, artifact and ordering stages PASS; stage 6
 In-process fault and recovery tests for every publication transition pass, but
 `PUBLICATION_DURABILITY_VERIFIED` is not claimed: independent receipt exchange
 and filesystem durability evidence remain a separate gate.
+
+## Production builder parity cross-execution (FB-NDC-013)
+
+This section records a second binary cross-execution at the unified production
+builder. It is separate from, and does not replace, the conformance-path record
+above. Fieldbook PR #66 unified the production builder with the canonical wire
+mapping: the production builder writes `artifacts/` under the declared paths,
+and the conformance producer calls `ndc_release::build_release`. No
+post-publication modification of release contents was made.
+
+### Exact commits
+
+| Component | Commit |
+|---|---|
+| Fieldbook PR #66 head (production builder parity) | `001e2688ed4863919e2eb8d35c47ee05615e755a` |
+| Fieldbook merged main (PR #66) | `5703185d59b1ccfeaa310926f26e006abf8ac72c` |
+| Nirnay verifier and wire mapping (unchanged) | `70716ebf66289a86335641847724fd92bf6bcce7` |
+
+### Commands
+
+The conformance producer binary was rebuilt from the production-builder head, then:
+
+```
+target/debug/ndc-conformance-producer \
+  --spec docs/specifications/ndc-conformance-producer-spec-example-2026-11-24.json \
+  --out <root>/publisher-abstract/dataset-abstract
+
+nirnay/target/debug/ndc-conformance-verifier \
+  --release <root>/publisher-abstract/dataset-abstract/conformance-release-2 \
+  --out <diagnostic.json>
+```
+
+The `--out` argument is the dataset root. The builder writes the final immutable
+release into `conformance-release-2` beneath that root and its ledger beside it.
+
+### Exact release layout
+
+```
+<root>/publisher-abstract/dataset-abstract/conformance-release-2/
+  manifest.json
+  signature.json
+  artifacts/sequenced-abstract.jsonl
+  artifacts/reference-abstract.jsonl.gz
+
+<root>/publisher-abstract/dataset-abstract.ledger/     (beside, NOT inside the release)
+  conformance-conformance-release-2-<pid>.stage.0000.json
+  ...
+  conformance-conformance-release-2-<pid>.stage.0007.json
+  conformance-release-2.receipt.json
+  conformance-release-2.available
+```
+
+The release root contains only `manifest.json`, `signature.json` and the
+`artifacts/` directory. Ledger stage files, the publication receipt and the
+`.available` marker are written beside the release directory, not inside it.
+
+### Result
+
+| Check | Result |
+|---|---|
+| Producer build | success (unified production builder via `ndc_release::build_release`) |
+| Structural stage 1 | PASS |
+| Manifest digest stage 2 | PASS |
+| Signature stage 3 | PASS |
+| Publisher identity stage 4 | PASS |
+| Artifacts and ordering stage 5 | PASS |
+| Ordering validation | PASS |
+| Rights admission stage 6 | **REFUSED** — `REJECT_RIGHTS_EVIDENCE` |
+| Outcome | `RIGHTS_ADMISSION_REFUSED` |
+| `receipt_written` | `false` |
+| `private_snapshot_survives` | `false` |
+| `dataset_accepted` | `false` |
+| Post-publication modification | none |
+
+Verifier refusal detail: `REJECT_RIGHTS_EVIDENCE: stage 6 rights decision is not
+PERMIT`; `rights_state: UNKNOWN`; stages 7-12 `NOT_RUN`. Production builder parity
+and wire compatibility are proven; rights are not granted by a passing signature
+or a passing artifact check.
+
+### Capability states
+
+| State | Result |
+|---|---|
+| `BINARY_CROSS_EXECUTED` | achieved for the production path at these commits |
+| `CRYPTOGRAPHICALLY_VERIFIED` | achieved for the production path |
+| `PUBLICATION_DURABILITY_VERIFIED` | not achieved — independent receipt exchange and filesystem durability remain a separate gate |
+| `RIGHTS_ADMITTED` | not achieved — rights `UNKNOWN` |
+| `DATASET_ACCEPTED` | not achieved — `dataset_accepted: false` |
+| `OPERATIONALLY_QUALIFIED` | not achieved — no provider, rights decision, accepted dataset, India implementation or live route |

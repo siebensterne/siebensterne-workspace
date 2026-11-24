@@ -66,7 +66,7 @@ original WP-5 evidence package.
 
 | Capability | State | Evidence or reason |
 |---|---|---|
-| Producer-generated release verified by a Nirnay verifier binary | **NOT_STARTED** | No shared invocation boundary and no authorized connector between the separate repositories. No cross-execution was run in this environment. The workspace checker is evidence tooling only and is not a producer or verifier. |
+| Producer-generated release verified by a Nirnay verifier binary | **EXECUTED (see §8)** | Real binaries were run through a filesystem release at the exact commits in `ndc-v2-cross-execution-2026-11-24.md`. §8 records the conformance-path result and the production-builder parity result at Fieldbook `5703185` / Nirnay `70716eb`. No shared runtime or validator; the workspace checker is evidence tooling only and is not a producer or verifier. |
 | Wire compatibility between the two typed manifest representations at the exact heads | **NOT_STARTED** | No compatibility adaptation or paired decision was executed. Concrete representation differences were observed in read-only source inspection and are listed in section 3. No compatibility claim is made. |
 | Standalone published NDC v2 schema artifact | **PUBLISHED (WP-B8, 2026-11-24)** | No such artifact existed at the recorded heads; typed structs in both repositories were the implementation authorities there (`ndc-v2-schema-digest.json`). The canonical schema package is now published in Workspace at `engineering/conformance/ndc-v2-schema-profile-1/` (26 files, digest `6e8c1e48…`). It is documentation and canonical abstract evidence only, not a producer or verifier implementation and not cross-execution. |
 | Verification promotion of either implementation | **NOT_STARTED** | Abstract test evidence at an exact head is not independent verification, integration or real-data evidence. |
@@ -113,3 +113,18 @@ and both ordering profiles passed. Rights admission refused at stage 6 with
 `REJECT_RIGHTS_EVIDENCE`; no admission receipt was issued and no dataset was
 accepted. Wire compatibility is now demonstrated for the abstract release; the
 statuses `RIGHTS_ADMITTED` and `DATASET_ACCEPTED` remain unachieved.
+
+Binary cross-execution now also covers the production builder, not only the
+conformance helper. Fieldbook PR #66 (merged main
+`5703185d59b1ccfeaa310926f26e006abf8ac72c`, head
+`001e2688ed4863919e2eb8d35c47ee05615e755a`) unified the production builder with the
+canonical wire mapping; the rebuilt producer wrote `manifest.json`, `signature.json`
+and `artifacts/` under the declared paths, and the real Nirnay verifier at `70716eb`
+returned stages 1-5 PASS and stage 6 `REJECT_RIGHTS_EVIDENCE` with outcome
+`RIGHTS_ADMISSION_REFUSED`, `receipt_written: false`, `private_snapshot_survives: false`
+and `dataset_accepted: false`. No release contents were modified after publication.
+`BINARY_CROSS_EXECUTED` and `CRYPTOGRAPHICALLY_VERIFIED` therefore hold for the
+production path; `PUBLICATION_DURABILITY_VERIFIED`, `RIGHTS_ADMITTED`,
+`DATASET_ACCEPTED` and `OPERATIONALLY_QUALIFIED` remain unachieved. Exact heads,
+commands and release layout are in `ndc-v2-cross-execution-2026-11-24.md` under
+"Production builder parity cross-execution (FB-NDC-013)".
