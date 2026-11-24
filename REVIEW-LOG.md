@@ -72,3 +72,10 @@ evidence or review archive.
 - Fieldbook PR #56: official language links in STYLES.md; standard in docs/style-standards.md and D9-D13 in docs/coding-standard.md; dated evidence. Full-tree sweeps clean; fmt/lint/docs/style/test/verify exit 0. CI 45292175118 success (head 90114f2). APPROVE.
 - Nirnay PR #141: official language links; standard in engineering/style-policy.md; 2 editable rustdoc links fixed; paper-engine bin collision renamed; frozen journal.rs private-link blocker recorded as dated exception (no lint weakened, no freeze bypass). Rejected at b361702 for stale code_commit; corrected in docs-only follow-up 94365be. CI 45292758536 success. APPROVE.
 - Merged heads: Fieldbook f27f4a4, Nirnay 7324925, Workspace 32a46db. Main CI: Fieldbook 45293427722 2/2 (rerun after stale merged tracking ref), Nirnay 45293438172 12/12.
+
+## 2026-11-24 — WS-SCOPE-2026-11-24-001 (owner direction)
+
+- Owner ratified "Global Reference Core, India First". India is the first national implementation of a global, jurisdiction-aware reference platform; not the centre of the model.
+- Fieldbook owns authoritative identity, reference assertions, revisions and publication; Nirnay consumes; Workspace owns contracts and governance.
+- First code-bearing work package: FB-REF-001 canonical object and identity core in Fieldbook.
+- India design ratification, provider rights and dataset acceptance remain separate owner gates. Freeze unchanged: rights UNKNOWN, dataset BLOCKED, budget INR 0, collection DISABLED, experiments BLOCKED, live execution DISABLED, D11 strict.
