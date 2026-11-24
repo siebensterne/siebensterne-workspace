@@ -3,9 +3,16 @@
 - **Status:** PROPOSED. Awaiting owner ratification. This document defines the intended shape of
   the India country pack. It ratifies no contract version, grants no data right, qualifies no
   source or provider, accepts no dataset, authorises no India implementation and opens no gate.
-- **Task / branch / base:** IN-COUNTRY-001 · branch `docs/india-domain-catalogue` · workspace base
-  `14afdfd`. Documentation only in the Workspace worktree. No source repository, schema, contract,
-  release, dataset, experiment or CI change is part of this work.
+- **Task / branch / base:** IN-COUNTRY-001 created this decision; amended in place under
+  IN-COUNTRY-002 · branch `docs/india-catalogue-amendments` · workspace base `7b0eb2e`.
+  Documentation only in the Workspace worktree: this decision and its companion catalogue are
+  amended in place, with no competing decision. No source repository, schema, contract, release,
+  dataset, experiment or CI change is part of this work.
+- **Amendment record (2026-11-24, PROPOSED):** mandatory nine-field evidence on every pack
+  component, immutable pack versions, explicit mainland/IFSC partition semantics submitted for
+  owner approval, alignment of the cohort completeness policy with the catalogue's split
+  subpopulations and independent object contracts, and an explicit not-approved section. Status
+  remains PROPOSED pending owner ratification.
 - **Authority read:** `engineering/decisions/WS-SCOPE-2026-11-24-001-global-reference-core-india-first.md`
   (ratified: one global core, India first; opaque platform identities; external identifiers as
   assertions; bitemporal assertions; per-dimension denominators), `engineering/coverage/india-coverage-register.md`
@@ -51,6 +58,34 @@ core types:
 | Identifier schemes | Named declared schemes | ISIN, LEI, MIC and domestic schemes are scoped assertions; a generic `Other` label is not a completeness device. |
 | Regulatory sources | Named declared sources with version and effective dates | A regulation is cited by source, publication and effective interval, never by an undated label. |
 | Corporate-action types | Named declared action types | Actions are events with revision lineage; they are not replacement securities. |
+| Every pack component | The nine evidence fields in §2.1 on each jurisdiction, authority, operator, venue, segment, identifier scheme, instrument spec, calendar, settlement convention, action rule, regulatory source and bitemporal revision. | No component is admitted without identity, version, source, source digest, valid interval, knowledge time, revision, predecessor and verification state. |
+
+### 2.1 Component evidence model
+
+Every pack component carries the same nine fields. The field names are a documentation contract,
+not new Rust types or new `ObjectClass` variants; the implemented core remains the vocabulary
+authority.
+
+| Field | Required content | Failure condition |
+|---|---|---|
+| Identity | Opaque platform-assigned identity for the component; external refs are assertions. | Identity derived from a name, code, venue symbol or currency label. |
+| Version | Positive monotonic version within that component identity. | Silent in-place widening or a version that does not advance on change. |
+| Source | Named source object and assigning authority with jurisdiction scope. | Undated label, unnamed source or source inferred from the component name. |
+| Source digest | Digest of the exact source bytes cited by the assertion. | Missing digest or a digest that cannot be tied to the cited source. |
+| Valid interval | Half-open `[valid_from, valid_to)` effective interval. | Inclusive end silently coerced or a rule applied outside its interval. |
+| Knowledge time | `recorded_at_us` with publication and receive instants held separate. | Arrival order used as a substitute for knowledge time. |
+| Revision | Nonzero revision on each admitted change; append-only. | Overwrite of a prior revision or a zero/absent revision. |
+| Predecessor | Link to the immediate predecessor revision where one exists. | Broken, self-closing or fabricated chain. |
+| Verification state | Declared verification state distinct from rights and from capability. | A verified state inferred from a source declaration or used as permission. |
+
+### 2.2 Immutability after admission
+
+A pack version is immutable after admission. A new venue, rule, scheme, calendar, settlement
+convention, action type, regulator citation or partition reference creates a new component
+revision or a new pack version; it never overwrites an admitted record. Superseded components stay
+addressable with their original valid interval, knowledge time, revision and predecessor. A
+corrected pack version receives a new version identity and digest, and the earlier pack version
+remains in lineage. No rule is applied retroactively by rewriting a predecessor.
 
 The pack is data, not Rust source. A new venue, segment, product family, identifier scheme or
 action type requires a new versioned assertion and, where a payload shape is missing, a **NEW
@@ -68,6 +103,24 @@ identifier, temporal and coverage machinery with the rest of the core. A product
 to the IFSC partition by name, currency or participant; assignment requires an asserted
 jurisdiction reference and a source. Mainland and IFSC venues remain separate venue objects, and
 no cross-partition venue, segment or product identity is merged.
+
+The definitions below are submitted to the owner for approval. None is admitted by this PROPOSED
+design; each becomes binding only in an owner-approved pack version with all nine evidence fields
+of §2.1.
+
+| Dimension | Mainland India definition submitted for approval | IFSC definition submitted for approval | Prohibited inference |
+|---|---|---|---|
+| Jurisdiction identity | Distinct opaque jurisdiction identity asserted for the domestic regime, with its legal basis and effective interval. | Distinct opaque jurisdiction identity asserted for the IFSC regime, with its legal basis and effective interval; never the mainland identity under a second label. | Treating a jurisdiction as a name, a country code, a venue or a data right. |
+| Regulatory authority | Authority role asserted under the mainland jurisdiction with source, scope and effective interval. | Authority role asserted under the IFSC jurisdiction with source, scope and effective interval; no authority is inherited from the mainland regime. | Inferring an authority from an entity name, licence reference, website or venue code. |
+| Venue ownership | Operator identity asserted in the mainland jurisdiction; venue identity distinct from operator, provider and feed. | Operator identity asserted in the IFSC jurisdiction; venue identity distinct from any mainland venue even where the operator name matches. | Merging venues or operators across partitions by name, code or shared operator text. |
+| Product applicability | Product assertion names its admitting jurisdiction, venue, segment and terms version. | Product assertion names the IFSC admitting facility and its own terms version; a mainland family is not transferred by label. | Assigning a product to a partition from its name, symbol, contract code or currency. |
+| Settlement | Settlement convention asserted with jurisdiction, settlement calendar and effective interval. | Settlement convention asserted with IFSC jurisdiction and its own calendar; no mainland convention inherited. | Assuming a settlement cycle or business-day rule from an asset class or another partition. |
+| Currency and instrument rules | Currency identity asserted separately; INR and foreign currencies are distinct objects with asserted convertibility and settlement rules. | Offshore currency and instrument rules asserted under the IFSC jurisdiction; no implied convertibility, route or settlement eligibility from membership. | Inferring IFSC membership or settlement eligibility from a currency code, an INR/USD label or a product name. |
+| Cross-partition references | Explicit asserted edge to an IFSC object, jurisdiction-checked and bitemporal. | Explicit asserted edge to a mainland object, jurisdiction-checked and bitemporal. | Silent cross-partition identity merge or a reference inferred from a shared participant, feed or code. |
+
+IFSC membership is established only by an asserted jurisdiction reference plus a named source,
+verification state and effective interval. It is never inferred from a name, a venue code, a
+currency, a participant domicile, a provider feed label or a shared product description.
 
 ### 3.2 Authorities
 
@@ -199,6 +252,9 @@ no permission and proves no truth of an observation.
 | Revision | Assertions are append-only. A correction adds a new record with a nonzero revision and a predecessor link; the earlier record stays addressable with its original interval and knowledge time. |
 | Supersession | A predecessor must exist, a chain may not close on itself, and selection uses release as-of instant and knowledge time rather than arrival order. |
 | Corrections across releases | A corrected release receives a new release identity and digest; the prior release and its knowledge time remain in lineage. No overwrite, no synthetic reconstruction and no partial release. |
+| Pack version immutability | An admitted pack version is immutable. A new rule creates a new component revision or a new pack version with a new version identity and digest; no admitted component is overwritten. |
+| Component evidence completeness | Every pack component carries the nine fields of §2.1. A component missing identity, version, source, source digest, valid interval, knowledge time, revision, predecessor or verification state is not admitted. |
+| Verification state | Verification state is declared with its verifier and evidence; it is distinct from capability and rights. A name, a code, a source declaration or a successful connection never raises it to verified. |
 | Capability and rights state | Capability evidence and rights state stay separate: a verified capability with rights `UNKNOWN` grants nothing, and a source declaration alone raises no capability to verified. |
 
 ## 5. Population-completeness policy per cohort
@@ -223,15 +279,20 @@ commensurable denominator). No count, ticker list, ISIN list or public page is a
 | IN-09 | OTC-private | Bounded declared source scope and party assertions | Reporting cut-off instant of the bounded scope | None at cohort level; per-scope only | `UNMEASURABLE` |
 | IN-10 | Authority-bounded | Exchange contract-specification assertions | Contract-specification effective instant and expiry under the venue calendar | Contract; instrument; listing/identity | `UNKNOWN` |
 | IN-11 | Authority-bounded | Exchange venue/operator assertion and contract specifications | Contract effective instant and expiry under the MCX calendar rule | Contract; session/time | `UNKNOWN` |
-| IN-12 | OTC-private | Counterparty assertions for OTC subset; venue assertions for listed subset | Fixing or deal cut-off instant; venue date for listed subset | Contract where a bounded scope is declared | `UNMEASURABLE` |
-| IN-13 | OTC-private | Counterparty assertions and benchmark administrator identity | Fixing publication instant under the declared calendar | None at cohort level; per-family only | `UNMEASURABLE` |
+| IN-12 | Listed: Authority-bounded; OTC: OTC-private | Admitting-exchange assertions for listed products; counterparty assertions and a bounded source scope for OTC products | Declared venue trading date for listed; deal cut-off instant for OTC | Contract and listing/identity for listed; per-scope only for OTC; no combined denominator | Listed `UNKNOWN`; OTC `UNMEASURABLE` |
+| IN-13 | Listed: Authority-bounded; bilateral: OTC-private; benchmark-linked: Provider-bounded; other: unclassified | Exchange specifications for listed; counterparty assertions for bilateral; named qualified source product plus administrator index identity for benchmark-linked | Contract-specification effective instant for listed; fixing or confirmation cut-off for the other subpopulations | Contract and listing/identity for listed; per-scope only for bilateral and benchmark-linked; none for other | Listed `UNKNOWN`; others `UNMEASURABLE` |
 | IN-14 | Officially enumerable for identities; Derived membership | Benchmark administrator assertions | Index-method or membership effective instant with revision | Instrument (index IDs); listing/identity (membership intervals) | `UNKNOWN` |
 | IN-15 | OTC-private | Versioned per-family contract and bounded source scope | Confirmation or reporting cut-off instant of that family's scope | Per-family denominator from its contract only | `UNMEASURABLE` |
 | IN-16 | OTC-private | Company registry and issuer assertions under a bounded scope | Registry or filing as-of instant under a declared rule | None at cohort level; per-scope only | `UNMEASURABLE` |
 | IN-17 | Authority-bounded | IFSC regulator and admitting-facility assertions | Jurisdiction rule effective instant and venue trading date | Per-product denominator from its versioned contract | `UNKNOWN` |
 | IN-18 | Authority-bounded | Issuer filings and venue assertions | Announcement and effective market dates under the calendar rule | Corporate action per instrument and period | `UNKNOWN` |
-| IN-19 | Authority-bounded | Regulator filing systems; qualified rating publisher for the rating subset | Filing or rating publication instant | Per-issuer or per-instrument observation denominator | `UNKNOWN` |
-| IN-20 | Derived | Publishing authority or assessment source with transformation version | Release vintage instant under the declared publication rule | Observation universe declared by the transformation | `UNKNOWN` |
+| IN-19 | Statement: Authority-bounded; rating: Provider-bounded; credit event: authority-bounded where filed, OTC-private where privately declared | Regulator filing systems for statements; qualified publisher for ratings; filing authority or bounded declaring scope for credit events | Filing instant for statements; publication instant for ratings; occurrence and disclosure instants for credit events | Per-issuer or per-instrument observation denominator on each independent object contract; no roll-up | `UNKNOWN` for filings; `UNMEASURABLE` where no qualified source or bounded scope |
+| IN-20 | (a) Authority-bounded releases; (b) Provider-bounded reference objects and specifications; (c) Derived | Publishing authority for releases; named publisher for specifications; declared transformation version and input universe for indicators | Release vintage for (a); specification effective instant for (b); transformation run instant for (c) | Declared release universe for (a); specification universe for (b); transformation input universe for (c); no cross-subdomain denominator | `UNKNOWN` or `UNMEASURABLE` per subdomain |
+
+For IN-12, IN-13, IN-19 and IN-20 the verdicts are per subpopulation or per object contract; no
+cohort-level verdict is formed by merging them. The mandatory twenty-question cross-domain set
+with per-cohort answers is maintained once in `engineering/design/india-national-domain-catalogue.md`
+§6; this table answers Q05 and Q14 for pack purposes and does not duplicate the full set.
 
 The nine NDC coverage dimensions retain separate denominators. No pass in one dimension implies a
 pass in another, no "all Indian instruments" percentage is declared, and no I6 or cohort roll-up
@@ -255,15 +316,15 @@ cohort; that is neither a pass nor a zero.
 | IN-09 | FinancialInstrument, LegalEntity, ContractInstance, IdentifierAssertion, Security as loaned asset | Yes; no core class covers a securities-lending object. |
 | IN-10 | ContractFamily, ContractInstance, FinancialInstrument, Security, Index, Listing, InstrumentTermsRevision | No for declared future/option families; yes for any unlisted payout shape. |
 | IN-11 | MarketProduct, ContractFamily, ContractInstance, MarketCalendar, Source | Yes for commodity contract specifications with grade, unit and delivery. |
-| IN-12 | FinancialInstrument, ContractFamily, ContractInstance, MarketProduct, LegalEntity | Yes for Indian currency-contract tenor and settlement terms. |
-| IN-13 | ContractFamily, ContractInstance, FinancialInstrument, Index, LegalEntity | Yes for OIS and reset/fixing schedules. |
+| IN-12 | FinancialInstrument, ContractFamily, ContractInstance, MarketProduct, LegalEntity, Listing for the listed subpopulation | Yes for listed currency-contract terms and for OTC tenor and settlement; listed and OTC subpopulations keep separate authorities and denominators. |
+| IN-13 | ContractFamily, ContractInstance, FinancialInstrument, Index, LegalEntity, Listing for the listed subpopulation | Yes per separated subpopulation (listed, bilateral, benchmark-linked, other) for OIS and reset/fixing schedules; no forced single population model. |
 | IN-14 | Index, LegalEntity, Source, Capability, Security as constituent | No for index identity; membership is an edge, not a class. |
 | IN-15 | FinancialInstrument, ContractFamily, ContractInstance, LegalEntity, Source | Yes per named OTC family; no generic `Other` family. |
 | IN-16 | Security, FinancialInstrument, LegalEntity, IdentifierAssertion, InstrumentTermsRevision | Yes for unlisted/private security families without a taxonomy variant. |
 | IN-17 | Jurisdiction, Authority, MarketOperator, Venue, Segment, MarketProduct, plus product classes | Yes per IFSC product lacking a declared family; no automatic mainland reuse. |
 | IN-18 | CorporateAction, LegalEntity, Security, Source | Yes for action types not in the declared set; never a replacement security class. |
-| IN-19 | LegalEntity, Source, Capability, CorporateAction only where declared | Yes for statement, rating and credit-event objects; do not force them into instrument or action classes. |
-| IN-20 | Source, DataProduct, Feed, Capability, MarketCalendar | Yes for observation and assessment payloads with vintage and methodology. |
+| IN-19 | LegalEntity, Source, Capability; no core class for the three object contracts | Yes: three independent typed extensions for statement, rating and credit event with their own lifecycle, revision and provenance; a rating is not a statement and an event is not an issuer observation. |
+| IN-20 | Source, DataProduct, Feed, Capability, MarketCalendar | Yes: separate typed payloads for published observations and releases, commodity reference objects and specifications, and derived indicators and transformations; a published observation is not a derived object. |
 
 ### 6.2 Core class to pack role
 
@@ -293,6 +354,10 @@ Every class below is an existing `ObjectClass`; none is redefined by the India p
 | Feed | Delivery-scoped identity distinct from source and venue. | Treating a feed as a venue or as permission. |
 | Capability | Evidence-bound capability claim with separate rights state. | Treating a capability claim as a right or a coverage pass. |
 
+The nine component-evidence fields of §2.1 are metadata on every pack component, not additional
+`ObjectClass` variants and not a second identity system. A jurisdiction-scoped partition is an
+asserted identity, not a new class tree.
+
 A cohort needing a NEW typed extension must receive that extension in a versioned contract before
 any object is forced into an existing class. No cohort is admitted by crosswalk membership alone.
 
@@ -300,24 +365,39 @@ any object is forced into an existing class. No cohort is admitted by crosswalk 
 
 - Version changes are monotonic and carry a source, effective interval and revision. Superseded
   rules remain addressable.
+- An admitted pack version is immutable. A new rule creates a new component revision or pack
+  version; no admitted component is overwritten, and the predecessor stays addressable.
+- Every component carries the nine §2.1 evidence fields. A component without all nine is not
+  admitted, and a verification state is never inferred from a name, code or source declaration.
+- Mainland and IFSC semantics stay separated under the §3.1 definitions submitted for owner
+  approval. IFSC membership needs an asserted jurisdiction reference, source and verification
+  state; it is not inferred from names, venue codes, currencies, participants or feed labels.
 - New venues, segments, products, schemes, currencies, calendars, settlement rules and action
   types enter through new assertions; no frozen wire surface is widened in place.
-- Each pack change is reviewed against the India domain catalogue, the coverage register's I1–I6
-  order and the nine-dimension denominator rule.
+- Each pack change is reviewed against the India domain catalogue, its mandatory Q01–Q20 set, the
+  coverage register's I1–I6 order and the nine-dimension denominator rule.
 - Ratification of this design does not approve the content of any future pack version; each
   version needs its own owner decision before use.
 
-## 8. What is NOT approved
+## 8. Not approved
 
 - **No data rights.** All source rights remain `UNKNOWN`. No licence, retention, replay,
   redistribution or analytics permission is granted by this document.
 - **No collection.** No provider contact, market-data API call, download, scrape, adapter run or
   source retrieval is authorised.
+- **No reference ingestion.** No reference-data ingestion, source qualification, rights approval,
+  admission receipt or dataset acceptance is performed or implied. Pack components are declared
+  shapes, not ingested values.
 - **No India implementation.** No code, crate, schema, wire field, enum, contract version,
   artifact, transport, storage engine, release or producer/verifier change is authorised. The
   global core freeze is unchanged.
 - **No dataset acceptance.** Dataset acceptance stays `BLOCKED`; no admission receipt, research
   dataset or experiment is created or implied.
+- **W2.3 remains gated.** W2.3 India implementation stays gated on separate owner ratification of
+  the design and of each country-pack version. This amendment does not open that gate.
+- **Design amendments are not authorization.** The evidence model, immutability rule and
+  mainland/IFSC definitions are PROPOSED declarations; they grant no right and admit no source,
+  pack version or coverage count.
 - No second identity system, no symbol-as-identity rule, no catch-all `Other` family, no
   permanent I6 bucket, no single "all Indian instruments" coverage percentage and no synthetic
   market-shaped evidence.
@@ -328,7 +408,7 @@ any object is forced into an existing class. No cohort is admitted by crosswalk 
 ## 9. Connections
 
 - `engineering/design/india-national-domain-catalogue.md` — IN-01..IN-20 work breakdown,
-  ontology rules and population-type classifications.
+  ontology rules, population types, split subpopulations and the mandatory Q01–Q20 answer set.
 - `engineering/decisions/WS-SCOPE-2026-11-24-001-global-reference-core-india-first.md` — ratified
   one-core ownership and model rules.
 - `engineering/coverage/india-coverage-register.md` — I1–I6 migration sequence and nine

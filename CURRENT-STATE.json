@@ -14,17 +14,17 @@
     "note": "RRP-001 review and measurement heads: manifests were built with git ls-files + shasum -a 256 + stat at these heads. Historical; not the current or tested heads."
   },
   "current_source_heads": {
-    "fieldbook": "dd90899b896263314bfb2a588a0e41b094b8619f",
+    "fieldbook": "071da27ed6512fb38c29ada679d76dd0e30ddb6b",
     "nirnay": "70716ebf66289a86335641847724fd92bf6bcce7"
   },
   "tested_source_heads": {
-    "fieldbook": "dd90899b896263314bfb2a588a0e41b094b8619f",
+    "fieldbook": "071da27ed6512fb38c29ada679d76dd0e30ddb6b",
     "nirnay": "70716ebf66289a86335641847724fd92bf6bcce7"
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45358955592",
-      "head_sha": "dd90899b896263314bfb2a588a0e41b094b8619f",
+      "run_id": "45365803281",
+      "head_sha": "071da27ed6512fb38c29ada679d76dd0e30ddb6b",
       "conclusion": "success",
       "jobs": "2/2",
       "note": "Rerun after merged remote-tracking branch cleared git-policy check"
@@ -233,5 +233,6 @@
       "DATASET_ACCEPTED": false
     },
     "cross_execution_refusal": "stage 6 REJECT_RIGHTS_EVIDENCE under UNKNOWN rights; no receipt, no dataset acceptance"
-  }
+  },
+  "evidence_audit_status": "9 RESOLVED, 1 REMAINING (B15/B16 streaming), 1 OWNER-DECISION (compression codec), 1 SEPARATE GATE (publication receipt). B12 atomic publication merged at 071da27. PUBLICATION_DURABILITY_VERIFIED not achieved."
 }
