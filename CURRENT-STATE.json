@@ -14,24 +14,24 @@
     "note": "RRP-001 review and measurement heads: manifests were built with git ls-files + shasum -a 256 + stat at these heads. Historical; not the current or tested heads."
   },
   "current_source_heads": {
-    "fieldbook": "e0472f7610ee062fe1a9b8aea8d7a6234a6e3b77",
-    "nirnay": "f1f8a8a35b510aa4b6676147f049eae2c63a16b2"
+    "fieldbook": "f27f4a442494de02fb7b7dc5c9d620e5664a70f9",
+    "nirnay": "7324925bb947fd20c32a77eed00c5bfc9d22ede9"
   },
   "tested_source_heads": {
-    "fieldbook": "e0472f7610ee062fe1a9b8aea8d7a6234a6e3b77",
-    "nirnay": "f1f8a8a35b510aa4b6676147f049eae2c63a16b2"
+    "fieldbook": "f27f4a442494de02fb7b7dc5c9d620e5664a70f9",
+    "nirnay": "7324925bb947fd20c32a77eed00c5bfc9d22ede9"
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45267263906",
-      "head_sha": "e0472f7610ee062fe1a9b8aea8d7a6234a6e3b77",
+      "run_id": "45293427722",
+      "head_sha": "f27f4a442494de02fb7b7dc5c9d620e5664a70f9",
       "conclusion": "success",
       "jobs": "2/2",
-      "note": "Rerun after stale merged remote branch cleared git-policy check"
+      "note": "Rerun after merged remote-tracking branch cleared git-policy check"
     },
     "nirnay": {
-      "run_id": "45281493580",
-      "head_sha": "f1f8a8a35b510aa4b6676147f049eae2c63a16b2",
+      "run_id": "45293438172",
+      "head_sha": "7324925bb947fd20c32a77eed00c5bfc9d22ede9",
       "conclusion": "success",
       "jobs": "12/12"
     }
@@ -218,5 +218,6 @@
     "Decide whether to approve a versioned test-only fixture amendment",
     "Define India venue/product coverage beyond the I1-I6 register"
   ],
-  "w21_status": "W2.1 complete: conformance matrix, release-format design and readiness report merged in workspace PR #7"
+  "w21_status": "W2.1 complete: conformance matrix, release-format design and readiness report merged in workspace PR #7",
+  "style_standard": "Adopted 2026-11-24: engineering/style/DOCUMENTATION-STANDARD.md in workspace; mirrored into Fieldbook STYLES.md/docs/style-standards.md/docs/coding-standard.md and Nirnay STYLES.md/engineering/style-policy.md. PRs workspace #8, Fieldbook #56, Nirnay #141. Full-tree sweep before gates; one dated exception in frozen Nirnay RRP-004 path crates/market-archive/src/journal.rs."
 }
