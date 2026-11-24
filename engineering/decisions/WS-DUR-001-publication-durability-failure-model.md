@@ -20,6 +20,16 @@ All approved digests, the capability states in `CURRENT-STATE.json` and the prog
 unchanged: rights `UNKNOWN`, dataset acceptance `BLOCKED`, budget INR 0, collection `DISABLED`,
 experiments `BLOCKED`, live execution `DISABLED`, D11 strict.
 
+WS-EVIDENCE-026 terminology reconciliation (2026-11-24): the `tested_failure_cases` row in §2.1,
+the permissible D0 claim in §5 and the I-02 note in §7 were corrected to distinguish the three
+fresh-process (subprocess) D0 cases from in-process fault injection. The ratified failure model,
+tier booleans, acknowledgement contract and invariants are unchanged. The correction neither
+broadens D0 beyond its stated three-case scope nor narrows the achieved scope to false;
+`PUBLICATION_DURABILITY_VERIFIED` remains NOT ACHIEVED. The original ratification digest is
+preserved in `REVIEW-LOG.md`; the amended document digest is recorded in `CURRENT-STATE.json`,
+`NDC-REGISTRY.md` and `ADR-REGISTRY.md`. See
+`engineering/conformance/ws-evidence-026-provenance-2026-11-24.md`.
+
 ## 1. Governing decision
 
 1. Durability is a **failure model**, not a test count and not a single product property. A
@@ -68,7 +78,7 @@ or to any provider, market-data or India path.
 | `storage_device_class` | Local temporary backing store; device class not inspected or qualified |
 | `sync_primitive` | `fsync`/`sync_all` on each regular file, on the `artifacts/` child directory and on the staging directory; parent/root directory sync on provisioning, staging entry, rename, receipt and marker; `F_FULLFSYNC` **not** used (see §4) |
 | `acknowledgement_rule` | A publication state is acknowledged only after every sync required by that state succeeded; a failed sync returns a typed `ProducerError` and is never downgraded to a warning; no acknowledgement from in-memory state, directory presence or a manifest declaration |
-| `tested_failure_cases` | Process restart at every committed journal stage; journal directory sync failure withholds acknowledgement; boundary faults at staging mkdir, root sync, artifacts mkdir, each file write/sync, both directory syncs, rename, rename root sync, receipt write/sync/ledger sync, marker write/sync/ledger sync; recovery from staging and final directory; v1-record readability and mixed-version refusal |
+| `tested_failure_cases` | **D0 subprocess (fresh-process) evidence — exactly three cases:** `publish_before` (process restart after the rename syscall but before the rename journal commit), `publish_staging` (process restart after the durable staging-tree journal commit), and `publish_rename` (process restart after the durable rename journal commit). **All other boundaries are in-process fault injection only**, not fresh-process/subprocess evidence: journal directory sync failure withholds acknowledgement; boundary faults at staging mkdir, root sync, artifacts mkdir, each file write/sync, both directory syncs, rename, rename root sync, receipt write/sync/ledger sync, marker write/sync/ledger sync; recovery from staging and final directory; v1-record readability and mixed-version refusal. D0 is ACHIEVED for this stated three-case scope only; no process restart is claimed as verified at every journal stage. |
 | `known_limitations` | Process crash only. Not OS crash, power loss, device failure, host failure or disaster recovery. No drive-cache flush qualification. No replication, backup or restore. Local receipt is not consumer admission. |
 | `evidence_digest` | `c659dbb8d87369a9cd00e25aa07c8749d980e9d9237e62f44bc3b449620d0c561f` — SHA-256 of `docs/fb-pub-019-directory-durability-2026-11-24.md` at exact Fieldbook commit `eecfe8ca54454245b813867ee273b60675c67025` (PR #69, merged). This is a gate-record digest, not an independent durability certificate. `D0_PROCESS_RECOVERY_VERIFIED` is conditioned on the owner-designated PUB-020 merge, not satisfied by this digest alone. |
 
@@ -199,7 +209,7 @@ or to any provider, market-data or India path.
 
 | Permitted | Not permitted |
 |---|---|
-| "Under the D0 process-termination profile on the declared temporary filesystem, journal stages survive a process restart and an interrupted publication is reconciled from durable evidence." | "Zero data loss." |
+| "Under the D0 process-termination profile on the declared temporary filesystem, the three fresh-process cases `publish_before`, `publish_staging` and `publish_rename` recover from durable journal evidence and an interrupted publication is reconciled; all other boundaries were exercised by in-process fault injection only." | "Zero data loss", or "every committed journal stage survives a fresh process restart". |
 | "Under the D1 APFS profile at exact OS/filesystem/device versions, the following power-loss cases were exercised and the following limits remain." (only after `D1_APFS_QUALIFIED=true`) | "RPO = 0" without a declared failure class, or "durable" without a tier. |
 | "Local `fsync` and parent-directory sync completed before acknowledgement on this filesystem." | "Local `fsync` gives replicated durability" or "a qualified Mac or Linux filesystem justifies a global durability claim." |
 | "The publication receipt is a local acknowledgement; Nirnay admission is a separate decision under UNKNOWN rights." | "A receipt, an `AVAILABLE` declaration or directory presence proves durable publication or dataset admission." |
@@ -213,7 +223,9 @@ or one device class never transfers to another profile.
 1. **Fieldbook v2 publication journal.** `FB-PUB-017` (Fieldbook commit
    `475dc34c8cc510ac8dfba158dfdedbd91950f219`, PR #68) added digest-chained immutable stage
    records with ledger-directory `fsync` after every committed transition, provisioning parent
-   sync, canonical validation of sequence records and restart/crash tests at every stage.
+   sync, canonical validation of sequence records and restart/crash tests at every stage (those
+   stage tests are in-process fault injection; fresh-process D0 evidence is limited to the three
+   subprocess cases in §2.1).
    `FB-PUB-019` (merged at Fieldbook commit `eecfe8ca54454245b813867ee273b60675c67025`, PR #69)
    added bottom-up directory durability: journal schema v2, five-record state machine, separate
    file/child-directory/root sync boundaries, receipt and marker fidelity, and process-restart
@@ -260,6 +272,10 @@ gate has been re-run by this documentation work.
 | I-13 | No durability claim outside a qualified profile. | Programme owner (Kartik Jangid) | Workspace; Fieldbook | This decision (§2, §4, §5); `FB::no_replace_rename_fails_closed_on_other_platforms`; `make consistency`; `make audit` |
 | I-14 | No source-head claim without an exact commit. | Programme owner (Kartik Jangid) | Workspace | `CURRENT-STATE.json` five separately evidenced head concepts; `make status`; `make audit`; exact commits in `REVIEW-LOG.md` |
 | I-15 | No silent deletion of uncertain publication evidence. | Fieldbook producer owner (Kartik Jangid) | Fieldbook; Workspace (RRP) | `FB::recovery_without_evidence_is_empty`; `FB::rename_before_root_sync_crash_is_quarantined`; `FB::schema_v1_records_remain_readable_and_auditable`; `RETIREMENT-ACCEPTANCE.md` no-deletion-before-replacement rules |
+
+The `FB::every_committed_journal_stage_survives_a_process_restart` name cited for I-02 is an
+in-process fault-injection test pointer, not fresh-process evidence; the fresh-process D0
+evidence is exactly the three subprocess cases recorded in §2.1.
 
 `FB::` names cite Fieldbook tests at or after the publication-journal work; `NZ::` names cite
 Nirnay verifier or domain tests. Exact commits, gate commands and exits belong in the dated
