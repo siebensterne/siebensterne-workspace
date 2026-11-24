@@ -5,6 +5,18 @@
     "status": "Ratified 2026-11-23",
     "note": "Decision A accepts ownership; Decision B approves NDC v2 semantics. No data rights and no separate consumer-use proposal approval."
   },
+  "ndc_v2_serialization_profile_1_ratification": {
+    "path": "engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md",
+    "sha256": "fb8a4992d63aabb41f02286317d1d69aeaec9a0e35836bd8ce6eff2754cb01fc",
+    "status": "Ratified 2026-11-24",
+    "note": "Decisions A-I of NDC v2 Release Serialization Profile 1. Docs only; no schema artifact, release, key or implementation. Does not approve the separate consumer-use proposal."
+  },
+  "d1_amendment_001": {
+    "path": "engineering/conformance/NDC-D1-AMENDMENT-001.md",
+    "sha256": "a2087aff7bcadb5aae90eea3f7893ac3147e2e8cbecce9fcb9357481e7e49894",
+    "status": "Approved 2026-11-24",
+    "note": "Approved amendment to D1 sections 5.8 and 7.2 under WS-NDC-2026-11-24-002 Decision A. New revision document with its own digest; D1 approved bytes and historical digest unchanged."
+  },
   "c0_semantic_model": {
     "path": "engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md",
     "sha256": "3dace660c362e683790ba7e56a785ded8af836abda36f6eab06ed284de49eed2",

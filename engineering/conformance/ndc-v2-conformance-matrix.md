@@ -7,6 +7,14 @@ approve a contract, create a release, verify a signature, grant a right or chang
 policy. The NDC v2 semantic requirements are Approved 2026-11-23; the paired runtime work
 recorded here is Implemented/Tested with abstract values only.
 
+**Ratified serialization profile.** NDC v2 Release Serialization Profile 1 was **RATIFIED
+2026-11-24** by owner decision
+`engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md`
+(Decisions A–I). The D1 digest amendment is
+`engineering/conformance/NDC-D1-AMENDMENT-001.md`. Section 6 records the decision references.
+Ratification fixes normative rules; it does **not** promote any producer or consumer
+implementation state below and creates no release, verifier, key or right.
+
 **Scope:** the 15 areas named in the W2.1 work order, paired across Fieldbook e0472f7 and
 Nirnay f1f8a8a. No shared crate, transport, broker, queue, database or vendored source is
 created or assumed. Producer and consumer remain separate repositories with separate
@@ -103,10 +111,14 @@ A code is a classification of a failed check, not proof that a cryptographic che
    requirements but no trusted-key registry, signer or publication binding. Nirnay checks
    that a declared publisher name equals the request identity (`consumer_use.py`) and that
    `release.publication_identity` is named (`dataset_admission.py`). No key validity or
-   revocation check exists. No real key was exercised.
+   revocation check exists. No real key was exercised. Profile 1 Decision H ratifies the
+   out-of-band registry and key-state rules; Batch B is limited to the trust interface and
+   injected test keys. State unchanged.
 2. **Release identity.** Nirnay has declaration-level identity and digest equality tests;
    Fieldbook has run/journal manifests but no NDC release emitter. The release serializer is
-   designed in `ndc-v2-release-format-design.md` and is explicitly not implemented.
+   designed in `ndc-v2-release-format-design.md` and is explicitly not implemented. Profile 1
+   Decision G ratifies durable publication with a receipt and uncertain-publication recovery;
+   no publication emitter exists at these heads. State unchanged.
 3. **Source identity.** Both sides enforce exact source dimensions and full object
    identity; Fieldbook's `UniverseRef` requires exact id/version/digest/time/revision and
    recorded membership. All tests use scalar strings and abstract instants.
@@ -131,22 +143,30 @@ A code is a classification of a failed check, not proof that a cryptographic che
 9. **Provenance.** Fieldbook journals durable source and receive records with config
    digests and revision lineage; Nirnay validates named source, universe, identity and
    corporate-action references plus knowledge time. A signature or lineage record is not
-   evidence of truth or permission.
+   evidence of truth or permission. Profile 1 Decision E ratifies the single release-level
+   `lineage.supersedes` relation; no release serializer emits one at these heads.
 10. **Digests.** Fieldbook exposes the SHA-256 primitive and journal digests but no NDC
     manifest/data digest serializer. Nirnay's code-manifest integrity layer adds path-safe
     reads, length framing, sorted entries, size-while-reading checks and 14 abstract tests;
-    this is research-code integrity, not an NDC release verifier.
+    this is research-code integrity, not an NDC release verifier. Profile 1 Decision A ratifies
+    complete-manifest JCS with `manifest_sha256` only in the sidecar, Decision C removes
+    `digests.artifact_digests[]` and Decision D ratifies the uncompressed-stream data digest.
+    No implementation state changes.
 11. **Signature.** RFC 8785 JCS plus a detached Ed25519 sidecar is a ratified semantic
     requirement and is fully specified as DESIGN in the companion document. Nirnay's
     `write_dataset` writes a detached sidecar for its *own* research dataset with an
     injected signer; that path is not a Fieldbook NDC release verifier and is not evidence
-    that the NDC verifier exists.
+    that the NDC verifier exists. Profile 1 Decision A ratifies the five-field sidecar and
+    complete-manifest signing; the consumer verifier state stays NOT_STARTED and the design
+    state stays DESIGNED. No real key was exercised.
 12. **Capabilities.** Four separate facts are tested in Nirnay preflight; Fieldbook's
     source capability manifests are declarations of technical capability and grant no
     permission. No capability was derived from a connection or a successful check.
 13. **Corrections.** Fieldbook models valid/transaction time and revision lineage; Nirnay
     requires named correction lineage and refuses a later knowledge time. The release-format
-    design specifies a new release identity per correction; no serializer emits one.
+    design specifies a new release identity per correction; no serializer emits one. Profile 1
+    Decision E ratifies one `lineage.supersedes` with one immediate predecessor and PROV
+    `wasRevisionOf`; event-level correction lineage stays separate. State unchanged.
 14. **Retention.** Both sides require typed bounded duration and purge duty; a shorter
     duration with a weaker purge is refused. No retention right was granted or exercised.
 15. **Rejection/failure.** Producer codes are declared in D1 and implemented as typed Rust
@@ -163,7 +183,29 @@ A code is a classification of a failed check, not proof that a cryptographic che
 - No shared crate, transport, broker, queue or database was introduced. Fieldbook and Nirnay
   keep separate validators and separate failure vocabularies.
 - No approved digest was edited. D0/D1/D2 and the separate consumer-use proposal keep their
-  recorded SHA-256 values.
+  recorded SHA-256 values. The D1 change is a separate approved revision document,
+  `NDC-D1-AMENDMENT-001.md`, with its own digest and date.
 - The paired runtime records remain Proposed implementations of a ratified semantic model;
   Implemented with abstract values is not Verified, and nothing in this matrix promotes a
-  state.
+  state. Ratification of Profile 1 on 2026-11-24 fixes normative rules only.
+
+## 6. Ratified Profile 1 decision references
+
+Ratification: `engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md`
+(status RATIFIED by owner 2026-11-24). The state columns in section 2 describe the code at the
+recorded heads and are unchanged by this section.
+
+| Decision | Matrix area(s) | Normative effect | Implementation state effect |
+|---|---|---|---|
+| A — manifest digest / circularity | 10, 11 | Complete-manifest JCS, `H_M = SHA256(M)`, digest only in five-field sidecar; D1 amended by `NDC-D1-AMENDMENT-001.md` | None; no release signer or verifier at these heads |
+| B — record ordering | 9, 13 | Per-artifact `record_order_profile`, sequence and reference keys; event-time-first sorting rejected | None; no serializer at these heads |
+| C — artifacts | 10 | `artifacts[]` sole inventory with fixed descriptors; canonical artifact order and JSONL | None |
+| D — dataset digest | 10 | SHA-256 over concatenated uncompressed canonical streams, compression-independent | None |
+| E — corrections | 9, 13 | One `lineage.supersedes`, one immediate predecessor, PROV `wasRevisionOf` | None |
+| F — limits | 15 | No manifest `limits`; versioned normative consumer resource policy; numeric maxima after qualification | None; no unmeasured number adopted |
+| G — publication | 2, 15 | Eight-state publication machine, durable receipt, uncertain-publication recovery | None; no publication emitter at these heads |
+| H — keys | 1, 11 | Out-of-band registry with key states and revocation evidence; Batch B trust interface and injected test keys only | None; no production key generated or activated |
+| I — independence | 1, 10, 15 | Separate producer and verifier implementations; shared schema and vectors only; path and first-refusal rules preserved | None; no shared crate introduced |
+
+Final schema requirement under Profile 1: exact version, registered digest, strict unknown-field
+handling and conformance vectors. A schema that compiles is not a verified release.
