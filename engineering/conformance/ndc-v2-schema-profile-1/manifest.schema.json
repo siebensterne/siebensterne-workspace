@@ -1,0 +1,1218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workspace.siebensterne.invalid/ndc/v2/profile-1/schemas/manifest.schema.json",
+  "title": "Canonical NDC v2 Profile 1 manifest — version 1",
+  "description": "Language-independent normative wire authority for the complete NDC v2 Release Serialization Profile 1 release manifest. Ratified by WS-NDC-2026-11-24-003 (417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119). This schema is strict: no unknown member, no optional-by-omission field, no default, no coercion. Structural validation is necessary but not sufficient; see semantic-constraints.md. The manifest contains no self-digest and no nested contract_version.",
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "not": {
+        "enum": [
+          "UNKNOWN",
+          "ALL",
+          "NONE",
+          "NULL",
+          "null",
+          "N/A",
+          "TBD",
+          "PLACEHOLDER",
+          "unknown",
+          "all"
+        ]
+      },
+      "description": "Ratified identifier grammar. Placeholder literals are rejected structurally; validity against the out-of-band registry is a semantic constraint."
+    },
+    "DecimalStringU64": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$",
+      "maxLength": 20,
+      "description": "Nanosecond instant, revision or count on the full u64 range. Parsed value must be within 0..=18446744073709551615; the bound is a semantic constraint. A JSON integer is never coerced to this form."
+    },
+    "CountOrSize": {
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        {
+          "$ref": "#/$defs/DecimalStringU64"
+        }
+      ],
+      "description": "Integer below 2^53, or decimal string for the full u64 range. Representation is selected by value, never by caller preference. A fractional or exponent token is rejected by the canonical-byte rule in semantic-constraints.md."
+    },
+    "U64Integer": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "Sha256Hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "UtcInstantString": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{9}Z$",
+      "description": "RFC 3339 profile: UTC designator Z only, exactly nine fractional digits, proleptic Gregorian, no offset, no leap second, valid calendar instant (semantic check)."
+    },
+    "ProducerAction": {
+      "type": "string",
+      "enum": [
+        "source_contact",
+        "reference_data_retrieval",
+        "historical_data_retrieval",
+        "real_time_capture",
+        "raw_storage",
+        "normalization",
+        "replay",
+        "backup",
+        "internal_analytics",
+        "derived_data_creation",
+        "display",
+        "external_redistribution",
+        "retention",
+        "deletion"
+      ],
+      "description": "The 14-value Fieldbook producer Operation enum stored as its enum value, not a display label. The consumer vocabulary is separate and is not implied by this wire value."
+    },
+    "ArtifactPath": {
+      "type": "string",
+      "pattern": "^artifacts/[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "description": "Release-relative POSIX path. NFC normalization, component alphabet, no traversal, no symlink descent and no duplicate normalized path are enforced as semantic constraints."
+    },
+    "ArtifactRecordOrderProfile": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "sequence_domain_id",
+            "sequence_epoch"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "sequenced"
+            },
+            "sequence_domain_id": {
+              "$ref": "#/$defs/NonEmptyString"
+            },
+            "sequence_epoch": {
+              "$ref": "#/$defs/NonEmptyString"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "reference"
+            }
+          }
+        }
+      ],
+      "description": "Artifact-level tagged object. The reference profile carries neither domain nor epoch; a sequenced profile requires both. Closed kind set."
+    },
+    "DataObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "version"
+      ],
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "PerformedOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_ref",
+        "action",
+        "data_object"
+      ],
+      "properties": {
+        "operation_ref": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "action": {
+          "$ref": "#/$defs/ProducerAction"
+        },
+        "data_object": {
+          "$ref": "#/$defs/DataObject"
+        }
+      },
+      "description": "Structured operation. An opaque string reference is not sufficient."
+    },
+    "OperationEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_ref",
+        "event_id",
+        "run_id",
+        "recorded_at_ns",
+        "decision_key",
+        "digest_sha256"
+      ],
+      "properties": {
+        "operation_ref": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "event_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "run_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "recorded_at_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        },
+        "decision_key": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "digest_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      },
+      "description": "Separate typed evidence bound by operation_ref. Exactly one evidence record must resolve per performed operation; duplicates, missing evidence and reassignment reject."
+    },
+    "ProducerActivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "performed_operations",
+        "operation_evidence"
+      ],
+      "properties": {
+        "performed_operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PerformedOperation"
+          }
+        },
+        "operation_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OperationEvidence"
+          }
+        }
+      },
+      "description": "Exactly two members. Purpose, grant, licensee, recipient, verdict and signature are not members of this section."
+    },
+    "GrantingAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_id",
+        "evidence_reference"
+      ],
+      "properties": {
+        "authority_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "evidence_reference": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      },
+      "description": "Distinct from the publisher signing key and from the reviewer."
+    },
+    "ScopeDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider_id",
+        "source_product_id",
+        "venue_id",
+        "segment_id",
+        "dataset_id",
+        "subject_state",
+        "named_subjects",
+        "data_time_begin_ns",
+        "data_time_end_ns"
+      ],
+      "properties": {
+        "provider_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "source_product_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "venue_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "segment_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "dataset_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "subject_state": {
+          "type": "string",
+          "enum": [
+            "NAMED",
+            "ALL",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "named_subjects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Identifier"
+          }
+        },
+        "data_time_begin_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        },
+        "data_time_end_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        }
+      },
+      "description": "An empty NAMED set is not ALL. Containment is a semantic check."
+    },
+    "Validity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "begin_ns",
+        "end_ns",
+        "clock_domain"
+      ],
+      "properties": {
+        "begin_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        },
+        "end_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        },
+        "clock_domain": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "Delivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "approved_endpoint_identities"
+      ],
+      "properties": {
+        "method": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "approved_endpoint_identities": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/Identifier"
+          }
+        }
+      }
+    },
+    "Retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_duration_ns",
+        "purge_rule"
+      ],
+      "properties": {
+        "max_duration_ns": {
+          "$ref": "#/$defs/CountOrSize"
+        },
+        "purge_rule": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      },
+      "description": "Bounded maximum plus purge rule. No unlimited sentinel and no default."
+    },
+    "DocumentReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference",
+        "clause",
+        "document_sha256",
+        "contract_revision",
+        "review_authority",
+        "reviewed_on"
+      ],
+      "properties": {
+        "reference": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "clause": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "document_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "contract_revision": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "review_authority": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "reviewed_on": {
+          "$ref": "#/$defs/UtcInstantString"
+        }
+      }
+    },
+    "DigestReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference",
+        "digest_sha256"
+      ],
+      "properties": {
+        "reference": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "digest_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      }
+    },
+    "ReviewedAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "purpose",
+        "usage_right",
+        "usage_mode",
+        "territory",
+        "scope_assertions",
+        "reviewer",
+        "authority"
+      ],
+      "properties": {
+        "purpose": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "usage_right": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "usage_mode": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "territory": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "scope_assertions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/NonEmptyString"
+          }
+        },
+        "reviewer": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "authority": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      },
+      "description": "Records review; it is not permission for an action absent from a grant."
+    },
+    "RegisteredAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attestation_id",
+        "grant_id",
+        "attestation"
+      ],
+      "properties": {
+        "attestation_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "grant_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "attestation": {
+          "$ref": "#/$defs/ReviewedAttestation"
+        }
+      }
+    },
+    "PermissionGrant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grant_id",
+        "grant_revision",
+        "granting_authority",
+        "action",
+        "object_class",
+        "decision",
+        "actor",
+        "licensee",
+        "recipient_class",
+        "recipient_identity",
+        "purpose",
+        "scope",
+        "validity",
+        "delivery",
+        "retention",
+        "supporting_document_references",
+        "contract_revision",
+        "review_authority",
+        "reviewed_on",
+        "reviewed_attestation"
+      ],
+      "properties": {
+        "grant_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "grant_revision": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "granting_authority": {
+          "$ref": "#/$defs/GrantingAuthority"
+        },
+        "action": {
+          "$ref": "#/$defs/ProducerAction"
+        },
+        "object_class": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "PERMIT",
+            "DENY"
+          ]
+        },
+        "actor": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "licensee": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "recipient_class": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "recipient_identity": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "purpose": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "scope": {
+          "$ref": "#/$defs/ScopeDeclaration"
+        },
+        "validity": {
+          "$ref": "#/$defs/Validity"
+        },
+        "delivery": {
+          "$ref": "#/$defs/Delivery"
+        },
+        "retention": {
+          "$ref": "#/$defs/Retention"
+        },
+        "supporting_document_references": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/DigestReference"
+          }
+        },
+        "contract_revision": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "review_authority": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "reviewed_on": {
+          "$ref": "#/$defs/UtcInstantString"
+        },
+        "reviewed_attestation": {
+          "$ref": "#/$defs/ReviewedAttestation"
+        }
+      },
+      "description": "Full typed source-rights evidence. Decision is the exact uppercase written-agreement value; ambiguity denies."
+    },
+    "RightsEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "permission_grants",
+        "document_references",
+        "reviewed_attestations"
+      ],
+      "properties": {
+        "permission_grants": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/PermissionGrant"
+          }
+        },
+        "document_references": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/DocumentReference"
+          }
+        },
+        "reviewed_attestations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/RegisteredAttestation"
+          }
+        }
+      },
+      "description": "Independent signed evidence section. A signature, receipt or lineage chain grants no right; failure of this section fails the release closed."
+    },
+    "CoverageDimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dimension_id",
+        "universe_id",
+        "denominator_identity",
+        "count_basis",
+        "numerator",
+        "denominator",
+        "missing_count",
+        "rejected_count",
+        "as_of_ns",
+        "verdict",
+        "evidence_reference",
+        "gaps"
+      ],
+      "properties": {
+        "dimension_id": {
+          "type": "string",
+          "enum": [
+            "instrument_coverage",
+            "listing_identity_coverage",
+            "contract_coverage",
+            "corporate_action_coverage",
+            "session_time_coverage",
+            "trade_event_coverage",
+            "quote_depth_coverage",
+            "mbo_coverage",
+            "sequence_continuity"
+          ]
+        },
+        "universe_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "denominator_identity": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "count_basis": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "numerator": {
+          "$ref": "#/$defs/CountOrSize"
+        },
+        "denominator": {
+          "$ref": "#/$defs/CountOrSize"
+        },
+        "missing_count": {
+          "$ref": "#/$defs/CountOrSize"
+        },
+        "rejected_count": {
+          "$ref": "#/$defs/CountOrSize"
+        },
+        "as_of_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL",
+            "UNKNOWN"
+          ]
+        },
+        "evidence_reference": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Gap"
+          }
+        }
+      },
+      "description": "Denominator is required and non-zero; PASS is admitted only after complete evidence and independent evaluation."
+    },
+    "Gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gap_id",
+        "gap_kind",
+        "component",
+        "count",
+        "description"
+      ],
+      "properties": {
+        "gap_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "gap_kind": {
+          "type": "string",
+          "enum": [
+            "MISSING",
+            "REJECTED",
+            "OTHER"
+          ]
+        },
+        "component": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "count": {
+          "$ref": "#/$defs/CountOrSize"
+        },
+        "description": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      },
+      "description": "Typed gap. Gaps are never silently filled, interpolated or implied as ALL."
+    },
+    "CoverageEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dimensions"
+      ],
+      "properties": {
+        "dimensions": {
+          "type": "array",
+          "minItems": 9,
+          "items": {
+            "$ref": "#/$defs/CoverageDimension"
+          }
+        }
+      },
+      "description": "Nine separate dimensions, each with its own universe, denominator and as-of. No aggregate percentage substitutes for a dimension."
+    },
+    "TransformationRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "version"
+      ],
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "ProvWasDerivedFrom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_entity_id",
+        "deriving_activity_id",
+        "knowledge_time_ns"
+      ],
+      "properties": {
+        "source_entity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "deriving_activity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        }
+      }
+    },
+    "ProvWasRevisionOf": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "predecessor_entity_id",
+        "revision_activity_id",
+        "knowledge_time_ns"
+      ],
+      "properties": {
+        "predecessor_entity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "revision_activity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        }
+      }
+    },
+    "ProvHadPrimarySource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_entity_id",
+        "attribution_activity_id",
+        "knowledge_time_ns"
+      ],
+      "properties": {
+        "source_entity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "attribution_activity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        }
+      }
+    },
+    "QualifiedAttribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_id",
+        "activity_id",
+        "role",
+        "knowledge_time_ns"
+      ],
+      "properties": {
+        "agent_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "activity_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "role": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        }
+      }
+    },
+    "Supersedes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supersedes_release_id",
+        "supersedes_manifest_sha256",
+        "supersedes_data_sha256",
+        "revision",
+        "correction_reason",
+        "knowledge_time_ns",
+        "invalidated_at_time"
+      ],
+      "properties": {
+        "supersedes_release_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "supersedes_manifest_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "supersedes_data_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "revision": {
+          "$ref": "#/$defs/U64Integer"
+        },
+        "correction_reason": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        },
+        "invalidated_at_time": {
+          "$ref": "#/$defs/UtcInstantString"
+        }
+      },
+      "description": "One seven-member relation. revision is the IMMEDIATE PREDECESSOR revision, strictly less than lineage.revision. An array form is not modelled in Profile 1."
+    },
+    "Lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_archive_reference",
+        "raw_archive_sha256",
+        "transformation_record",
+        "knowledge_time_ns",
+        "revision",
+        "was_derived_from",
+        "was_revision_of",
+        "had_primary_source",
+        "generated_at_time",
+        "invalidated_at_time",
+        "qualified_attribution",
+        "supersedes"
+      ],
+      "properties": {
+        "raw_archive_reference": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "raw_archive_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "transformation_record": {
+          "$ref": "#/$defs/TransformationRecord"
+        },
+        "knowledge_time_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        },
+        "revision": {
+          "$ref": "#/$defs/U64Integer"
+        },
+        "was_derived_from": {
+          "$ref": "#/$defs/ProvWasDerivedFrom"
+        },
+        "was_revision_of": {
+          "$ref": "#/$defs/ProvWasRevisionOf"
+        },
+        "had_primary_source": {
+          "$ref": "#/$defs/ProvHadPrimarySource"
+        },
+        "generated_at_time": {
+          "$ref": "#/$defs/UtcInstantString"
+        },
+        "invalidated_at_time": {
+          "$ref": "#/$defs/UtcInstantString"
+        },
+        "qualified_attribution": {
+          "$ref": "#/$defs/QualifiedAttribution"
+        },
+        "supersedes": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/Supersedes"
+            }
+          ]
+        }
+      },
+      "description": "Single typed PROV structure. revision is the current release revision; supersedes.revision is the immediate predecessor. Event-level correction lineage is separate and is not merged here."
+    },
+    "PayloadSchemaEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_type",
+        "schema_id",
+        "schema_version",
+        "digest_sha256"
+      ],
+      "properties": {
+        "event_type": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "schema_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "digest_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      },
+      "description": "Per-event-type versioned registry entry with explicit identity, version and registered digest. A silent positional array or a manifest-wide scalar is rejected."
+    },
+    "SchemaVersions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "normalizer_version",
+        "envelope_version",
+        "payload_schemas"
+      ],
+      "properties": {
+        "normalizer_version": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "envelope_version": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "payload_schemas": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/PayloadSchemaEntry"
+          }
+        }
+      },
+      "description": "contract_version is deliberately absent here; the single authoritative location is the manifest root."
+    },
+    "Digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "digest_algorithm",
+        "data_sha256"
+      ],
+      "properties": {
+        "digest_algorithm": {
+          "type": "string",
+          "const": "sha256"
+        },
+        "data_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      },
+      "description": "No manifest_sha256 and no artifact_digests. The manifest digest lives only in the detached sidecar; per-artifact digests live only in artifacts[]."
+    },
+    "PublicationIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publisher_identity",
+        "signing_key_id",
+        "signature_reference",
+        "archive_reference"
+      ],
+      "properties": {
+        "publisher_identity": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "signing_key_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "signature_reference": {
+          "type": "string",
+          "const": "signature.json"
+        },
+        "archive_reference": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "ArtifactDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "logical_partition_id",
+        "shard_ordinal",
+        "path",
+        "record_order_profile",
+        "encoding",
+        "compression",
+        "compression_version",
+        "stored_bytes",
+        "stored_sha256",
+        "uncompressed_bytes",
+        "uncompressed_sha256",
+        "record_count"
+      ],
+      "properties": {
+        "logical_partition_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "shard_ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "path": {
+          "$ref": "#/$defs/ArtifactPath"
+        },
+        "record_order_profile": {
+          "$ref": "#/$defs/ArtifactRecordOrderProfile"
+        },
+        "encoding": {
+          "type": "string",
+          "const": "application/x-ndjson; charset=utf-8"
+        },
+        "compression": {
+          "type": "string",
+          "enum": [
+            "none",
+            "gzip"
+          ]
+        },
+        "compression_version": {
+          "type": "string",
+          "enum": [
+            "none/1",
+            "gzip-deflate/flate2-1"
+          ],
+          "description": "Registered string identifier for schema version 1. It binds codec family, codec version and decoding semantics; no inference from magic bytes or extension. Only registered identifiers are admitted."
+        },
+        "stored_bytes": {
+          "$ref": "#/$defs/CountOrSize"
+        },
+        "stored_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "uncompressed_bytes": {
+          "$ref": "#/$defs/CountOrSize"
+        },
+        "uncompressed_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "record_count": {
+          "$ref": "#/$defs/CountOrSize"
+        }
+      },
+      "description": "Exactly twelve members. (logical_partition_id, shard_ordinal) is unique and defines canonical artifact order."
+    },
+    "ReleaseIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "release_id",
+        "release_version",
+        "as_of_ns",
+        "created_at_utc_ns",
+        "publication_state"
+      ],
+      "properties": {
+        "release_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "release_version": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "as_of_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        },
+        "created_at_utc_ns": {
+          "$ref": "#/$defs/DecimalStringU64"
+        },
+        "publication_state": {
+          "type": "string",
+          "enum": [
+            "STAGING_CREATED",
+            "FILES_WRITTEN",
+            "FILES_SYNCED",
+            "STAGING_DIR_FSYNCED",
+            "ATOMIC_NO_REPLACE_RENAME",
+            "PARENT_DIR_FSYNCED",
+            "DURABLE_PUBLICATION_RECEIPT",
+            "AVAILABLE"
+          ]
+        }
+      },
+      "description": "Declared publication state is not durability evidence; a durable receipt is required."
+    },
+    "SourceScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider_id",
+        "source_product_id",
+        "venue_id",
+        "segment_id",
+        "dataset_id"
+      ],
+      "properties": {
+        "provider_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "source_product_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "venue_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "segment_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "dataset_id": {
+          "$ref": "#/$defs/Identifier"
+        }
+      },
+      "description": "All five identifiers required, non-empty and valid. No null, empty, UNKNOWN, ALL or placeholder. Venue-less sources are outside Profile 1."
+    },
+    "Manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "contract_version",
+        "contract_revision",
+        "release_identity",
+        "source_scope",
+        "producer_activity",
+        "rights",
+        "coverage",
+        "lineage",
+        "schema_versions",
+        "digests",
+        "publication_identity",
+        "artifacts"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "contract_version": {
+          "type": "string",
+          "const": "v2",
+          "description": "Single authoritative location. A nested schema_versions.contract_version or a duplicate root member fails strict validation."
+        },
+        "contract_revision": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "release_identity": {
+          "$ref": "#/$defs/ReleaseIdentity"
+        },
+        "source_scope": {
+          "$ref": "#/$defs/SourceScope"
+        },
+        "producer_activity": {
+          "$ref": "#/$defs/ProducerActivity"
+        },
+        "rights": {
+          "$ref": "#/$defs/RightsEvidence"
+        },
+        "coverage": {
+          "$ref": "#/$defs/CoverageEvidence"
+        },
+        "lineage": {
+          "$ref": "#/$defs/Lineage"
+        },
+        "schema_versions": {
+          "$ref": "#/$defs/SchemaVersions"
+        },
+        "digests": {
+          "$ref": "#/$defs/Digests"
+        },
+        "publication_identity": {
+          "$ref": "#/$defs/PublicationIdentity"
+        },
+        "artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/ArtifactDescriptor"
+          }
+        }
+      },
+      "description": "Complete canonical manifest, exactly thirteen members. No self-digest, no limits, no artifact_digests, no nested contract_version."
+    }
+  },
+  "$ref": "#/$defs/Manifest"
+}

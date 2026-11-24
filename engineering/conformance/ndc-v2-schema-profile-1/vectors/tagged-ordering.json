@@ -1,0 +1,74 @@
+{
+  "vector_set": "Canonical NDC v2 Profile 1 — tagged ordering profiles and record modes",
+  "authority": "WS-NDC-2026-11-24-003 digest 417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119 §5 and DP-18/DP-21",
+  "note": "Abstract domain, epoch and object identifiers only. No observation or sequence domain from any external source is represented.",
+  "cases": [
+    {
+      "id": "sequenced-artifact-and-record",
+      "artifact_profile": {"kind": "sequenced", "sequence_domain_id": "domain-example", "sequence_epoch": "epoch-example"},
+      "record_ordering": {"kind": "sequenced", "sequence_domain_id": "domain-example", "sequence_epoch": "epoch-example", "sequence_number": "7"},
+      "expected": "ACCEPT_ORDERING",
+      "rule": "A sequenced record must match the domain and epoch of its artifact profile."
+    },
+    {
+      "id": "reference-artifact-and-record",
+      "artifact_profile": {"kind": "reference"},
+      "record_ordering": {"kind": "reference", "object_id": "object-example", "revision": "2", "knowledge_time_ns": "1000", "assertion_id": "assertion-example"},
+      "expected": "ACCEPT_ORDERING",
+      "rule": "A reference record uses object id, revision, knowledge time and assertion id; its artifact profile carries neither domain nor epoch."
+    },
+    {
+      "id": "both-modes-on-one-record",
+      "record_ordering": {
+        "kind": "sequenced",
+        "sequence_domain_id": "domain-example",
+        "sequence_epoch": "epoch-example",
+        "sequence_number": "7",
+        "object_id": "object-example",
+        "revision": "2",
+        "knowledge_time_ns": "1000",
+        "assertion_id": "assertion-example"
+      },
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "A record carries exactly one mode; the sequenced tagged branch forbids the reference key set."
+    },
+    {
+      "id": "reference-profile-with-domain",
+      "artifact_profile": {"kind": "reference", "sequence_domain_id": "domain-example"},
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "A reference profile carries neither domain nor epoch; additional members are rejected."
+    },
+    {
+      "id": "bare-string-artifact-profile",
+      "artifact_profile": "sequence-domain-strict",
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "The artifact-level profile is a tagged object, never a bare string."
+    },
+    {
+      "id": "record-mode-mismatch",
+      "artifact_profile": {"kind": "reference"},
+      "record_ordering": {"kind": "sequenced", "sequence_domain_id": "domain-example", "sequence_epoch": "epoch-example", "sequence_number": "7"},
+      "expected_rejection": "REJECT_ORDERING",
+      "rule": "The record's mode and domain/epoch must match the artifact profile that contains it."
+    },
+    {
+      "id": "sequence-number-as-integer",
+      "record_ordering_delta": {"sequence_number": 7},
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "Sequence numbers on the wire are decimal strings matching the ratified grammar; no coercion from integer."
+    },
+    {
+      "id": "visible-sequence-gap",
+      "record_order_profile": {"kind": "sequenced", "sequence_domain_id": "domain-example", "sequence_epoch": "epoch-example"},
+      "sequence_numbers": ["1", "3"],
+      "expected": "ACCEPT_VISIBLE_GAP",
+      "rule": "Known gaps stay visible; no sequence number is fabricated to close one."
+    },
+    {
+      "id": "event-time-fallback",
+      "condition": "a caller attempts to sort records by an event-time field when no ordering mode is present",
+      "expected_rejection": "REJECT_ORDERING",
+      "rule": "Event time is never a sort key and no fallback to event time exists."
+    }
+  ]
+}

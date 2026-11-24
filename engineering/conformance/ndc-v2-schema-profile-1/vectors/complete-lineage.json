@@ -1,0 +1,91 @@
+{
+  "vector_set": "Canonical NDC v2 Profile 1 — complete PROV lineage and predecessor revision",
+  "authority": "WS-NDC-2026-11-24-003 digest 417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119 §10 and DP-14/DP-15/DP-16/DP-17",
+  "note": "All references, digests and instants are abstract. No predecessor release or source archive is represented by this file.",
+  "cases": [
+    {
+      "id": "complete-lineage-accept",
+      "lineage": {
+        "raw_archive_reference": "archive-example",
+        "raw_archive_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+        "transformation_record": {"identity": "transform-example", "version": "1"},
+        "knowledge_time_ns": "1000",
+        "revision": 2,
+        "was_derived_from": {"source_entity_id": "archive-entity-example", "deriving_activity_id": "transform-activity-example", "knowledge_time_ns": "1000"},
+        "was_revision_of": {"predecessor_entity_id": "predecessor-entity-example", "revision_activity_id": "revision-activity-example", "knowledge_time_ns": "1000"},
+        "had_primary_source": {"source_entity_id": "archive-entity-example", "attribution_activity_id": "attribution-activity-example", "knowledge_time_ns": "1000"},
+        "generated_at_time": "2026-01-01T00:00:00.000000000Z",
+        "invalidated_at_time": "2026-01-02T00:00:00.000000000Z",
+        "qualified_attribution": {"agent_id": "agent-example", "activity_id": "transform-activity-example", "role": "role-example", "knowledge_time_ns": "1000"},
+        "supersedes": {
+          "supersedes_release_id": "predecessor-release-example",
+          "supersedes_manifest_sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+          "supersedes_data_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+          "revision": 1,
+          "correction_reason": "reason-example",
+          "knowledge_time_ns": "900",
+          "invalidated_at_time": "2026-01-02T00:00:00.000000000Z"
+        }
+      },
+      "expected": "ACCEPT_CHAIN",
+      "rule": "One typed structure with the full PROV relation set, qualified attribution, current revision 2 and immediate predecessor revision 1."
+    },
+    {
+      "id": "initial-release-no-predecessor",
+      "lineage_delta": {"revision": 1, "supersedes": null},
+      "expected": "ACCEPT_CHAIN",
+      "rule": "An initial release has no predecessor; the supersedes member is null."
+    },
+    {
+      "id": "predecessor-not-immediate",
+      "current_revision": 3,
+      "supersedes_revision": 1,
+      "expected_rejection": "REJECT_SOURCE_LINEAGE",
+      "rule": "The predecessor is immediate: chain traversal decrements by one from the current revision."
+    },
+    {
+      "id": "predecessor-revision-regression",
+      "current_revision": 2,
+      "supersedes_revision": 2,
+      "expected_rejection": "REJECT_SOURCE_LINEAGE",
+      "rule": "The immediate predecessor revision is strictly less than the current revision."
+    },
+    {
+      "id": "supersedes-self-reference",
+      "release_id": "release-example",
+      "supersedes_release_id": "release-example",
+      "expected_rejection": "REJECT_SOURCE_LINEAGE",
+      "rule": "Self-reference and a release supplying its own predecessor are rejected."
+    },
+    {
+      "id": "invalidated-at-time-wrong-precision",
+      "invalidated_at_time": "2026-01-02T00:00:00.000000Z",
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "The canonical UTC string carries exactly nine fractional digits and the Z designator."
+    },
+    {
+      "id": "invalidated-at-time-offset-form",
+      "invalidated_at_time": "2026-01-02T00:00:00.000000000+00:00",
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "No offset form is admitted; neither Rust string representation is normative."
+    },
+    {
+      "id": "supersedes-array-form",
+      "supersedes": ["predecessor-relation-example"],
+      "expected_rejection": "REJECT_SHAPE",
+      "rule": "A multi-predecessor array is not modelled in Profile 1; one seven-member relation is required."
+    },
+    {
+      "id": "missing-predecessor-evidence",
+      "condition": "supersedes is present but trusted predecessor evidence is unavailable outside the release",
+      "expected_rejection": "REJECT_SOURCE_LINEAGE",
+      "rule": "Trusted predecessor evidence resolves outside the release; chain walks fail on the first breach."
+    },
+    {
+      "id": "event-level-lineage-not-merged",
+      "condition": "an event-level correction carries its own knowledge time and revision in its payload",
+      "expected": "NO_RELEASE_LEVEL_MERGE",
+      "rule": "Event-level correction lineage stays separate from release-level supersedes and is not merged into it."
+    }
+  ]
+}

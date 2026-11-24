@@ -1,0 +1,21 @@
+{
+  "vector_set": "Canonical NDC v2 Profile 1 — RFC 8032 public test vector",
+  "authority": "WS-NDC-2026-11-24-003 digest 417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119; Profile 1 Decisions A and H",
+  "vector_reference": "RFC 8032 section 7.1, first test case",
+  "note": "Public key and published signature only. No signing secret is included. The NDC signature input is the domain prefix concatenated with the 32-byte canonical manifest digest, not the empty RFC message shown here.",
+  "public_key_hex": "d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a",
+  "message_hex": "",
+  "signature_hex": "e5564300c360ac729086e2cc806e828a84877f1eb8e5d974d873e065224901555fb8821590a33bacc61e39701cf9b46bd25bf5f0595bbe24655141438e7a100b",
+  "ndc_signing_domain_literal": "NDC-V2-RELEASE-MANIFEST-SHA256-V1\u0000",
+  "cases": [
+    {
+      "id": "trusted-key-state-machine",
+      "states": ["ACTIVE", "RETIRED", "REVOKED", "COMPROMISED"],
+      "rule": "An out-of-band registry is authoritative. ACTIVE signs and verifies; RETIRED cannot sign new releases; REVOKED and COMPROMISED fail closed. A release cannot supply its own trusted key."
+    },
+    {
+      "id": "key-id-binding",
+      "rule": "Sidecar key_id equals the manifest signing key id and resolves through the registry to the declared publisher identity. No key id is reused and no key material is carried in the release."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "vector_set": "Canonical NDC v2 Profile 1 — RFC 8785 canonicalization",
+  "authority": "WS-NDC-2026-11-24-003 digest 417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119; Profile 1 Decision A",
+  "authority_reference": "RFC 8785 section 3.2 and Appendix B",
+  "note": "Abstract strings and published number samples only. No external observation and no signing material.",
+  "cases": [
+    {
+      "id": "appendix-b-number-samples",
+      "input": {"numbers": [333333333.33333329, 1E30, 4.50, 2e-3, 0.000000000000000000000000001]},
+      "expected_canonical": "{\"numbers\":[333333333.3333333,1e+30,4.5,0.002,1e-27]}",
+      "wire_note": "These samples document RFC 8785 number serialization only. A count, byte size, instant or exact decimal on the canonical wire is never emitted with a fractional or exponent token."
+    },
+    {
+      "id": "utf16-member-order",
+      "input": {"": "private-use-example", "𐀀": "supplementary-example"},
+      "expected_canonical": "{\"𐀀\":\"supplementary-example\",\"\":\"private-use-example\"}",
+      "wire_note": "Canonical manifest and record member order is UTF-16 code unit order over member names."
+    },
+    {
+      "id": "control-character-escaping",
+      "input": {"text": "line\nbreak\ttab"},
+      "expected_canonical": "{\"text\":\"line\\nbreak\\ttab\"}",
+      "wire_note": "The canonical bytes are the sole input to digesting, ordering and signing."
+    },
+    {
+      "id": "integer-versus-decimal-string-boundary",
+      "input": {"below": 9007199254740991, "at_full_range": "18446744073709551615"},
+      "expected_canonical": "{\"at_full_range\":\"18446744073709551615\",\"below\":9007199254740991}",
+      "wire_note": "Count and byte size use a JSON integer below 2^53, or a decimal string for the full u64 range, selected by value."
+    }
+  ]
+}

@@ -22,7 +22,9 @@ one producer and one consumer. No transport, queue, shared crate or database is 
 | Profile ratification | `engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md` — Decisions A–I; digest `fb8a4992d63aabb41f02286317d1d69aeaec9a0e35836bd8ce6eff2754cb01fc` |
 | Approved D1 amendment | `engineering/conformance/NDC-D1-AMENDMENT-001.md` — approved 2026-11-24; digest `a2087aff7bcadb5aae90eea3f7893ac3147e2e8cbecce9fcb9357481e7e49894`; D1 approved bytes and digest unchanged |
 | Canonical wire schema ratification | `engineering/decisions/WS-NDC-2026-11-24-003-canonical-profile-1-wire-schema.md` — **RATIFIED 2026-11-24** by owner direction; digest `417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119`; resolves DP-01..DP-30 |
-| Canonical wire authority | One third, language-independent canonical NDC v2 Profile 1 wire schema; neither Rust representation is normative; both repositories keep independent internal representations with explicit serialization/deserialization mappings; no shared runtime crate; B8 creates the schema package |
+| Canonical wire authority | One third, language-independent canonical NDC v2 Profile 1 wire schema; neither Rust representation is normative; both repositories keep independent internal representations with explicit serialization/deserialization mappings; no shared runtime crate; B8 published the schema package |
+| Canonical schema package | `engineering/conformance/ndc-v2-schema-profile-1/` — version 1, published 2026-11-24; **26 files** (8 JSON Schemas, 16 canonical vectors, 2 normative documents); index `VECTORS.md`; checker `scripts/check_ndc_schema_package.py` |
+| Schema package digest | `SCHEMA-PACKAGE-DIGEST 6e8c1e48e27289b8c3d3e959a06a805e736d0759b4fb244edbb074f65e107bab` — one reproducible digest over the sorted (path, sha256) list with domain prefix `NDC-V2-PROFILE-1-SCHEMA-PACKAGE-DIGEST-V1` |
 | Contract status | NDC v2 **Approved 2026-11-23**; NDC v1 **historical**, superseded by v2 |
 | NDC v1 producer document (historical) | `engineering/ndc-producer-requirements-v1.md`, digest `592a1c9043ed2756a3f9d938dbe6e2ee80007166b440cf6f2709d5de11424c33` |
 | NDC v1 consumer document (historical) | `engineering/ndc-consumer-requirements-v1.md`, digest `25315c57de753bde33b0f8044e70646f24b19c8af7ca9fdbdd2e53682a53b8bd` |
@@ -47,7 +49,7 @@ component exists. These layers are recorded separately:
 | JSON schemas | Present as versioned repository artifacts (for example `schemas/research/dataset-manifest.v1.schema.json`), not part of the approved NDC v2 requirement bytes | A schema that compiles is not a verified release |
 | Canonical serialization rules | **Ratified as semantics**: 2026-11-23 Decision B, refined by Profile 1 Decision A — RFC 8785 JCS over the complete manifest, SHA-256 digest only in the detached sidecar, Ed25519 domain-separated signature; proves publisher-key control and manifest integrity only | `OWNER-RATIFICATION-2026-11-23.md` Decision B; `WS-NDC-2026-11-24-002` Decision A; `NDC-D1-AMENDMENT-001.md` |
 | Canonical wire schema authority | **Ratified 2026-11-24**: one language-independent canonical wire schema for Profile 1; B8 package and cross-execution still NOT_STARTED | `WS-NDC-2026-11-24-003` (`417bd4e5…`): strict UTF-8/RFC 8785 JCS, decimal-string nanosecond instants, byte-derived tagged record ordering, typed operations/evidence, source scope, rights, coverage, lineage, registered compression versions, versioned schema package with one digest; DP-01..DP-30 resolved; no shared runtime crate |
-| Final NDC serialization schema | **Profile 1 version and digests registered; standalone published schema artifact NOT_STARTED** | `engineering/conformance/ndc-v2-schema-digest.json` registers the exact version, profile and D1 amendment digests, strict unknown-field policy and the source of truth; no standalone schema file exists at the recorded heads, so the typed structs in both repositories are the implementation authorities |
+| Final NDC serialization schema | **Profile 1 version and digests registered; canonical schema package published by WP-B8 (2026-11-24)** | `engineering/conformance/ndc-v2-schema-digest.json` registers the exact version, profile and D1 amendment digests, strict unknown-field policy and the source of truth. The B8 canonical schema package at `engineering/conformance/ndc-v2-schema-profile-1/` is the standalone published wire artifact (digest `6e8c1e48…`, 26 files). At the WP-5 recorded heads no such file existed and the typed structs in both repositories were the implementation authorities; those heads are historical evidence, not the normative wire representation. Cross-execution remains NOT_STARTED |
 | Resource policy | **Ratified rule**: versioned normative consumer resource policy, no manifest `limits`, producer and verifier enforce independently; numerical maxima pending workload qualification | `WS-NDC-2026-11-24-002` Decision F |
 | Publication durability | **Ratified rule**: staged, synced, atomic no-replace rename with parent-directory sync and durable receipt; uncertain-publication recovery after rename before parent sync | `WS-NDC-2026-11-24-002` Decision G |
 | Trusted publisher registry | **Ratified rule**: out-of-band registry with key states and revocation evidence; Batch B trust interface with injected test keys only | `WS-NDC-2026-11-24-002` Decision H |
@@ -105,10 +107,24 @@ review record.
 | Schema package | Versioned package: manifest/sidecar/record-envelope/payload schemas, ordering profiles, typed rights/coverage/lineage schemas, semantic constraints, canonical vectors and ONE package digest; strict schemas, explicit required arrays, tagged unions; structural validation insufficient; schema shared, validators not |
 | Five added decisions | One authoritative root `contract_version` (formal requirements amendment); versioned per-event-type payload schema registry; supersedes revision = immediate predecessor; consumer rights separate from producer rights evidence; venue-less sources outside Profile 1 |
 
-The canonical schema package is work package B8 and does **not** exist yet. This decision
-supersedes neither approved semantics nor the freeze; it claims none of
+The canonical schema package was published by work package B8 as the version 1 package recorded
+below. This decision supersedes neither approved semantics nor the freeze; it claims none of
 `SCHEMA_CONFORMANT`, `CROSS_EXECUTED`, `CRYPTOGRAPHICALLY_VERIFIED`, `RIGHTS_ADMITTED` or
 `DATASET_ACCEPTED`.
+
+## B8 canonical schema package (published 2026-11-24)
+
+| Item | Record |
+|---|---|
+| Package | `engineering/conformance/ndc-v2-schema-profile-1/` — version 1 of the language-independent canonical NDC v2 Profile 1 wire schema |
+| Authority | `WS-NDC-2026-11-24-003` (`417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119`); Profile 1 Decisions A–I (`fb8a4992…`) and the 102-row WP-B6 reconciliation |
+| Files | **26** indexed files: 8 JSON Schemas, 16 canonical abstract vectors and 2 normative documents |
+| Schemas | `manifest.schema.json`, `signature-sidecar.schema.json`, `record-envelope.schema.json`, `ordering-profiles.schema.json`, `rights-evidence.schema.json`, `coverage.schema.json`, `lineage.schema.json`, `payload-schema-registry.schema.json` — draft 2020-12, strict object levels, explicit `required` arrays, tagged unions, no defaults or coercions |
+| Normative documents | `semantic-constraints.md` (cross-field rules, five distinct status states, structural validation insufficient); `compatibility-and-evolution.md` (reject unknown/missing/wrong-type/coercion, version bumps, breaking semantic changes) |
+| Vectors | 16 files; seven WP-5 vectors copied and adapted to the canonical wire representation, plus nine new vectors for required venue/segment, typed rights, typed operation evidence, coverage denominator arithmetic and no-PASS, complete PROV lineage and predecessor revision, tagged ordering, byte-derived key mismatch, duplicate `contract_version` and payload registry. The originals in `ndc-v2-conformance-vectors/` are unchanged |
+| Index and digest | `VECTORS.md` lists the SHA-256 of every indexed file; `scripts/check_ndc_schema_package.py` prints one `SCHEMA-PACKAGE-DIGEST 6e8c1e48e27289b8c3d3e959a06a805e736d0759b4fb244edbb074f65e107bab` over the sorted (path, sha256) list with domain prefix `NDC-V2-PROFILE-1-SCHEMA-PACKAGE-DIGEST-V1` |
+| Checker scope | Verifies every indexed digest, JSON parseability and no duplicate JSON members, `additionalProperties:false` and explicit `required` at object levels in every schema, vector no-secret/no-external-observation patterns, and prints the package identity |
+| Non-claims | Documentation and abstract evidence only. No Rust source, shared runtime crate, release, dataset, receipt, key, right, provider contact, collection, India implementation or experiment. Cross-execution, wire compatibility and the five status states remain NOT_STARTED / unclaimed |
 
 ## Separate consumer-use proposal (not approved)
 
@@ -132,7 +148,7 @@ Profile 1.
 | Acceptance matrix | `engineering/conformance/ndc-v2-acceptance-matrix.md` — ten WP-5 checks with exact producer and verifier test evidence, both sides' states and typed rejection codes |
 | Vectors | `engineering/conformance/ndc-v2-conformance-vectors/VECTORS.md` — seven abstract non-market vector files with SHA-256 values |
 | Evidence checker | `scripts/check_ndc_conformance_vectors.py` — workspace evidence tool; not a producer, verifier, connector or shared runtime crate |
-| States | Producer and verifier: `TESTED_WITH_ABSTRACT_VALUES` at the exact heads. Cross-execution, wire compatibility and a standalone published schema artifact: **NOT_STARTED**. No implementation state promoted. The canonical wire requirements are now ratified by `WS-NDC-2026-11-24-003`; no conformance or cross-execution status is claimed by that decision. |
+| States | Producer and verifier: `TESTED_WITH_ABSTRACT_VALUES` at the exact heads. Cross-execution and wire compatibility: **NOT_STARTED**. A standalone published canonical schema artifact now exists in Workspace as the B8 package above (it is not present in either source repository at the recorded heads). No implementation state promoted. The canonical wire requirements are ratified by `WS-NDC-2026-11-24-003`; the B8 package registers their schema form and claims no conformance or cross-execution status. |
 
 The WP-5 package does not change any approved digest. D0 `3dace660…`, D1 `215a5b55…`,
 D2 `22eaef7d…`, v1 digests and the separate consumer-use `4b9d1fe7…` **Proposed** status stay
