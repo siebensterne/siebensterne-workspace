@@ -84,3 +84,7 @@ evidence or review archive.
 
 - Workspace PR #9: WS-SCOPE-2026-11-24-001 "Global Reference Core, India First" ratified by owner direction. One scope decision, not 16 ADRs; India design/rights/dataset remain separate gates. APPROVE. Workspace main 773f21f.
 - Fieldbook PR #57: FB-REF-001 canonical financial object and identity core. 21 object classes, opaque derived IDs, identifier assertions, four-way resolution, bitemporal ledger, denominator-bearing coverage. 20 abstract tests; 624 passed; full sweeps before gates. CI 45309465082 success. APPROVE. Fieldbook main 4c82802; main CI 45310771854 2/2 after stale-branch rerun.
+
+## 2026-11-24 — FB-REF-002 typed instrument terms
+
+- Fieldbook PR #58 at 399718d: Unit/ExactMeasure checked arithmetic, seven family-typed terms, ContractFamily/ContractInstance, InstrumentTermsRevision/TermsRegistry reusing BitemporalLedger. Rejected at 8447873 for a competing DerivativeKind classification; fixed as a validated newtype over taxonomy::InstrumentKind. 23 tests, 647 passed. CI 45314314973 success. APPROVE. Fieldbook main e747051; main CI 45315060744 2/2 after stale-branch rerun.
