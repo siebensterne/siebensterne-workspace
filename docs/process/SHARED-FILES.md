@@ -18,6 +18,7 @@ Verified by `make consistency` with `cmp`:
 | `.clang-format` | C++20 formatter contract |
 | `.clang-tidy` | strict static-analysis contract, every diagnostic an error |
 | `CMakeLists.txt` | strict C++20 compiler baseline |
+| `cmake/strict-flags.cmake` | one strict flag set for root and standalone builds |
 | `CMakePresets.json` | GCC and Clang configure/build/test workflow |
 | `q-style.json` | machine-readable q/kdb+ style contract |
 | `.pre-commit-config.yaml` | pinned offline hook set |

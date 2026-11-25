@@ -20,7 +20,7 @@ is listed here with a reason. `make consistency` checks the machine-verifiable r
 ## Shared tooling configs
 
 `.clang-format`, `.clang-tidy`, `CMakeLists.txt`, `CMakePresets.json`,
-`q-style.json` and `.pre-commit-config.yaml` are byte-identical in all three
+`q-style.json`, `cmake/strict-flags.cmake` and `.pre-commit-config.yaml` are byte-identical in all three
 repositories. The C++ baseline uses C++20, strict warnings-as-errors and the
 same two-compiler preset workflow everywhere, including repositories without
 C++ sources. The q/kdb+ contract is machine-readable and loaded by

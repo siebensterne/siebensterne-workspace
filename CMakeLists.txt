@@ -12,22 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_library(siebensterne_strict_flags INTERFACE)
-target_compile_features(siebensterne_strict_flags INTERFACE cxx_std_20)
-target_compile_options(siebensterne_strict_flags INTERFACE
-  -Wall
-  -Wextra
-  -Wpedantic
-  -Werror
-  -Wshadow
-  -Wcast-qual
-  -Wnon-virtual-dtor
-  -Woverloaded-virtual
-  -Wunused
-  -Wnull-dereference
-  -Wformat=2
-  -Wimplicit-fallthrough
-)
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/strict-flags.cmake")
 
 include(CTest)
 
