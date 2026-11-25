@@ -9,6 +9,7 @@ This repository coordinates Fieldbook and Nirnay. It contains no product source.
 - Keep the repositories independent. Coordinate interface changes with paired, compatible PRs. Do not create shared source, crates or workspaces without a measured need and an accepted decision.
 - Inspect the exact base commit, branch and worktree before editing. Trace callers and tests. Implement the change; do not stop at a plan.
 - Make one coherent change per PR. Add regression, boundary and failure tests. Run the owning repository's required gates.
+- Do not add Markdown for routine work; behavior belongs in source, tests and the PR. New documents need a contract, decision, procedure or evidence justification.
 - Preserve historical evidence and approved contract bytes. Add a new decision or evidence record when state changes; never rewrite history to make it current.
 - Use `CURRENT-STATE.json` for authorization. Do not infer data rights or permission from a URL, token, successful connection or checksum. Do not broaden collection, experiments, dataset acceptance or execution authority.
 - Keep D11 synthetic-market-data retirements, the M4 holdout and live-execution controls in force. Pure mathematical and abstract protocol tests remain separate from market evidence.

@@ -36,3 +36,11 @@ rights, release identity, calendar semantics or dataset admission.
 
 Do not merge a paired change with a red CI gate. Do not claim verification from a
 green check alone.
+
+## Documentation changes
+
+- [ ] No new Markdown file for routine work; source, tests, the PR and CI carry it.
+- [ ] If a new Markdown file is required, the PR states which stable contract,
+      decision, procedure or evidence it owns.
+- [ ] No duplicated current status; workspace `CURRENT-STATE.json` is the authority.
+- [ ] Root `README.md` stays at 100 lines or fewer; root `AGENTS.md` at 2 KB or fewer.
