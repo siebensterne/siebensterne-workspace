@@ -19,12 +19,14 @@ is listed here with a reason. `make consistency` checks the machine-verifiable r
 
 ## Shared tooling configs
 
-`.clang-format`, `.clang-tidy`, `CMakeLists.txt`, `CMakePresets.json`,
-`q-style.json`, `cmake/strict-flags.cmake` and `.pre-commit-config.yaml` are byte-identical in all three
-repositories. The C++ baseline uses C++20, strict warnings-as-errors and the
-same two-compiler preset workflow everywhere, including repositories without
-C++ sources. The q/kdb+ contract is machine-readable and loaded by
-`scripts/check_q_style.py`; no waivers are permitted.
+`CMakeLists.txt`, `CMakePresets.json` and `cmake/strict-flags.cmake` are
+byte-identical in all three repositories. Fieldbook and Nirnay additionally own
+`.clang-format`, `.clang-tidy`, `q-style.json`, `scripts/check_q_style.py` and
+their byte-identical pre-commit hook set. The workspace is orchestration-only:
+it has no C++ or q sources, so it carries `.shellcheckrc`, `.editorconfig` and
+an orchestration-only `.pre-commit-config.yaml` instead of the source-language
+style contracts. The shared CMake baseline uses C++20, strict
+warnings-as-errors and the same two-compiler preset workflow everywhere.
 
 ## Canonical command surface
 
