@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
-# Offline, deterministic hook set shared byte-for-byte by all three
-# repositories. Remote hook revisions and local tool versions are pinned in
-# quality-contract.json (and WORKSPACE.lock.json at workspace level). Every
-# hook fails closed: no repository, language or check is exempt.
+# Workspace orchestration hook set. The C++ formatter, analyzer and q/kdb+
+# contracts are owned by Fieldbook and Nirnay because only those repositories
+# carry those sources. Workspace hooks cover shell policy and the shared CMake
+# baseline only. Tool versions are pinned in WORKSPACE.lock.json; the source
+# repositories' hook set is pinned in their shared quality-contract.json.
 minimum_pre_commit_version: "4.0.0"
 default_stages: [pre-commit]
 repos:
@@ -23,27 +24,11 @@ repos:
 
   - repo: local
     hooks:
-      - id: q-style
-        name: q / kdb+ added-line style (q-style.json)
-        entry: bash -c 'python3 scripts/check_q_style.py --self-test && python3 scripts/check_q_style.py' --
+      - id: shellcheck
+        name: ShellCheck 0.11.0.1 (.shellcheckrc)
+        entry: shellcheck
         language: system
-        always_run: true
-        pass_filenames: false
-
-      - id: clang-format
-        name: clang-format 21.1.8 dry-run (.clang-format)
-        entry: clang-format --style=file --dry-run --Werror
-        language: system
-        files: '\.(c|cc|cpp|cxx|h|hpp|hxx)$'
-        exclude: '^(build|target)/'
-        require_serial: true
-
-      - id: clang-tidy
-        name: clang-tidy strict analysis (.clang-tidy, WarningsAsErrors *)
-        entry: bash -c 'cmake --preset strict-gcc-configure >/dev/null && clang-tidy --config-file=.clang-tidy -p build/cmake-strict-gcc-configure "$@"' --
-        language: system
-        files: '\.(c|cc|cpp|cxx|h|hpp|hxx)$'
-        exclude: '^(build|target)/'
+        files: '\.(sh|bash|zsh)$'
         require_serial: true
 
       - id: cmake-strict

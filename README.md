@@ -38,8 +38,9 @@ ledger. Historical phase records are evidence, not current status.
 | Retirement decisions and manifests | `engineering/retirement/` |
 | Active ledger and historical phase records | `engineering/evidence/REVIEW-LOG.md` (active), `engineering/evidence/` and `engineering/conformance/` (historical) |
 | Pairing, tool commands and shared-file policy | `docs/process/` |
-| Shared C++ and hook configs | `.clang-format`, `.clang-tidy`, `CMakeLists.txt`, `CMakePresets.json`, `cmake/strict-flags.cmake`, `.pre-commit-config.yaml` (identical in all three repositories) |
-| q / kdb+ style contract | `q-style.json` and `scripts/check_q_style.py` (identical in all three repositories) |
+| Workspace orchestration style | `.shellcheckrc`, `.editorconfig` and `.pre-commit-config.yaml` (workspace hook set) |
+| Shared CMake baseline | `CMakeLists.txt`, `CMakePresets.json`, `cmake/strict-flags.cmake` (identical in all three repositories) |
+| Source-repository C++/q style | `.clang-format`, `.clang-tidy`, `q-style.json` and `scripts/check_q_style.py` belong to Fieldbook and Nirnay only |
 
 Read the owning document for a task. Older records answer historical questions;
 they do not override the current authority.

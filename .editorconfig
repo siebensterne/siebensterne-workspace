@@ -1,0 +1,32 @@
+# Editor baseline for workspace orchestration files. The binding gates are
+# the repository checkers, not this file. Source-repository baselines live in
+# Fieldbook and Nirnay because they own different file classes.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{json,jsonl,toml,yml,yaml}]
+indent_size = 2
+max_line_length = 100
+
+[*.md]
+indent_size = 2
+max_line_length = 100
+
+[*.{sh,bash,zsh}]
+indent_size = 2
+max_line_length = 80
+
+[Makefile]
+indent_style = tab
+indent_size = 4
+
+[*.cmake]
+indent_size = 2
+max_line_length = 100

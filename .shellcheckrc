@@ -1,0 +1,13 @@
+# Shell style for the workspace orchestration scripts.
+# Pinned ShellCheck 0.11.0.1 in WORKSPACE.lock.json; every optional check
+# listed here is binding in the local pre-commit hook.
+shell=bash
+external-sources=true
+
+enable=add-default-case
+enable=avoid-negated-conditions
+enable=avoid-nullary-conditions
+enable=deprecate-which
+enable=quote-safe-variables
+enable=require-double-brackets
+enable=useless-use-of-cat
