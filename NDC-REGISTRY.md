@@ -48,16 +48,16 @@ component exists. These layers are recorded separately:
 | Approved implementation-conformance rules | **Approved as requirements** under W1.2 C1/C2 paired PRs #45/#46/#130; enforcement still to be proven | `CURRENT-STATE.json` `reviewed_commit_ids`; W2.1-B/C exists to close runtime gaps, not to reopen the approved semantics |
 | JSON schemas | Present as versioned repository artifacts (for example `schemas/research/dataset-manifest.v1.schema.json`), not part of the approved NDC v2 requirement bytes | A schema that compiles is not a verified release |
 | Canonical serialization rules | **Ratified as semantics**: 2026-11-23 Decision B, refined by Profile 1 Decision A — RFC 8785 JCS over the complete manifest, SHA-256 digest only in the detached sidecar, Ed25519 domain-separated signature; proves publisher-key control and manifest integrity only | `OWNER-RATIFICATION-2026-11-23.md` Decision B; `WS-NDC-2026-11-24-002` Decision A; `NDC-D1-AMENDMENT-001.md` |
-| Canonical wire schema authority | **Ratified 2026-11-24**: one language-independent canonical wire schema for Profile 1; B8 package published, with binary cross-execution now recorded at the Phase 3 final heads | `WS-NDC-2026-11-24-003` (`417bd4e5…`): strict UTF-8/RFC 8785 JCS, decimal-string nanosecond instants, byte-derived tagged record ordering, typed operations/evidence, source scope, rights, coverage, lineage, registered compression versions, versioned schema package with one digest; DP-01..DP-30 resolved; no shared runtime crate |
-| Final NDC serialization schema | **Profile 1 version and digests registered; canonical schema package published by WP-B8 (2026-11-24)** | `engineering/conformance/ndc-v2-schema-digest.json` registers the exact version, profile and D1 amendment digests, strict unknown-field policy and the source of truth. The B8 canonical schema package at `engineering/conformance/ndc-v2-schema-profile-1/` is the standalone published wire artifact (digest `6e8c1e48…`, 26 files). At the WP-5 recorded heads no such file existed and the typed structs in both repositories were the implementation authorities; those heads are historical evidence, not the normative wire representation. Cross-execution was NOT_STARTED at the WP-5 heads; current binary cross-execution is recorded in the Phase 3 acceptance record |
+| Canonical wire schema authority | **Ratified 2026-11-24**: one language-independent canonical wire schema for Profile 1; B8 package published, with the HISTORICAL non-streaming binary cross-execution recorded at the Phase 3 heads; current Phase 3A status in the Phase 3A acceptance record | `WS-NDC-2026-11-24-003` (`417bd4e5…`): strict UTF-8/RFC 8785 JCS, decimal-string nanosecond instants, byte-derived tagged record ordering, typed operations/evidence, source scope, rights, coverage, lineage, registered compression versions, versioned schema package with one digest; DP-01..DP-30 resolved; no shared runtime crate |
+| Final NDC serialization schema | **Profile 1 version and digests registered; canonical schema package published by WP-B8 (2026-11-24)** | `engineering/conformance/ndc-v2-schema-digest.json` registers the exact version, profile and D1 amendment digests, strict unknown-field policy and the source of truth. The B8 canonical schema package at `engineering/conformance/ndc-v2-schema-profile-1/` is the standalone published wire artifact (digest `6e8c1e48…`, 26 files). At the WP-5 recorded heads no such file existed and the typed structs in both repositories were the implementation authorities; those heads are historical evidence, not the normative wire representation. Cross-execution was NOT_STARTED at the WP-5 heads; the Phase 3 non-streaming binary cross-execution is recorded in the Phase 3 acceptance record (HISTORICAL); actual B16 streaming cross-execution is NOT_RUN and not evidence in Phase 3A - see the Phase 3A acceptance record |
 | Resource policy | **Ratified rule**: versioned normative consumer resource policy, no manifest `limits`, producer and verifier enforce independently; numerical maxima pending workload qualification | `WS-NDC-2026-11-24-002` Decision F; `WS-STREAM-001` (2026-11-25) adds the normative immutable versioned `ResourceProfile` contract with role-specific profiles, trusted local selection, consumer local ceiling and stricter-of effective limits, but approves no number or profile digest |
 | Publication durability | **Ratified rule**: staged, synced, atomic no-replace rename with parent-directory sync and durable receipt; uncertain-publication recovery after rename before parent sync | `WS-NDC-2026-11-24-002` Decision G |
 | Publication durability failure model | **Ratified rule (WS-DUR-001)**: five tiers D0–D4 with profile-scoped booleans, an error-only sync acknowledgement contract, per-platform primitive qualification and no global durability Boolean; not a D1 claim | `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` — **RATIFIED 2026-11-24** by owner direction; current digest `931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` (FB-DUR-002 full-matrix evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` preserved as historical in `REVIEW-LOG.md`) |
 | Trusted publisher registry | **Ratified rule**: out-of-band registry with key states and revocation evidence; Batch B trust interface with injected test keys only | `WS-NDC-2026-11-24-002` Decision H |
-| Runtime implementation | Producer and independent verifier implemented; bounded streaming implementation complete at the Phase 3 final heads; binary cross-execution recorded at FB `8216197` / NZ `c1c2f0d` with stage-6 rights refusal | WP-5 acceptance matrix records exact test evidence at Fieldbook `2ef88a9` and Nirnay `2dad496` (historical package heads where cross-execution was NOT_STARTED); Phase 3 evidence in `engineering/conformance/phase-3-acceptance-2026-11-25.md`; no shared invocation boundary or connector, no verification promotion |
+| Runtime implementation | Producer and independent verifier implemented; bounded streaming implementation complete at Phase 3A final heads FB `acbd9b68` / NZ `c2c51757`; actual B16 streaming cross-execution NOT_RUN and not evidence | WP-5 acceptance matrix records exact test evidence at Fieldbook `2ef88a9` and Nirnay `2dad496` (historical package heads where cross-execution was NOT_STARTED); Phase 3 non-streaming binary cross-execution at FB `8216197` / NZ `c1c2f0d` is HISTORICAL in `engineering/conformance/phase-3-acceptance-2026-11-25.md`; current Phase 3A evidence in `engineering/conformance/phase-3a-acceptance-2026-11-25.md`; no shared invocation boundary or connector, no verification promotion |
 | Consumer verification capability | Independent `release-verifier` crate implemented at Nirnay `2dad496`; **Proposed consumer-use proposal unchanged** | Twelve-stage verifier with abstract tests; no shared crate; the separate consumer-use document below is not approved and is not an authority for this capability |
 | B15/B16 streaming architecture | **RATIFIED 2026-11-25** by owner direction (`WS-STREAM-001`): bounded interfaces and pipelines, two-intent lifecycle, byte-derived ordering, Profile 1 digests, incremental digests, bounded parsing and decompression, typed failure semantics, descriptor-relative snapshots, independent implementations and separate receipts | Contract only; numeric resource maxima and codec identifier deferred; `STREAM_RESOURCE_PROFILE_RATIFIED` pending; both design documents remain PROPOSED |
-| Phase 3 evidence acceptance | **ACCEPTED 2026-11-25** at FB `8216197` (PR #75) / NZ `c1c2f0d` (PR #145), CI `45491963354` 2/2 and `45491893837` 12/12; `STREAMING_IMPLEMENTATION_COMPLETE` achieved under finite `TEST_ONLY` profiles | `engineering/conformance/phase-3-acceptance-2026-11-25.md` (digest `3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4`); stage 6 `REJECT_RIGHTS_EVIDENCE`, `RIGHTS_ADMISSION_REFUSED`, no admission receipt, no surviving snapshot; no capability or durability promotion |
+| Phase 3 evidence acceptance (HISTORICAL) | **ACCEPTED 2026-11-25** at FB `8216197` (PR #75) / NZ `c1c2f0d` (PR #145), CI `45491963354` 2/2 and `45491893837` 12/12; `STREAMING_IMPLEMENTATION_COMPLETE` achieved under finite `TEST_ONLY` profiles; superseded for current status by Phase 3A | `engineering/conformance/phase-3-acceptance-2026-11-25.md` (digest `3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4`); stage 6 `REJECT_RIGHTS_EVIDENCE`, `RIGHTS_ADMISSION_REFUSED`, no admission receipt, no surviving snapshot; no capability or durability promotion |
 
 ## NDC v2 Release Serialization Profile 1 (ratified 2026-11-24)
 
@@ -167,7 +167,7 @@ PERF-001 assignment or operational qualification is approved.
 | Item | Registered state |
 |---|---|
 | Architecture and contracts | **RATIFIED NOW** for bounded record-source interfaces, streaming producer/verifier pipelines, the two-intent lifecycle, byte-derived ordering, Profile 1 digest compatibility, deterministic streaming compression, incremental stored/expanded digests, bounded decompression and parsing, cancellation/backpressure/failure semantics, descriptor-relative private snapshot writing and cleanup, independent implementations and separate publication/admission receipts |
-| Implementation | **IMPLEMENTED at Phase 3 final heads** FB `8216197124d33466fbe651e417b7c19505e4155e` (B15, PR #75) and NZ `c1c2f0d984bee11a63eb1df98833ee8723cd8629` (B16, PR #145) with finite, explicitly marked `TEST_ONLY` profiles; `STREAMING_IMPLEMENTATION_COMPLETE` ACHIEVED, not `Verified`. No production invocation without an approved role profile selected by trusted local policy; producer declarations never raise the consumer ceiling |
+| Implementation | **IMPLEMENTED at Phase 3A final heads** FB `acbd9b683d86ba6fbb62f7170f8852b23876e3aa` (B15 plus FB #76/#77/#78/#79/#80) and NZ `c2c51757b0aeca94d2eacf651e8861e1937f74c8` (B16 plus NZ #146-#150) with finite, explicitly marked `TEST_ONLY` profiles; `STREAMING_IMPLEMENTATION_COMPLETE` ACHIEVED, not `Verified`. Phase 3 heads `8216197` / `c1c2f0d` are HISTORICAL. No production invocation without an approved role profile selected by trusted local policy; producer declarations never raise the consumer ceiling; actual B16 streaming cross-execution NOT_RUN |
 | `STREAM_RESOURCE_PROFILE_RATIFIED` | **PENDING**: requires owner approval of every numeric limit and one profile digest per `ProcessingRole` (`PRODUCER`, `VERIFIER`, `RECOVERY`, `SNAPSHOT`) |
 | `PERF_001_QUALIFIED`, `OPERATIONALLY_QUALIFIED` | **BLOCKED** |
 | `PUBLICATION_DURABILITY_VERIFIED` | **false**, unchanged under WS-DUR-001 |
@@ -180,10 +180,12 @@ effective limit is the stricter of consumer local ceiling, consumer role profile
 producer declaration. Caller-supplied raw limits are not normative. No approved digest, schema
 version, rejection code or historical record was edited by this decision.
 
-**Implementation status (Phase 3, 2026-11-25):** the ratified contracts are implemented at
-FB `8216197` / NZ `c1c2f0d` under finite `TEST_ONLY` profiles; this is an `Implemented` state only.
-Numeric maxima, the codec identifier, `STREAM_RESOURCE_PROFILE_RATIFIED` and PERF-001 remain
-deferred or blocked. See `engineering/conformance/phase-3-acceptance-2026-11-25.md`.
+**Implementation status (Phase 3A, 2026-11-25):** the ratified contracts are implemented at
+FB `acbd9b683d86ba6fbb62f7170f8852b23876e3aa` / NZ `c2c51757b0aeca94d2eacf651e8861e1937f74c8` under finite `TEST_ONLY` profiles, with the Phase 3A conformance
+packages merged; this is an `Implemented` state only. The Phase 3 heads `8216197` / `c1c2f0d` are
+HISTORICAL. Numeric maxima, the codec identifier, `STREAM_RESOURCE_PROFILE_RATIFIED` and PERF-001
+remain deferred or blocked; actual B16 streaming cross-execution remains NOT_RUN and is not
+evidence. See `engineering/conformance/phase-3a-acceptance-2026-11-25.md`.
 
 ### WS-DOC-001 design-document synchronization (2026-11-25)
 
@@ -207,8 +209,11 @@ deferred or blocked. See `engineering/conformance/phase-3-acceptance-2026-11-25.
   `FB-SPOOL-001` (multi-source spool), `FB-LIMIT-001` (expansion ratio) and `FB-SOURCE-001`
   (core-owned bounded record port). B16 Appendix B lists `NZ-REG-001` (payload registry),
   `NZ-RES-001` (profile resolver), `NZ-LIMIT-001` (exact parser bounds) and `NZ-LIMIT-002`
-  (artifact/concurrency separation). No merge, commit, gate result, test count or capability
-  outcome is claimed for any package not recorded by the parent.
+  (artifact/concurrency separation). At the time of that synchronization no merge, commit, gate result,
+  test count or capability outcome was claimed for any package not recorded by the parent. Those
+  packages were subsequently merged and are recorded with exact heads, CI and claim discipline in
+  `engineering/conformance/phase-3a-acceptance-2026-11-25.md`; actual B16 streaming cross-execution
+  remains NOT_RUN and is not evidence.
 - `NDC-RECEIPT-001` remains **PROPOSED / AWAITING OWNER RATIFICATION**, not ratified; the Fieldbook
   publication receipt and the Nirnay admission receipt remain separate objects (A-12). Workspace
   hosted CI remains `NOT_RUN`. The freeze is unchanged and no Phase 3 or Phase 3A capability state
@@ -219,16 +224,33 @@ deferred or blocked. See `engineering/conformance/phase-3-acceptance-2026-11-25.
 
 | Item | Record |
 |---|---|
-| Acceptance record | `engineering/conformance/phase-3-acceptance-2026-11-25.md` — digest `3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4` (`shasum -a 256`), docs/JSON only, no commit |
+| Acceptance record (HISTORICAL) | `engineering/conformance/phase-3-acceptance-2026-11-25.md` — digest `3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4` (`shasum -a 256`), docs/JSON only, no commit; preserved unchanged |
 | Final heads | Fieldbook `8216197124d33466fbe651e417b7c19505e4155e` (PR #75), Nirnay `c1c2f0d984bee11a63eb1df98833ee8723cd8629` (PR #145); Workspace base `6dcca8b`; audited subject `6d45af2` and packaged head / evidence commit `95580f5` unchanged |
 | Hosted CI | FB `45491963354` success 2/2 after stale-branch rerun; NZ `45491893837` success 12/12; Workspace hosted CI `NOT_RUN` |
 | Cross-execution | producer PASS; structural, manifest, signature, publisher, artifact and ordering PASS; stage 6 `REJECT_RIGHTS_EVIDENCE`; `RIGHTS_ADMISSION_REFUSED`; no Nirnay admission receipt; no surviving snapshot; dataset `BLOCKED` |
-| Capability states | `STREAMING_IMPLEMENTATION_COMPLETE` ACHIEVED, `STREAM_RESOURCE_PROFILE_RATIFIED` PENDING, `PERF_001_QUALIFIED` BLOCKED, `PUBLICATION_DURABILITY_VERIFIED` false, `OPERATIONALLY_QUALIFIED` BLOCKED, `RIGHTS_ADMITTED` and `DATASET_ACCEPTED` false; D0 achieved at `4e0f2f5`, D1/D1b/D2–D4 false |
+| Capability states | `STREAMING_IMPLEMENTATION_COMPLETE` ACHIEVED, `STREAM_RESOURCE_PROFILE_RATIFIED` PENDING, `PERF_001_QUALIFIED` BLOCKED, `PUBLICATION_DURABILITY_VERIFIED` false, `OPERATIONALLY_QUALIFIED` BLOCKED, `RIGHTS_ADMITTED` and `DATASET_ACCEPTED` false; D0 achieved at `4e0f2f5`, D1/D1b/D2–D4 false; **HISTORICAL Phase 3 state** |
 | Non-claims | No numeric maximum approved; no production invocation without an approved role-specific `ResourceProfile`; verifier local ceiling always stricter; PERF-001 and D1 not run; freeze unchanged |
 
 The acceptance record updates the five separately evidenced `CURRENT-STATE.json` head concepts and
 adds pointers to the historical sprint, provenance, evidence-manifest and D0 records. Those
-records are preserved unchanged and are not rewritten by this registry entry.
+records are preserved unchanged and are not rewritten by this registry entry. This Phase 3 acceptance section is **HISTORICAL**; current status is in the Phase 3A section below.
+
+## Phase 3A evidence acceptance (2026-11-25)
+
+| Item | Record |
+|---|---|
+| Acceptance record | `engineering/conformance/phase-3a-acceptance-2026-11-25.md` — digest `497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866` (`shasum -a 256`), docs/JSON only, no commit |
+| Final heads | Fieldbook `acbd9b683d86ba6fbb62f7170f8852b23876e3aa`, Nirnay `c2c51757b0aeca94d2eacf651e8861e1937f74c8`; Workspace base `d12b5b9880e23085c17f206dd48ec73e7fe13f61`; audited subject `6d45af2` and packaged head / evidence commit `95580f5` unchanged |
+| Hosted CI | FB `45621903705` success 2/2 after deleting stale merged remote branches and rerunning; NZ `45612047715` success 12/12; Workspace hosted CI `NOT_RUN` |
+| Merged packages | NZ #146 (NZ-RES-001), FB #76 (FB-STREAM-001), NZ #147 (NZ-REG-001), NZ #148 (NZ-LIMIT-001), FB #77 (FB-LIMIT-001), FB #78 (FB-STREAM-002), NZ #149 (NZ-LIMIT-002), FB #79 (FB-SPOOL-001), FB #80 (FB-SOURCE-001), NZ #150 (NZ-API-001 harness), WS #31/#32 |
+| Stream contract conformance | Closed by the merged packages except the actual B16 streaming cross-execution |
+| Actual B16 streaming cross-execution | **NOT_RUN and not evidence**: NZ-API-001 harness skips with explicit reason (no external B15 streaming producer binary; `InvocationContext::TestHarness` and `ResourceProfile::new_test_only` are `cfg(test)`-only); no producer bytes simulated; the Phase 3 non-streaming binary cross-execution is HISTORICAL and is not a streaming result |
+| Capability states | `STREAMING_IMPLEMENTATION_COMPLETE` ACHIEVED, `B16_STREAMING_CROSS_EXECUTION` NOT_RUN, `STREAM_RESOURCE_PROFILE_RATIFIED` PENDING, `PERF_001_QUALIFIED` BLOCKED, `PUBLICATION_DURABILITY_VERIFIED` false, `OPERATIONALLY_QUALIFIED` BLOCKED, `RIGHTS_ADMITTED` and `DATASET_ACCEPTED` false; D0 at `4e0f2f5` unchanged |
+| Non-claims | No production `ResourceProfile`, no numeric maxima, no PERF-001 or PERF-BASE-001 result, no D1 qualification, no global durability Boolean, no `Implemented`-to-`Verified` promotion; freeze unchanged |
+
+The acceptance record updates the five separately evidenced `CURRENT-STATE.json` head concepts and
+reconciles the derived summaries. The Phase 3 acceptance record and older dated records remain
+HISTORICAL and preserved unchanged.
 
 ## B8 canonical schema package (published 2026-11-24)
 

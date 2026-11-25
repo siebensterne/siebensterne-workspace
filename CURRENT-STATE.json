@@ -9,7 +9,8 @@
     "scope": "PR 0 evidence baseline reconciliation; docs/JSON only; no source, schema, right, data, provider, India implementation or experiment change; no commit",
     "branch": "docs/evidence-baseline-reconciliation",
     "base_commit": "62b617c380ea97cd2a68f67c880a1f652ef14961",
-    "note": "The five source-head concepts below are separately evidenced and must not be conflated. Legacy mixed head keys further down are retained only for backward compatibility with existing checkers and are explicitly HISTORICAL or legacy."
+    "note": "The five source-head concepts below are separately evidenced and must not be conflated. Legacy mixed head keys further down are retained only for backward compatibility with existing checkers and are explicitly HISTORICAL or legacy.",
+    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md; the PR 0 reconciliation and its five-concept note are preserved unchanged."
   },
   "phase3_acceptance": {
     "date": "2026-11-25",
@@ -74,7 +75,85 @@
       "no Implemented-to-Verified promotion; no internal self-hash"
     ],
     "no_internal_self_hash": true,
-    "note": "This record updates the five source-head concepts to the Phase 3 final heads. The Workspace audited-subject and packaged/evidence-commit concepts are unchanged; no committed Workspace file contains its own final commit hash."
+    "note": "This record updates the five source-head concepts to the Phase 3 final heads. The Workspace audited-subject and packaged/evidence-commit concepts are unchanged; no committed Workspace file contains its own final commit hash.",
+    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md is the current Phase 3A status; this Phase 3 record and its heads, CI and evidence are HISTORICAL and preserved unchanged."
+  },
+  "phase3a_acceptance": {
+    "date": "2026-11-25",
+    "status": "ACCEPTED; documentation and JSON evidence record only; no commit; freeze unchanged",
+    "record": "engineering/conformance/phase-3a-acceptance-2026-11-25.md",
+    "digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+    "digest_command": "shasum -a 256 engineering/conformance/phase-3a-acceptance-2026-11-25.md",
+    "branch": "docs/phase3a-acceptance",
+    "base_commit": "d12b5b9880e23085c17f206dd48ec73e7fe13f61",
+    "scope": "docs/JSON only; no source, schema, right, data, provider, India, experiment, release, key, dataset, collection, live-execution, performance, resource-profile or CI change",
+    "heads": {
+      "fieldbook_final": "acbd9b683d86ba6fbb62f7170f8852b23876e3aa",
+      "nirnay_final": "c2c51757b0aeca94d2eacf651e8861e1937f74c8",
+      "workspace_base": "d12b5b9880e23085c17f206dd48ec73e7fe13f61",
+      "workspace_audited_subject": "6d45af29793485e5b3fce03840228f5d97a34cd9",
+      "workspace_evidence_commit": "95580f5c92480c6965a4b72d54bf0b6af30f5dbd"
+    },
+    "hosted_ci": {
+      "fieldbook": "45621903705 success 2/2 after deleting stale merged remote branches and rerunning",
+      "nirnay": "45612047715 success 12/12",
+      "workspace": "NOT_RUN"
+    },
+    "merged_packages": [
+      "NZ #146 NZ-RES-001 trusted profile admission (merge 5f114e337342cf92f156cd8d033132640455c55d)",
+      "FB #76 FB-STREAM-001 plan/source pairing (merge 5f3321d11a268b4cd20332ce5cf3b710a7f1c7bf)",
+      "NZ #147 NZ-REG-001 payload registry (merge 2f35e2a0fbcea6b7c5e690d4d139caa0b64176da)",
+      "NZ #148 NZ-LIMIT-001 parser bounds (merge c24bc299e102c3f2f9ef46d5eb6eb477e5cd7d01)",
+      "FB #77 FB-LIMIT-001 expansion ratio (merge e0d065e0298da3a97a191eab08f69ae53bff0865)",
+      "FB #78 FB-STREAM-002 durable quarantine (merge 98d3c9511c8f99a1d92e237aa09f9c6bcc14163c)",
+      "NZ #149 NZ-LIMIT-002 artifact/concurrency separation (merge 7d4bd470af3a6b3b6556fa44ce343b0787a6cb2b)",
+      "FB #79 FB-SPOOL-001 multi-source spool (merge c8ac3f0c53efa2f3b4020252128bcaa38e0c9e6f)",
+      "FB #80 FB-SOURCE-001 core-owned record port (merge acbd9b683d86ba6fbb62f7170f8852b23876e3aa)",
+      "NZ #150 NZ-API-001 streaming cross-execution harness (merge c2c51757b0aeca94d2eacf651e8861e1937f74c8)",
+      "WS #31 / WS #32 Phase 3 acceptance and streaming doc sync (merged before workspace base d12b5b9)"
+    ],
+    "stream_conformance": {
+      "closed_items": "NZ-RES-001, FB-STREAM-001, NZ-REG-001, NZ-LIMIT-001, FB-LIMIT-001, FB-STREAM-002, NZ-LIMIT-002, FB-SPOOL-001 and FB-SOURCE-001 merged at the exact heads in the record; NZ-API-001 harness merged",
+      "actual_b16_streaming_cross_execution": "NOT_RUN; NZ-API-001 harness skips with explicit reason (NIRNAY_B15_PRODUCER_BIN unset or no executable Fieldbook B15 streaming producer; InvocationContext::TestHarness and ResourceProfile::new_test_only are cfg(test)-only; public conformance producer uses buffered build_release and is not substituted); not counted as evidence"
+    },
+    "outstanding_gates": [
+      "actual B15-producer-to-B16-verifier streaming cross-execution NOT_RUN and not evidence",
+      "PERF-BASE-001 serial performance baseline NOT_RUN; PERF-001 not run and PERF_001_QUALIFIED BLOCKED",
+      "STREAM_RESOURCE_PROFILE_RATIFIED PENDING: no approved numeric maxima and no production role profile digest",
+      "PUBLICATION_DURABILITY_VERIFIED false: D1 (APFS/ext4), D1b physical power loss and D2-D4 unqualified; no global durability Boolean",
+      "OPERATIONALLY_QUALIFIED BLOCKED; RIGHTS_ADMITTED false; DATASET_ACCEPTED false",
+      "NDC-RECEIPT-001 PROPOSED; publication receipt and admission receipt remain separate"
+    ],
+    "capability_states": {
+      "STREAMING_IMPLEMENTATION_COMPLETE": "ACHIEVED",
+      "B15_B16_STREAM_CONFORMANCE": "CLOSED_EXCEPT_ACTUAL_B16_STREAMING_CROSS_EXECUTION",
+      "B16_STREAMING_CROSS_EXECUTION": "NOT_RUN",
+      "STREAM_RESOURCE_PROFILE_RATIFIED": "PENDING",
+      "PERF_001_QUALIFIED": "BLOCKED",
+      "PUBLICATION_DURABILITY_VERIFIED": "false / NOT_ACHIEVED",
+      "OPERATIONALLY_QUALIFIED": "BLOCKED",
+      "RIGHTS_ADMITTED": "false",
+      "DATASET_ACCEPTED": "false",
+      "D0_PROCESS_RECOVERY_VERIFIED": "ACHIEVED_D0_ONLY",
+      "D1_APFS_QUALIFIED": "false",
+      "D1_EXT4_QUALIFIED": "false",
+      "D1b_PHYSICAL_POWER_LOSS_QUALIFIED": "false",
+      "D2_LOCAL_DEVICE_FAILURE_QUALIFIED": "false",
+      "D3_HOST_FAILURE_QUALIFIED": "false",
+      "D4_DISASTER_RECOVERY_QUALIFIED": "false",
+      "PERF_BASE_001_SERIAL_BASELINE": "NOT_RUN"
+    },
+    "claim_discipline": [
+      "no actual B16 streaming cross-execution was run; harness skips are not evidence",
+      "no production ResourceProfile exists; no production invocation without an approved role profile",
+      "all numeric maxima deferred; no chunk, parser, queue, disk, descriptor, memory, duration, concurrency or throughput number approved",
+      "PERF-001 and PERF-BASE-001 not run; no RSS plateau, throughput, latency or CPU result claimed",
+      "PUBLICATION_DURABILITY_VERIFIED false; D1/D1b/D2-D4 unqualified; no global durability Boolean",
+      "freeze unchanged: INR 0, 21 UNKNOWN, BLOCKED, DISABLED, BLOCKED, M4 UNTOUCHED, D11 retired synthetic tests, live execution DISABLED",
+      "no Implemented-to-Verified promotion; no internal self-hash"
+    ],
+    "no_internal_self_hash": true,
+    "note": "Phase 3A supersedes Phase 3 as current status. Phase 3 heads, CI runs, capability states and evidence records are preserved unchanged as HISTORICAL. No actual streaming cross-execution, production profile, numeric maximum, PERF-001, PERF-BASE-001, durability tier or capability promotion is claimed."
   },
   "phase3_capability_states": {
     "STREAMING_IMPLEMENTATION_COMPLETE": "ACHIEVED",
@@ -90,7 +169,28 @@
     "D1b_PHYSICAL_POWER_LOSS_QUALIFIED": "false",
     "D2_LOCAL_DEVICE_FAILURE_QUALIFIED": "false",
     "D3_HOST_FAILURE_QUALIFIED": "false",
-    "D4_DISASTER_RECOVERY_QUALIFIED": "false"
+    "D4_DISASTER_RECOVERY_QUALIFIED": "false",
+    "note": "HISTORICAL Phase 3 capability states; values unchanged at Phase 3A. Current authoritative states are in phase3a_capability_states and engineering/conformance/phase-3a-acceptance-2026-11-25.md."
+  },
+  "phase3a_capability_states": {
+    "STREAMING_IMPLEMENTATION_COMPLETE": "ACHIEVED",
+    "STREAM_RESOURCE_PROFILE_RATIFIED": "PENDING",
+    "PERF_001_QUALIFIED": "BLOCKED",
+    "PUBLICATION_DURABILITY_VERIFIED": "false / NOT_ACHIEVED",
+    "OPERATIONALLY_QUALIFIED": "BLOCKED",
+    "RIGHTS_ADMITTED": "false",
+    "DATASET_ACCEPTED": "false",
+    "D0_PROCESS_RECOVERY_VERIFIED": "ACHIEVED_D0_ONLY",
+    "D1_APFS_QUALIFIED": "false",
+    "D1_EXT4_QUALIFIED": "false",
+    "D1b_PHYSICAL_POWER_LOSS_QUALIFIED": "false",
+    "D2_LOCAL_DEVICE_FAILURE_QUALIFIED": "false",
+    "D3_HOST_FAILURE_QUALIFIED": "false",
+    "D4_DISASTER_RECOVERY_QUALIFIED": "false",
+    "B15_B16_STREAM_CONFORMANCE": "CLOSED_EXCEPT_ACTUAL_B16_STREAMING_CROSS_EXECUTION",
+    "B16_STREAMING_CROSS_EXECUTION": "NOT_RUN",
+    "note": "Current Phase 3A authoritative capability states; see engineering/conformance/phase-3a-acceptance-2026-11-25.md.",
+    "PERF_BASE_001_SERIAL_BASELINE": "NOT_RUN"
   },
   "workspace_audited_subject_head": "6d45af29793485e5b3fce03840228f5d97a34cd9",
   "workspace_evidence_commit": "95580f5c92480c6965a4b72d54bf0b6af30f5dbd",
@@ -103,7 +203,8 @@
     ],
     "tested_commit": "95580f5c92480c6965a4b72d54bf0b6af30f5dbd",
     "note": "Run in the docs/JSON-only worktree whose base is the Workspace evidence commit (documentation-only uncommitted changes; no commit created). Temporary local clone symlinks were used for the runs and removed afterwards. Static gates only: no hosted CI and no full Fieldbook fixture/e2e or Nirnay test suite was run.",
-    "phase3_pointer": "Phase 3 static gates at base 6dcca8b with final FB/NZ clones are recorded in static_gate_results.phase3_2026_11_25 and engineering/conformance/phase-3-acceptance-2026-11-25.md; the tested_commit 95580f5 above is preserved as the earlier evidence-commit observation."
+    "phase3_pointer": "HISTORICAL: Phase 3 static gates at base 6dcca8b with final FB/NZ clones are recorded in static_gate_results.phase3_2026_11_25 and engineering/conformance/phase-3-acceptance-2026-11-25.md; the tested_commit 95580f5 above is preserved as the earlier evidence-commit observation.",
+    "phase3a_pointer": "Phase 3A static gates at base d12b5b9880e23085c17f206dd48ec73e7fe13f61 with final FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa / NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8 clones are recorded in static_gate_results.phase3a_2026_11_25 and engineering/conformance/phase-3a-acceptance-2026-11-25.md."
   },
   "workspace_package_head_attestation": {
     "commit_sha": "95580f5c92480c6965a4b72d54bf0b6af30f5dbd",
@@ -115,32 +216,33 @@
   "workspace_head_terminology": {
     "record": "engineering/conformance/ws-evidence-026-provenance-2026-11-24.md",
     "note": "6d45af2 is the audited subject; 95580f5 is the evidence commit and packaged Git bundle main head. The five head concepts below are separately evidenced and are not interchangeable; see the dated terminology record. Fieldbook DUR-002 at 4e0f2f5 is a D0 evidence commit only and does not replace any of the five head concepts or the packaged-head attestation.",
-    "phase3_pointer": "Phase 3 acceptance uses base 6dcca8b and updates the five head concepts to FB 8216197 / NZ c1c2f0d; the audited subject 6d45af2 and packaged head / evidence commit 95580f5 are unchanged."
+    "phase3_pointer": "HISTORICAL: Phase 3 acceptance used base 6dcca8b and updated the five head concepts to FB 8216197 / NZ c1c2f0d; the audited subject 6d45af2 and packaged head / evidence commit 95580f5 are unchanged.",
+    "phase3a_pointer": "Phase 3A acceptance uses base d12b5b9880e23085c17f206dd48ec73e7fe13f61 and updates the five head concepts to FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa / NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8; the audited subject 6d45af2 and packaged head / evidence commit 95580f5 are unchanged."
   },
   "current_source_head": {
     "fieldbook": {
       "repository": "fieldbook",
-      "commit_sha": "8216197124d33466fbe651e417b7c19505e4155e",
+      "commit_sha": "acbd9b683d86ba6fbb62f7170f8852b23876e3aa",
       "clean_worktree": true,
-      "verification_method": "final Phase 3 head; local clean worktree observation",
+      "verification_method": "final Phase 3A head; local clean-worktree observation on main",
       "workflow_or_command": "git -C <repo> rev-parse HEAD && git -C <repo> status --short",
-      "run_id": "PHASE3_FINAL_HEAD",
+      "run_id": "PHASE3A_FINAL_HEAD",
       "result": "HEAD_CONFIRMED_CLEAN",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4",
-      "note": "Phase 3 acceptance head; supersedes the final sprint head fd4b542 for current status. The earlier value is preserved in publication_integrity_sprint.final_heads and historical_source_head_evidence; evidence_digest is the Phase 3 acceptance record digest."
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "Phase 3A acceptance head; supersedes the Phase 3 head 8216197124d33466fbe651e417b7c19505e4155e for current status. The earlier value is preserved in historical_source_head_evidence; evidence_digest is the Phase 3A acceptance record digest."
     },
     "nirnay": {
       "repository": "nirnay",
-      "commit_sha": "c1c2f0d984bee11a63eb1df98833ee8723cd8629",
+      "commit_sha": "c2c51757b0aeca94d2eacf651e8861e1937f74c8",
       "clean_worktree": true,
-      "verification_method": "final Phase 3 head; local clean worktree observation",
+      "verification_method": "final Phase 3A head; local clean-worktree observation on main",
       "workflow_or_command": "git -C <repo> rev-parse HEAD && git -C <repo> status --short",
-      "run_id": "PHASE3_FINAL_HEAD",
+      "run_id": "PHASE3A_FINAL_HEAD",
       "result": "HEAD_CONFIRMED_CLEAN",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4",
-      "note": "Phase 3 acceptance head; supersedes the final sprint head d3b66f5 for current status. The earlier value is preserved in publication_integrity_sprint.final_heads and historical_source_head_evidence; evidence_digest is the Phase 3 acceptance record digest."
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "Phase 3A acceptance head; supersedes the Phase 3 head c1c2f0d984bee11a63eb1df98833ee8723cd8629 for current status. The earlier value is preserved in historical_source_head_evidence; evidence_digest is the Phase 3A acceptance record digest."
     },
     "workspace": {
       "repository": "workspace",
@@ -151,33 +253,35 @@
       "workflow_or_command": "git -C <workspace> rev-parse main && git -C <workspace> status --short; attested by the external package manifest (not an internal file)",
       "run_id": "WS_EVIDENCE_026_PACKAGED_HEAD",
       "result": "PACKAGED_HEAD_CONFIRMED_CLEAN",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4",
-      "note": "Audited subject 6d45af2 and packaged head 95580f5 are unchanged by Phase 3; Workspace base for this PR is 6dcca8b. evidence_digest is the Phase 3 acceptance record digest, not a digest of the packaged head."
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "Audited subject 6d45af29793485e5b3fce03840228f5d97a34cd9 and packaged head 95580f5c92480c6965a4b72d54bf0b6af30f5dbd are unchanged by Phase 3A; workspace base for this PR is d12b5b9880e23085c17f206dd48ec73e7fe13f61. evidence_digest is the Phase 3A acceptance record digest, not a digest of the packaged head."
     }
   },
   "ci_verified_source_head": {
     "fieldbook": {
       "repository": "fieldbook",
-      "commit_sha": "8216197124d33466fbe651e417b7c19505e4155e",
+      "commit_sha": "acbd9b683d86ba6fbb62f7170f8852b23876e3aa",
       "clean_worktree": true,
-      "verification_method": "hosted CI exact-head workflow at the Phase 3 final head",
-      "workflow_or_command": "hosted CI run 45491963354",
-      "run_id": "45491963354",
+      "verification_method": "hosted CI exact-head workflow at the Phase 3A final head",
+      "workflow_or_command": "hosted CI run 45621903705",
+      "run_id": "45621903705",
       "result": "SUCCESS; 2/2 after stale-branch rerun",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "SUCCESS at the Phase 3A final head after deleting stale merged remote branches and rerunning. The Phase 3 CI run 45491963354 is preserved as HISTORICAL."
     },
     "nirnay": {
       "repository": "nirnay",
-      "commit_sha": "c1c2f0d984bee11a63eb1df98833ee8723cd8629",
+      "commit_sha": "c2c51757b0aeca94d2eacf651e8861e1937f74c8",
       "clean_worktree": true,
-      "verification_method": "hosted CI exact-head workflow at the Phase 3 final head",
-      "workflow_or_command": "hosted CI run 45491893837",
-      "run_id": "45491893837",
+      "verification_method": "hosted CI exact-head workflow at the Phase 3A final head",
+      "workflow_or_command": "hosted CI run 45612047715",
+      "run_id": "45612047715",
       "result": "SUCCESS; 12/12",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "SUCCESS at the Phase 3A final head. The Phase 3 CI run 45491893837 is preserved as HISTORICAL."
     },
     "workspace": {
       "repository": "workspace",
@@ -189,118 +293,126 @@
       "run_id": "NONE_WORKSPACE_NO_CI",
       "result": "CONSISTENCY OK; audit exit 0 (static gates, not hosted CI)",
       "hosted_ci": "NOT_RUN",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4",
-      "note": "Workspace hosted CI NOT_RUN; unchanged by Phase 3. evidence_digest is the Phase 3 acceptance record digest."
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "Workspace hosted CI NOT_RUN; unchanged by Phase 3A. evidence_digest is the Phase 3A acceptance record digest."
     }
   },
   "local_tested_source_head": {
     "fieldbook": {
       "repository": "fieldbook",
-      "commit_sha": "8216197124d33466fbe651e417b7c19505e4155e",
+      "commit_sha": "acbd9b683d86ba6fbb62f7170f8852b23876e3aa",
       "clean_worktree": true,
-      "verification_method": "Phase 3 local gates and tests recorded by the merged PR at the exact head; not re-run by the documentation record",
-      "workflow_or_command": "cargo xtask / make check / make audit at exact PR head; see docs/fb-b15-streaming-producer-2026-11-24.md",
-      "run_id": "PHASE3_LOCAL_GATES",
+      "verification_method": "Phase 3A merged-package local gate records at the exact head; not re-run by the documentation record",
+      "workflow_or_command": "cargo xtask / make check-static / make audit at exact PR head; see the package ledger in engineering/conformance/phase-3a-acceptance-2026-11-25.md",
+      "run_id": "PHASE3A_LOCAL_GATES",
       "result": "ALL_GATES_PASS",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "Phase 3A acceptance head; static gates re-observed in the docs-only worktree. Full test suites were not re-run here."
     },
     "nirnay": {
       "repository": "nirnay",
-      "commit_sha": "c1c2f0d984bee11a63eb1df98833ee8723cd8629",
+      "commit_sha": "c2c51757b0aeca94d2eacf651e8861e1937f74c8",
       "clean_worktree": true,
-      "verification_method": "Phase 3 local gates and tests recorded by the merged PR at the exact head; not re-run by the documentation record",
-      "workflow_or_command": "cargo xtask / make check / make audit at exact PR head; see crates/release-verifier/B16-STREAMING-IMPLEMENTATION-2026-11-24.md",
-      "run_id": "PHASE3_LOCAL_GATES",
+      "verification_method": "Phase 3A merged-package local gate records at the exact head; not re-run by the documentation record",
+      "workflow_or_command": "cargo xtask / make check-static / make audit at exact PR head; see the package ledger in engineering/conformance/phase-3a-acceptance-2026-11-25.md",
+      "run_id": "PHASE3A_LOCAL_GATES",
       "result": "ALL_GATES_PASS",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "Phase 3A acceptance head; static gates re-observed in the docs-only worktree. Full test suites were not re-run here."
     },
     "workspace": {
       "repository": "workspace",
       "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
       "head_role": "AUDITED_SUBJECT (not the packaged head)",
       "clean_worktree": true,
-      "verification_method": "Phase 3 local static gates in the docs-only worktree at base 6dcca8b",
-      "workflow_or_command": "make consistency && make audit in the docs-only worktree at base 6dcca8b; audited subject and evidence commit unchanged",
-      "run_id": "PHASE3_LOCAL_STATIC_GATES",
+      "verification_method": "Phase 3A local static gates in the docs/JSON-only worktree at base d12b5b9880e23085c17f206dd48ec73e7fe13f61",
+      "workflow_or_command": "make consistency && make audit in the docs/JSON-only worktree at base d12b5b9880e23085c17f206dd48ec73e7fe13f61; audited subject and evidence commit unchanged",
+      "run_id": "PHASE3A_LOCAL_STATIC_GATES",
       "result": "STATIC_GATES_PASS; no full test suite run in this repository",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4",
-      "note": "Audited subject 6d45af2 and packaged head 95580f5 unchanged; evidence_digest is the Phase 3 acceptance record digest."
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "Audited subject 6d45af29793485e5b3fce03840228f5d97a34cd9 and packaged head 95580f5c92480c6965a4b72d54bf0b6af30f5dbd unchanged; evidence_digest is the Phase 3A acceptance record digest."
     }
   },
   "cross_execution_source_head": {
     "fieldbook": {
       "repository": "fieldbook",
-      "commit_sha": "8216197124d33466fbe651e417b7c19505e4155e",
+      "commit_sha": "acbd9b683d86ba6fbb62f7170f8852b23876e3aa",
       "clean_worktree": true,
-      "verification_method": "Phase 3 final binary-to-binary cross-execution recorded in the acceptance record",
-      "workflow_or_command": "target/debug/ndc-conformance-producer + nirnay/target/debug/ndc-conformance-verifier; see engineering/conformance/phase-3-acceptance-2026-11-25.md",
-      "run_id": "PHASE3_FINAL_CROSS_EXECUTION",
-      "result": "STAGES_1_5_PASS; STAGE_6_REJECT_RIGHTS_EVIDENCE; RIGHTS_ADMISSION_REFUSED; NO_ADMISSION_RECEIPT; NO_SURVIVING_SNAPSHOT; DATASET_BLOCKED",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      "verification_method": "Phase 3A NZ-API-001 streaming cross-execution harness at the final head; harness skips with explicit reason",
+      "workflow_or_command": "crates/release-verifier/scripts/nz_api001_streaming_cross_execution.sh (cfg(test) harness); see section 3 of engineering/conformance/phase-3a-acceptance-2026-11-25.md",
+      "run_id": "PHASE3A_NZ_API_001_STREAMING",
+      "result": "NOT_RUN - actual B15-producer-to-B16-verifier streaming cross-execution not run; NZ-API-001 harness skips with explicit reason (no external B15 streaming producer binary, cfg(test)-only TEST_ONLY helpers); not counted as evidence",
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "This concept records the Phase 3A streaming cross-execution status (NOT_RUN). The Phase 3 non-streaming binary cross-execution at FB 8216197124d33466fbe651e417b7c19505e4155e / NZ c1c2f0d984bee11a63eb1df98833ee8723cd8629 (stage 6 REJECT_RIGHTS_EVIDENCE) and the earlier conformance-path and production-builder runs are HISTORICAL, preserved in historical_source_head_evidence and their dated records, and are not streaming evidence."
     },
     "nirnay": {
       "repository": "nirnay",
-      "commit_sha": "c1c2f0d984bee11a63eb1df98833ee8723cd8629",
+      "commit_sha": "c2c51757b0aeca94d2eacf651e8861e1937f74c8",
       "clean_worktree": true,
-      "verification_method": "Phase 3 final binary-to-binary cross-execution recorded in the acceptance record",
-      "workflow_or_command": "target/debug/ndc-conformance-producer + nirnay/target/debug/ndc-conformance-verifier; see engineering/conformance/phase-3-acceptance-2026-11-25.md",
-      "run_id": "PHASE3_FINAL_CROSS_EXECUTION",
-      "result": "STAGES_1_5_PASS; STAGE_6_REJECT_RIGHTS_EVIDENCE; RIGHTS_ADMISSION_REFUSED; NO_ADMISSION_RECEIPT; NO_SURVIVING_SNAPSHOT; DATASET_BLOCKED",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      "verification_method": "Phase 3A NZ-API-001 streaming cross-execution harness at the final head; harness skips with explicit reason",
+      "workflow_or_command": "crates/release-verifier/scripts/nz_api001_streaming_cross_execution.sh (cfg(test) harness); see section 3 of engineering/conformance/phase-3a-acceptance-2026-11-25.md",
+      "run_id": "PHASE3A_NZ_API_001_STREAMING",
+      "result": "NOT_RUN - actual B15-producer-to-B16-verifier streaming cross-execution not run; NZ-API-001 harness skips with explicit reason (no external B15 streaming producer binary, cfg(test)-only TEST_ONLY helpers); not counted as evidence",
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "This concept records the Phase 3A streaming cross-execution status (NOT_RUN). The Phase 3 non-streaming binary cross-execution at FB 8216197124d33466fbe651e417b7c19505e4155e / NZ c1c2f0d984bee11a63eb1df98833ee8723cd8629 (stage 6 REJECT_RIGHTS_EVIDENCE) and the earlier conformance-path and production-builder runs are HISTORICAL, preserved in historical_source_head_evidence and their dated records, and are not streaming evidence."
     },
     "workspace": {
       "repository": "workspace",
       "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
-      "head_role": "AUDITED_SUBJECT (not the packaged head; Workspace is the orchestration record); audited subject unchanged by Phase 3",
+      "head_role": "AUDITED_SUBJECT (not the packaged head; Workspace is the orchestration record); audited subject unchanged by Phase 3A",
       "clean_worktree": true,
-      "verification_method": "Phase 3 final binary-to-binary cross-execution recorded in the acceptance record",
-      "workflow_or_command": "target/debug/ndc-conformance-producer + nirnay/target/debug/ndc-conformance-verifier; see engineering/conformance/phase-3-acceptance-2026-11-25.md",
-      "run_id": "PHASE3_FINAL_CROSS_EXECUTION",
-      "result": "STAGES_1_5_PASS; STAGE_6_REJECT_RIGHTS_EVIDENCE; RIGHTS_ADMISSION_REFUSED; NO_ADMISSION_RECEIPT; NO_SURVIVING_SNAPSHOT; DATASET_BLOCKED",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      "verification_method": "Phase 3A NZ-API-001 streaming cross-execution harness at the final head; harness skips with explicit reason",
+      "workflow_or_command": "crates/release-verifier/scripts/nz_api001_streaming_cross_execution.sh (cfg(test) harness); see section 3 of engineering/conformance/phase-3a-acceptance-2026-11-25.md",
+      "run_id": "PHASE3A_NZ_API_001_STREAMING",
+      "result": "NOT_RUN - actual B15-producer-to-B16-verifier streaming cross-execution not run; NZ-API-001 harness skips with explicit reason (no external B15 streaming producer binary, cfg(test)-only TEST_ONLY helpers); not counted as evidence",
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "This concept records the Phase 3A streaming cross-execution status (NOT_RUN). The Phase 3 non-streaming binary cross-execution at FB 8216197124d33466fbe651e417b7c19505e4155e / NZ c1c2f0d984bee11a63eb1df98833ee8723cd8629 (stage 6 REJECT_RIGHTS_EVIDENCE) and the earlier conformance-path and production-builder runs are HISTORICAL, preserved in historical_source_head_evidence and their dated records, and are not streaming evidence."
     }
   },
   "reviewed_source_head": {
     "fieldbook": {
       "repository": "fieldbook",
-      "commit_sha": "8216197124d33466fbe651e417b7c19505e4155e",
+      "commit_sha": "acbd9b683d86ba6fbb62f7170f8852b23876e3aa",
       "clean_worktree": true,
-      "verification_method": "Phase 3 independent reviews at exact heads",
-      "workflow_or_command": "PRs WS #25-#30, FB #73/#74/#75, NZ #145 review records",
-      "run_id": "PHASE3_REVIEWS",
+      "verification_method": "Phase 3A independent reviews at exact heads",
+      "workflow_or_command": "PRs NZ #146-#150, FB #76-#80, WS #31/#32 review records",
+      "run_id": "PHASE3A_REVIEWS",
       "result": "ALL_APPROVED_AT_EXACT_HEADS",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "Phase 3A review evidence at the exact heads; earlier Phase 3 review heads are preserved as HISTORICAL."
     },
     "nirnay": {
       "repository": "nirnay",
-      "commit_sha": "c1c2f0d984bee11a63eb1df98833ee8723cd8629",
+      "commit_sha": "c2c51757b0aeca94d2eacf651e8861e1937f74c8",
       "clean_worktree": true,
-      "verification_method": "Phase 3 independent reviews at exact heads",
-      "workflow_or_command": "PRs WS #25-#30, FB #73/#74/#75, NZ #145 review records",
-      "run_id": "PHASE3_REVIEWS",
+      "verification_method": "Phase 3A independent reviews at exact heads",
+      "workflow_or_command": "PRs NZ #146-#150, FB #76-#80, WS #31/#32 review records",
+      "run_id": "PHASE3A_REVIEWS",
       "result": "ALL_APPROVED_AT_EXACT_HEADS",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "Phase 3A review evidence at the exact heads; earlier Phase 3 review heads are preserved as HISTORICAL."
     },
     "workspace": {
       "repository": "workspace",
       "commit_sha": "6d45af29793485e5b3fce03840228f5d97a34cd9",
       "head_role": "AUDITED_SUBJECT (not the packaged head)",
       "clean_worktree": true,
-      "verification_method": "Phase 3 workspace documentation reviews at the audited-subject head",
-      "workflow_or_command": "PRs WS #25-#30 review records; audited subject and packaged head unchanged",
-      "run_id": "PHASE3_REVIEWS",
+      "verification_method": "Phase 3A workspace documentation reviews at the audited-subject head",
+      "workflow_or_command": "PRs WS #31/#32 review records; audited subject and packaged head unchanged",
+      "run_id": "PHASE3A_REVIEWS",
       "result": "ALL_APPROVED_AT_EXACT_HEADS",
-      "verification_timestamp": "2026-11-24T21:43:42Z",
-      "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      "verification_timestamp": "2026-11-25T13:34:30Z",
+      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "note": "Audited subject and packaged head unchanged by Phase 3A; workspace base for this PR is d12b5b9880e23085c17f206dd48ec73e7fe13f61."
     }
   },
   "bootstrap_baselines": {
@@ -314,9 +426,9 @@
     "note": "LEGACY / HISTORICAL: RRP-001 review and measurement heads: manifests were built with git ls-files + shasum -a 256 + stat at these heads. Retained unchanged for backward compatibility; not the current or tested heads. See reviewed_source_head for the separately evidenced current review."
   },
   "current_source_heads": {
-    "fieldbook": "8216197124d33466fbe651e417b7c19505e4155e",
-    "nirnay": "c1c2f0d984bee11a63eb1df98833ee8723cd8629",
-    "note": "CURRENT Phase 3 final heads. The prior fd4b542 / d3b66f5 values are preserved unchanged in publication_integrity_sprint.final_heads and historical_source_head_evidence; reviewed_source_heads and tested_source_heads remain explicit LEGACY/HISTORICAL keys."
+    "fieldbook": "acbd9b683d86ba6fbb62f7170f8852b23876e3aa",
+    "nirnay": "c2c51757b0aeca94d2eacf651e8861e1937f74c8",
+    "note": "CURRENT Phase 3A final heads. The Phase 3 heads 8216197124d33466fbe651e417b7c19505e4155e / c1c2f0d984bee11a63eb1df98833ee8723cd8629 and the earlier fd4b542 / d3b66f5 values are preserved unchanged in historical_source_head_evidence and publication_integrity_sprint.final_heads; reviewed_source_heads and tested_source_heads remain explicit LEGACY/HISTORICAL keys."
   },
   "tested_source_heads": {
     "fieldbook": "071da27ed6512fb38c29ada679d76dd0e30ddb6b",
@@ -325,25 +437,39 @@
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45491963354",
-      "head_sha": "8216197124d33466fbe651e417b7c19505e4155e",
+      "run_id": "45621903705",
+      "head_sha": "acbd9b683d86ba6fbb62f7170f8852b23876e3aa",
       "conclusion": "success",
       "jobs": "2/2",
-      "note": "SUCCESS at the Phase 3 final head after stale-branch rerun"
+      "note": "SUCCESS at the Phase 3A final head after deleting stale merged remote branches and rerunning"
     },
     "nirnay": {
-      "run_id": "45491893837",
-      "head_sha": "c1c2f0d984bee11a63eb1df98833ee8723cd8629",
+      "run_id": "45612047715",
+      "head_sha": "c2c51757b0aeca94d2eacf651e8861e1937f74c8",
       "conclusion": "success",
       "jobs": "12/12",
-      "note": "SUCCESS at the Phase 3 final head"
+      "note": "SUCCESS at the Phase 3A final head"
     },
     "workspace": {
       "run_id": "NONE_WORKSPACE_NO_CI",
       "hosted_ci": "NOT_RUN",
-      "note": "Unchanged by Phase 3; static gates recorded in static_gate_results.phase3_2026_11_25"
+      "note": "Unchanged by Phase 3A; static gates recorded in static_gate_results.phase3a_2026_11_25"
     },
     "historical": [
+      {
+        "run_id": "45491963354",
+        "head_sha": "8216197124d33466fbe651e417b7c19505e4155e",
+        "conclusion": "success",
+        "jobs": "2/2",
+        "note": "HISTORICAL Phase 3 Fieldbook CI run; preserved unchanged"
+      },
+      {
+        "run_id": "45491893837",
+        "head_sha": "c1c2f0d984bee11a63eb1df98833ee8723cd8629",
+        "conclusion": "success",
+        "jobs": "12/12",
+        "note": "HISTORICAL Phase 3 Nirnay CI run; preserved unchanged"
+      },
       {
         "run_id": "45454563981",
         "head_sha": "fd4b542c2df9b775c138a50d068734adedad985e",
@@ -493,6 +619,45 @@
         "result": "HISTORICAL: Phase 2 final sprint head; superseded for current status by Phase 3 final head c1c2f0d984bee11a63eb1df98833ee8723cd8629",
         "verification_timestamp": "2026-11-24T18:08:34Z",
         "evidence_digest": "6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c"
+      },
+      {
+        "id": "HIST-PHASE3-FINAL-FB-8216197",
+        "concept": "all five source-head concepts (Phase 3)",
+        "repository": "fieldbook",
+        "commit_sha": "8216197124d33466fbe651e417b7c19505e4155e",
+        "clean_worktree": true,
+        "verification_method": "final Phase 3 head; local clean-worktree observation and hosted CI 45491963354",
+        "workflow_or_command": "recorded in engineering/conformance/phase-3-acceptance-2026-11-25.md and the five head concepts before Phase 3A",
+        "run_id": "PHASE3_FINAL_HEAD",
+        "result": "HISTORICAL: Phase 3 final head; superseded for current status by Phase 3A final head acbd9b683d86ba6fbb62f7170f8852b23876e3aa",
+        "verification_timestamp": "2026-11-24T21:43:42Z",
+        "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      },
+      {
+        "id": "HIST-PHASE3-FINAL-NZ-C1C2F0D",
+        "concept": "all five source-head concepts (Phase 3)",
+        "repository": "nirnay",
+        "commit_sha": "c1c2f0d984bee11a63eb1df98833ee8723cd8629",
+        "clean_worktree": true,
+        "verification_method": "final Phase 3 head; local clean-worktree observation and hosted CI 45491893837",
+        "workflow_or_command": "recorded in engineering/conformance/phase-3-acceptance-2026-11-25.md and the five head concepts before Phase 3A",
+        "run_id": "PHASE3_FINAL_HEAD",
+        "result": "HISTORICAL: Phase 3 final head; superseded for current status by Phase 3A final head c2c51757b0aeca94d2eacf651e8861e1937f74c8",
+        "verification_timestamp": "2026-11-24T21:43:42Z",
+        "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+      },
+      {
+        "id": "HIST-PHASE3-CROSS-EXECUTION",
+        "concept": "cross_execution_source_head",
+        "repository": "fieldbook",
+        "commit_sha": "8216197124d33466fbe651e417b7c19505e4155e",
+        "clean_worktree": true,
+        "verification_method": "Phase 3 final non-streaming binary cross-execution recorded in the Phase 3 acceptance record",
+        "workflow_or_command": "engineering/conformance/phase-3-acceptance-2026-11-25.md section 3",
+        "run_id": "PHASE3_FINAL_CROSS_EXECUTION",
+        "result": "HISTORICAL: structural stages PASS, stage 6 REJECT_RIGHTS_EVIDENCE, no admission receipt, dataset BLOCKED; not a B15/B16 streaming cross-execution and not Phase 3A evidence",
+        "verification_timestamp": "2026-11-24T21:43:42Z",
+        "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
       }
     ]
   },
@@ -503,13 +668,14 @@
     "command": "shasum -a 256 engineering/conformance/ndc-v2-evidence-manifest-2026-11-24.md",
     "purpose": "Dated evidence manifest entry for the PR 0 evidence baseline reconciliation: exact commits, evidence digests, commands and gate results",
     "note": "The manifest does not digest this file or itself; no circular evidence claim. Its SHA-256 was the local_tested_source_head evidence_digest at the 2026-11-24 reconciliation; Phase 3 head concepts use the acceptance-record digest instead.",
-    "phase3_pointer": "engineering/conformance/phase-3-acceptance-2026-11-25.md is the current Phase 3 evidence record; this 2026-11-24 manifest is preserved unchanged and no longer the source of current head, CI or capability evidence."
+    "phase3_pointer": "engineering/conformance/phase-3-acceptance-2026-11-25.md is the HISTORICAL Phase 3 evidence record; this 2026-11-24 manifest is preserved unchanged and is no longer the source of current head, CI or capability evidence.",
+    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md is the current Phase 3A evidence record; this 2026-11-24 manifest remains preserved unchanged and is not the source of current head, CI or capability evidence."
   },
   "static_gate_results": {
     "workspace": {
       "command": "make consistency && make audit",
       "result": "CONSISTENCY OK exit 0; AUDIT exit 0",
-      "note": "HISTORICAL 2026-11-24 gate run with temporary symlinks to Fieldbook 475dc34 and Nirnay 70716eb; preserved and superseded for current evidence by phase3_2026_11_25 below.",
+      "note": "HISTORICAL 2026-11-24 gate run with temporary symlinks to Fieldbook 475dc34 and Nirnay 70716eb; preserved and superseded for current evidence by phase3a_2026_11_25 below.",
       "evidence": "engineering/conformance/ndc-v2-evidence-manifest-2026-11-24.md"
     },
     "fieldbook": {
@@ -522,10 +688,17 @@
     },
     "phase3_2026_11_25": {
       "commands": "make consistency && make audit",
-      "result": "CONSISTENCY OK exit 0; AUDIT exit 0 (47 PASS lines)",
+      "result": "HISTORICAL Phase 3 run: CONSISTENCY OK exit 0; AUDIT exit 0 (47 PASS lines)",
       "heads": "FB 8216197124d33466fbe651e417b7c19505e4155e / NZ c1c2f0d984bee11a63eb1df98833ee8723cd8629, both clean on main and descendants of the lock pins",
-      "note": "Run in the docs/JSON-only worktree at base 6dcca8b with temporary local clone symlinks removed afterwards; a fresh CARGO_TARGET_DIR rebuilt Nirnay cargo xtask from the exact clone instead of a stale cached binary. No gate weakened; no full suite, CI job, test count or cross-execution re-run.",
+      "note": "HISTORICAL Phase 3 run at base 6dcca8b with FB 8216197 / NZ c1c2f0d; preserved unchanged and superseded for current evidence by phase3a_2026_11_25 below.",
       "evidence": "engineering/conformance/phase-3-acceptance-2026-11-25.md"
+    },
+    "phase3a_2026_11_25": {
+      "commands": "make consistency && make audit",
+      "result": "CONSISTENCY OK exit 0 (37 PASS lines); AUDIT exit 0 (47 PASS lines)",
+      "heads": "FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa / NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8, both clean on main and descendants of the lock pins",
+      "note": "Run in the docs/JSON-only worktree at base d12b5b9880e23085c17f206dd48ec73e7fe13f61 with temporary local clone symlinks removed afterwards; a fresh CARGO_TARGET_DIR rebuilt Nirnay cargo xtask from the exact clone. No gate weakened; no full suite, CI job, test count or streaming cross-execution re-run.",
+      "evidence": "engineering/conformance/phase-3a-acceptance-2026-11-25.md"
     }
   },
   "test_suite_results": {
@@ -588,7 +761,8 @@
     "rrp_005": "Fieldbook PR #51, Nirnay PR #136 (merged)",
     "rrp_006": "Workspace PR #5 (merged)",
     "rrp_007": "Verified; no new PR",
-    "phase3_acceptance": "Phase 3 acceptance record engineering/conformance/phase-3-acceptance-2026-11-25.md; merged package ledger WS #25, FB #73, WS #26/#27, WS #28, FB #74, WS #29, WS #30, FB #75 and NZ #145"
+    "phase3_acceptance": "Phase 3 acceptance record engineering/conformance/phase-3-acceptance-2026-11-25.md; merged package ledger WS #25, FB #73, WS #26/#27, WS #28, FB #74, WS #29, WS #30, FB #75 and NZ #145",
+    "phase3a_acceptance": "Phase 3A acceptance record engineering/conformance/phase-3a-acceptance-2026-11-25.md; merged package ledger NZ #146-#150, FB #76-#80, WS #31/#32"
   },
   "review_package_manifest": {
     "authority": "external REVIEW-PACKAGE-QA.md (RRP-001..007 complete) and package sidecars",
@@ -615,8 +789,8 @@
     "ndc_v2": "APPROVED 2026-11-23; active contract version; producer and consumer digests above; C0 digest 3dace660c362e683790ba7e56a785ded8af836abda36f6eab06ed284de49eed2",
     "ndc_consumer_use_v2_proposed": "PROPOSED; not approved; separate implementation proposal digest 4b9d1fe7190de08151989fc8895f42e1daa737021e8dae019ddc3325f9603a2c",
     "w2_india_design": "PROPOSED pending a separate India design approval (ownership ratification does not ratify the domain model)",
-    "final_ndc_serialization_schema": "NDC v2 Release Serialization Profile 1 canonical schema package published (26 files, digest 6e8c1e48e27289b8c3d3e959a06a805e736d0759b4fb244edbb074f65e107bab) and wire authority ratified; the earlier 'Not yet implemented' value is HISTORICAL as at the W2.1 heads and is not rewritten; see NDC-REGISTRY.md and engineering/conformance/phase-3-acceptance-2026-11-25.md",
-    "full_release_verifier": "Independent twelve-stage release verifier implemented at Nirnay c1c2f0d (B16, PR #145) with a bounded streaming entry point and metadata-only snapshot; stage 6 REJECT_RIGHTS_EVIDENCE, no admission receipt, not Verified or operationally qualified; the earlier 'Not implemented' value is HISTORICAL as at the W2.1 heads and is not rewritten; see engineering/conformance/phase-3-acceptance-2026-11-25.md",
+    "final_ndc_serialization_schema": "NDC v2 Release Serialization Profile 1 canonical schema package published (26 files, digest 6e8c1e48e27289b8c3d3e959a06a805e736d0759b4fb244edbb074f65e107bab) and wire authority ratified; the earlier 'Not yet implemented' value is HISTORICAL as at the W2.1 heads and is not rewritten; see NDC-REGISTRY.md and engineering/conformance/phase-3-acceptance-2026-11-25.md; Phase 3A current status and heads in engineering/conformance/phase-3a-acceptance-2026-11-25.md",
+    "full_release_verifier": "Independent twelve-stage release verifier implemented at Nirnay c2c51757b0aeca94d2eacf651e8861e1937f74c8 (B16, PR #145 plus Phase 3A conformance packages NZ #146-#150) with a bounded streaming entry point and metadata-only snapshot; actual B16 streaming cross-execution NOT_RUN (harness skips with explicit reason) and not evidence. The earlier Phase 3 non-streaming binary cross-execution at c1c2f0d recorded stage 6 REJECT_RIGHTS_EVIDENCE and no admission receipt. Not Verified or operationally qualified. The earlier 'Not implemented' value is HISTORICAL as at the W2.1 heads and is not rewritten; see engineering/conformance/phase-3a-acceptance-2026-11-25.md.",
     "owner_directive_d11": "Recorded in engineering/retirement/RRP-001.md; supersedes preserve-source-while-disabled for synthetic market-data test assets",
     "retirement_programme": "RRP-001..RRP-007 completed (no pending items): RRP-001 workspace PR #4; RRP-002 Fieldbook PR #49 / Nirnay PR #134; RRP-003 Fieldbook PR #50; RRP-004 Nirnay PR #135; RRP-005 Fieldbook PR #51 / Nirnay PR #136; RRP-006 workspace PR #5; RRP-007 verified. No history rewrite; retired paths keep their blobs in Git history.",
     "retirement_programme_items": {
@@ -680,9 +854,10 @@
     "approved_implementation_conformance_rules": "Approved as requirements in W1.2 C1/C2 paired PRs #45/#46/#130; runtime enforcement to be proven in W2.1",
     "json_schemas": "Present as versioned repository artifacts; not part of the approved NDC v2 requirement bytes",
     "canonical_serialization": "Ratified as RFC 8785 JCS canonical manifest bytes with detached Ed25519 sidecar; integrity only, not source authenticity",
-    "runtime_implementation": "Bounded streaming implementation complete at FB 8216197 (B15, PR #75) and NZ c1c2f0d (B16, PR #145) under finite TEST_ONLY profiles; no production invocation without an approved role profile; not operationally qualified.",
-    "consumer_verification_capability": "Independent twelve-stage verifier implemented at Nirnay c1c2f0d with a bounded streaming entry point and metadata-only snapshot; stage 6 REJECT_RIGHTS_EVIDENCE under UNKNOWN rights, no admission receipt, no surviving snapshot; not a Verified or operationally qualified state.",
-    "phase3_pointer": "engineering/conformance/phase-3-acceptance-2026-11-25.md"
+    "runtime_implementation": "Bounded streaming implementation complete at Phase 3A final heads FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa (B15 plus FB #76/#77/#78/#79/#80) and NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8 (B16 plus NZ #146-#150) under finite TEST_ONLY profiles; Phase 3 heads 8216197 / c1c2f0d are HISTORICAL. No production invocation without an approved role profile; not operationally qualified.",
+    "consumer_verification_capability": "Independent twelve-stage verifier implemented at Nirnay c2c51757b0aeca94d2eacf651e8861e1937f74c8 with a bounded streaming entry point and metadata-only snapshot; actual B16 streaming cross-execution NOT_RUN (harness skip with explicit reason) and not evidence. The earlier Phase 3 non-streaming binary cross-execution at c1c2f0d recorded stage 6 REJECT_RIGHTS_EVIDENCE, no admission receipt and no surviving snapshot. Not a Verified or operationally qualified state.",
+    "phase3_pointer": "HISTORICAL: engineering/conformance/phase-3-acceptance-2026-11-25.md",
+    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md"
   },
   "reporting_categories": [
     "implemented",
@@ -715,7 +890,9 @@
       "OPERATIONALLY_QUALIFIED": false,
       "STREAMING_IMPLEMENTATION_COMPLETE": true,
       "STREAM_RESOURCE_PROFILE_RATIFIED": false,
-      "PERF_001_QUALIFIED": false
+      "PERF_001_QUALIFIED": false,
+      "B16_STREAMING_CROSS_EXECUTION": false,
+      "PERF_BASE_001_SERIAL_BASELINE": false
     },
     "cross_execution_refusal": "stage 6 REJECT_RIGHTS_EVIDENCE under UNKNOWN rights; no receipt, no dataset acceptance (conformance-path and production-builder binary cross-executions)",
     "receipt_note": "'no receipt' above means no Nirnay admission receipt (receipt_written:false in the verifier diagnostic). The Fieldbook production builder does write its publication receipt into the ledger beside the release. Clarified by engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md; capability states unchanged.",
@@ -724,9 +901,13 @@
       "STREAM_RESOURCE_PROFILE_RATIFIED": "PENDING",
       "PERF_001_QUALIFIED": "BLOCKED",
       "PUBLICATION_DURABILITY_VERIFIED": "NOT_ACHIEVED",
-      "OPERATIONALLY_QUALIFIED": "BLOCKED"
+      "OPERATIONALLY_QUALIFIED": "BLOCKED",
+      "B16_STREAMING_CROSS_EXECUTION": "NOT_RUN",
+      "PERF_BASE_001_SERIAL_BASELINE": "NOT_RUN"
     },
-    "phase3_pointer": "engineering/conformance/phase-3-acceptance-2026-11-25.md; all numeric maxima deferred; no production invocation without an approved role profile; PERF-001 and D1 not run."
+    "phase3_pointer": "HISTORICAL: engineering/conformance/phase-3-acceptance-2026-11-25.md; Phase 3 head, CI and cross-execution evidence preserved unchanged.",
+    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md; all numeric maxima deferred; no production invocation without an approved role profile; PERF-001 and PERF-BASE-001 not run; D1 not run; actual B16 streaming cross-execution NOT_RUN and not evidence.",
+    "phase3a_note": "BINARY_CROSS_EXECUTED and CRYPTOGRAPHICALLY_VERIFIED describe only the HISTORICAL non-streaming conformance-path and production-builder binary cross-executions at earlier heads. They are not a B15/B16 streaming cross-execution, which remains NOT_RUN and must not be counted as evidence."
   },
   "durability_profiles": {
     "decision": "engineering/decisions/WS-DUR-001-publication-durability-failure-model.md",
@@ -781,10 +962,10 @@
       "D3_HOST_FAILURE_QUALIFIED": false,
       "D4_DISASTER_RECOVERY_QUALIFIED": false,
       "D0_evidence_head": "4e0f2f5c9ad9ea239b73fdedb3405c5a55f7abd6",
-      "D0_evidence_head_role": "D0 evidence commit only; not a new packaged, audited-subject, CI, local-tested, cross-execution or reviewed source head. The five separately evidenced head concepts elsewhere in CURRENT-STATE.json now carry the Phase 3 final heads FB 8216197 / NZ c1c2f0d; the audited subject and packaged head are unchanged."
+      "D0_evidence_head_role": "D0 evidence commit only; not a new packaged, audited-subject, CI, local-tested, cross-execution or reviewed source head. The five separately evidenced head concepts elsewhere in CURRENT-STATE.json now carry the Phase 3A final heads FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa / NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8; the Phase 3 heads 8216197 / c1c2f0d are HISTORICAL. The audited subject and packaged head are unchanged."
     },
     "no_global_durability_boolean": true,
-    "PUBLICATION_DURABILITY_VERIFIED": "Aggregate programme status gate only; unchanged false in ndc_profile_status.statuses and production_builder_parity.capability_states. Remains NOT ACHIEVED until D1 evidence exists for a declared APFS or ext4 profile; D1b physical power loss is also unqualified. The 28-boundary D0 matrix does not promote D1-D4 or make a global durability claim. Phase 3 capability states in phase3_capability_states remain false/NOT_ACHIEVED; see engineering/conformance/phase-3-acceptance-2026-11-25.md.",
+    "PUBLICATION_DURABILITY_VERIFIED": "Aggregate programme status gate only; unchanged false in ndc_profile_status.statuses, phase3_capability_states and phase3a_capability_states. Remains NOT ACHIEVED until D1 evidence exists for a declared APFS or ext4 profile; D1b physical power loss is also unqualified. The 28-boundary D0 matrix does not promote D1-D4 or make a global durability claim. Current Phase 3A states in phase3a_capability_states remain false/NOT_ACHIEVED; see engineering/conformance/phase-3a-acceptance-2026-11-25.md.",
     "acknowledgement_contract": "A publication state may be acknowledged only after every durability operation required by that state succeeded under the declared failure model; a failed sync is an error, never a warning.",
     "acknowledgement_states": [
       "STAGING_CREATED",
@@ -794,13 +975,14 @@
       "AVAILABLE"
     ],
     "platform_qualification": "Linux renameat2(RENAME_NOREPLACE) and macOS renamex_np(RENAME_EXCL) with fsync are the ratified no-replace primitives; macOS F_FULLFSYNC may be required for drive-cache flush and is not yet used or qualified; VM reset is not a physical power-loss test; per-platform primitive, errors, versions, mount settings, limitations and evidence are required before a tier is claimed.",
-    "journal_and_packages": "Fieldbook v2 digest-chained publication journal: FB-PUB-017 at 475dc34, FB-PUB-019 at eecfe8c, PUB-020 at 2ca329c (fresh-process recovery), PUB-021 at e87a043 (descriptor-relative validation), FB-API-001 at fd4b542 (byte-derived ordering), DUR-002 at 4e0f2f5 (PR #74, full 28-exit-point subprocess recovery matrix over 24 owner boundary names with idempotent second recovery); the earlier packages carry exact-head CI and independent review records, and DUR-002 is cited at its merged commit without re-running gates here. D0 scope evidenced at Fieldbook 4e0f2f5; the earlier 2ca329c/three-case scope is HISTORICAL and preserved. D1 OS/filesystem crash and D1b power loss, plus D2-D4, remain unqualified; PUBLICATION_DURABILITY_VERIFIED remains false and no global durability claim is made. Phase 3: FB #75 (B15 streaming producer) at 8216197 and NZ #145 (B16 streaming verifier) at c1c2f0d implement bounded streaming under finite TEST_ONLY profiles; see engineering/conformance/phase-3-acceptance-2026-11-25.md. No durability tier or capability state is promoted by those implementation packages.",
+    "journal_and_packages": "Fieldbook v2 digest-chained publication journal: FB-PUB-017 at 475dc34, FB-PUB-019 at eecfe8c, PUB-020 at 2ca329c (fresh-process recovery), PUB-021 at e87a043 (descriptor-relative validation), FB-API-001 at fd4b542 (byte-derived ordering), DUR-002 at 4e0f2f5 (PR #74, full 28-exit-point subprocess recovery matrix over 24 owner boundary names with idempotent second recovery); the earlier packages carry exact-head CI and independent review records, and DUR-002 is cited at its merged commit without re-running gates here. D0 scope evidenced at Fieldbook 4e0f2f5; the earlier 2ca329c/three-case scope is HISTORICAL and preserved. D1 OS/filesystem crash and D1b power loss, plus D2-D4, remain unqualified; PUBLICATION_DURABILITY_VERIFIED remains false and no global durability claim is made. HISTORICAL Phase 3: FB #75 (B15 streaming producer) at 8216197 and NZ #145 (B16 streaming verifier) at c1c2f0d implemented bounded streaming under finite TEST_ONLY profiles; preserved unchanged. CURRENT Phase 3A packages merged at FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa / NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8: NZ #146 (NZ-RES-001), FB #76 (FB-STREAM-001), NZ #147 (NZ-REG-001), NZ #148 (NZ-LIMIT-001), FB #77 (FB-LIMIT-001), FB #78 (FB-STREAM-002), NZ #149 (NZ-LIMIT-002), FB #79 (FB-SPOOL-001), FB #80 (FB-SOURCE-001), NZ #150 (NZ-API-001 streaming cross-execution harness) and WS #31/#32. Stream conformance items are closed except actual B16 streaming cross-execution, which is NOT_RUN (harness skips with explicit reason) and must not be counted as evidence. No production ResourceProfile, no numeric maxima and no PERF-001 result; see engineering/conformance/phase-3a-acceptance-2026-11-25.md. No durability tier or capability state is promoted by these packages.",
     "invariants": "I-01..I-15 are normative in WS-DUR-001 section 7.",
     "freeze": "unchanged",
-    "phase3_pointer": "engineering/conformance/phase-3-acceptance-2026-11-25.md reconciles Phase 3 capability states without promoting any durability tier; D0 remains profile-scoped at 4e0f2f5 and D1/D1b/D2-D4 remain unqualified."
+    "phase3_pointer": "HISTORICAL: engineering/conformance/phase-3-acceptance-2026-11-25.md reconciled Phase 3 capability states without promoting any durability tier; D0 remains profile-scoped at 4e0f2f5 and D1/D1b/D2-D4 remain unqualified.",
+    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md reconciles Phase 3A capability states without promoting any durability tier; D0 remains profile-scoped at 4e0f2f5 and D1/D1b/D2-D4 remain unqualified."
   },
   "production_builder_parity": {
-    "status": "HISTORICAL \u2014 preserved unchanged as earlier production-builder parity evidence; not the current head at this reconciliation",
+    "status": "HISTORICAL — preserved unchanged as earlier production-builder parity evidence; not the current head at this reconciliation",
     "superseded_by": "engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md (dated current evidence baseline; earlier sections preserved, not overwritten)",
     "record": "engineering/conformance/ndc-v2-cross-execution-2026-11-24.md, section 'Production builder parity cross-execution (FB-NDC-013)'",
     "fieldbook_pr_head": "001e2688ed4863919e2eb8d35c47ee05615e755a",
@@ -831,10 +1013,11 @@
       "OPERATIONALLY_QUALIFIED": false
     },
     "note": "Production-path binary cross-execution heads. They do not replace the conformance-path current/tested heads and CI above, which retain their own evidence.",
-    "phase3_pointer": "HISTORICAL parity evidence; Phase 3 final binary cross-execution and current capability states are recorded in engineering/conformance/phase-3-acceptance-2026-11-25.md."
+    "phase3_pointer": "HISTORICAL parity evidence; Phase 3 final non-streaming binary cross-execution and Phase 3 capability states are recorded in engineering/conformance/phase-3-acceptance-2026-11-25.md.",
+    "phase3a_pointer": "Current Phase 3A capability states and explicit NOT_RUN status of actual B16 streaming cross-execution are recorded in engineering/conformance/phase-3a-acceptance-2026-11-25.md; no historical binary cross-execution is promoted to a streaming one."
   },
-  "evidence_audit_status": "9 RESOLVED, finding 10 (B15/B16 streaming) IMPLEMENTED at FB 8216197 / NZ c1c2f0d with architecture ratified by WS-STREAM-001 and finite TEST_ONLY profiles; numeric maxima DEFERRED and STREAM_RESOURCE_PROFILE_RATIFIED PENDING; 1 OWNER-DECISION (compression codec identifier still deferred), 1 SEPARATE GATE (NDC-RECEIPT-001 publication receipt consumer contract, PROPOSED). PERF-001 and D1 are NOT RUN; PUBLICATION_DURABILITY_VERIFIED not achieved. The 2026-11-24 classification with B15/B16 still REMAINING is HISTORICAL and preserved in engineering/conformance/ndc-v2-evidence-audit-2026-11-24.md; Phase 3 evidence is in engineering/conformance/phase-3-acceptance-2026-11-25.md.",
-  "release_correctness": "FB-NDC-013 (PR #66), FB-PUB-014/015/016 (PR #67), FB-PUB-017 (PR #68) merged. Actual production builder output verified by real Nirnay verifier at the dated 2026-11-24 baseline (FB 475dc34 / NZ 70716eb / WS 62b617c), preserved as historical. The former remaining B15/B16 streaming items are now IMPLEMENTED at FB 8216197 (PR #75) and NZ c1c2f0d (PR #145) under finite TEST_ONLY profiles; producer and all six structural stages PASS, stage 6 REJECT_RIGHTS_EVIDENCE, RIGHTS_ADMISSION_REFUSED. Remaining gates: resource profile ratification, PERF-001 (not run), D1 filesystem qualification (not run), publication receipt consumer gate. See engineering/conformance/phase-3-acceptance-2026-11-25.md.",
+  "evidence_audit_status": "9 RESOLVED, finding 10 (B15/B16 streaming) IMPLEMENTED at Phase 3 heads FB 8216197124d33466fbe651e417b7c19505e4155e / NZ c1c2f0d984bee11a63eb1df98833ee8723cd8629 with architecture ratified by WS-STREAM-001 and finite TEST_ONLY profiles; Phase 3A conformance packages in engineering/conformance/phase-3a-acceptance-2026-11-25.md are merged at FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa / NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8 and close the stream-contract items except actual B16 streaming cross-execution, which is NOT_RUN and not evidence. All numeric maxima DEFERRED and STREAM_RESOURCE_PROFILE_RATIFIED PENDING; 1 OWNER-DECISION (compression codec identifier still deferred), 1 SEPARATE GATE (NDC-RECEIPT-001 publication receipt consumer contract, PROPOSED). PERF-001 and PERF-BASE-001 are NOT RUN; PUBLICATION_DURABILITY_VERIFIED not achieved. The 2026-11-24 classification with B15/B16 still REMAINING is HISTORICAL and preserved in engineering/conformance/ndc-v2-evidence-audit-2026-11-24.md.",
+  "release_correctness": "FB-NDC-013 (PR #66), FB-PUB-014/015/016 (PR #67), FB-PUB-017 (PR #68) merged. Actual production builder output verified by real Nirnay verifier at the dated 2026-11-24 baseline (FB 475dc34 / NZ 70716eb / WS 62b617c), preserved as historical. The former remaining B15/B16 streaming items were implemented at Phase 3 heads FB 8216197124d33466fbe651e417b7c19505e4155e (PR #75) and NZ c1c2f0d984bee11a63eb1df98833ee8723cd8629 (PR #145) under finite TEST_ONLY profiles; the Phase 3 non-streaming binary cross-execution had producer and structural stages PASS and stage 6 REJECT_RIGHTS_EVIDENCE. Phase 3A conformance packages merged at FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa / NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8 close the stream contract except actual B16 streaming cross-execution, which remains NOT_RUN and is not evidence. Remaining gates: resource profile ratification, PERF-001 and PERF-BASE-001 (not run), D1 filesystem qualification (not run), publication receipt consumer gate. See engineering/conformance/phase-3a-acceptance-2026-11-25.md.",
   "publication_integrity_sprint": {
     "status": "EXECUTED",
     "acceptance_record": "engineering/conformance/publication-integrity-sprint-acceptance-2026-11-24.md",
@@ -845,6 +1028,7 @@
       "workspace": "6d45af29793485e5b3fce03840228f5d97a34cd9"
     },
     "superseded_by": "engineering/conformance/phase-3-acceptance-2026-11-25.md",
-    "note": "HISTORICAL sprint record preserved unchanged: final heads fd4b542 / d3b66f5 / 6d45af2 and digest 6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c remain as at the sprint. Phase 3 current heads, CI and capability states are recorded in engineering/conformance/phase-3-acceptance-2026-11-25.md; D0 evidence was separately superseded by the 28-boundary matrix at 4e0f2f5."
+    "note": "HISTORICAL sprint record preserved unchanged: final heads fd4b542 / d3b66f5 / 6d45af2 and digest 6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c remain as at the sprint. Phase 3 current heads, CI and capability states are recorded in engineering/conformance/phase-3-acceptance-2026-11-25.md; D0 evidence was separately superseded by the 28-boundary matrix at 4e0f2f5.",
+    "phase3a_pointer": "Phase 3A current status is recorded in engineering/conformance/phase-3a-acceptance-2026-11-25.md at FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa / NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8; the Phase 3 acceptance record remains the direct HISTORICAL superseder of this sprint record."
   }
 }
