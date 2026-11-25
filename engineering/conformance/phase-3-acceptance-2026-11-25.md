@@ -1,5 +1,7 @@
 # Phase 3 evidence acceptance — 2026-11-25
 
+> **CURRENT STATUS: HISTORICAL.** Superseded by `engineering/conformance/phase-3a-acceptance-2026-11-25.md`. This record preserves Phase 3 evidence only.
+
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
 Status: **documentation and JSON evidence record only**. No source, schema, right, data, provider,

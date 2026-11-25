@@ -1,5 +1,7 @@
 # NDC v2 semantic model — Proposed
 
+> **CURRENT STATUS: APPROVED BYTES UNDER A HISTORICAL FILENAME.** The "Proposed" suffix is retained; the bytes are ratified.
+
 Status: **Proposed**. This document settles meaning before implementation. It is not an
 accepted contract, a data licence, or authorisation to collect. It supersedes the
 operation mappings in NDC v1 documents without editing their historical digests.

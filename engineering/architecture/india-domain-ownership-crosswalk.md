@@ -1,5 +1,7 @@
 # India domain ownership crosswalk — W1.2-D1
 
+> **CURRENT STATUS: PROPOSED crosswalk.** `NR-ARCH-ADR-0001` is Accepted; see `ADR-REGISTRY.md`.
+
 - **Status:** Proposed documentation crosswalk. It records ownership and migration intent; it
   does not accept a contract, ratify an ADR, change rights, or authorise implementation.
   The ownership decision `NR-ARCH-ADR-0001` remains **Proposed** (see `ADR-REGISTRY.md`).

@@ -1,5 +1,7 @@
 # WS-NDC-INT-002 — actual producer-to-verifier cross-execution
 
+> **CURRENT STATUS: HISTORICAL.** Superseded for current evidence by `phase-3a-acceptance-2026-11-25.md`.
+
 Status: **EXECUTED** at the exact commits below. This record reports wire and
 cryptographic interoperability only. It does not grant rights, accept a dataset
 or authorize use.

@@ -15,11 +15,11 @@ one producer and one consumer. No transport, queue, shared crate or database is 
 | Consumer document | `engineering/ndc-consumer-requirements-v2-proposed.md` in Nirnay |
 | Consumer document digest (approved) | `22eaef7de012e4f144299bc7fe82a701670531799e7e340e60a2908786a5a957` |
 | C0 semantic model | `engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md` in Workspace |
-| C0 semantic model digest (approved) | `3dace660c362e683790ba7e56a785ded8af836abda36f6eab06ed284de49eed2` |
+| C0 semantic model digest (approved) | `3dace660c362…` (historical; current file digest `e56268ddc882…` — see `engineering/DIGEST-RECONCILIATION-2026-11-26.json`) |
 | Ownership decision | `NR-ARCH-ADR-0001` — **Accepted 2026-11-23** by owner ratification |
 | Ratification reference | `engineering/decisions/OWNER-RATIFICATION-2026-11-23.md` — Decision A (ownership) and Decision B (NDC v1/v2 semantics); roles named there |
 | Release serialization profile | **NDC v2 Release Serialization Profile 1 — Ratified 2026-11-24** |
-| Profile ratification | `engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md` — Decisions A–I; digest `fb8a4992d63aabb41f02286317d1d69aeaec9a0e35836bd8ce6eff2754cb01fc` |
+| Profile ratification | `engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md` — Decisions A–I; digest `fb8a4992d63a…` (historical; current file digest `bd4dd9b70cb2…` — see `engineering/DIGEST-RECONCILIATION-2026-11-26.json`) |
 | Approved D1 amendment | `engineering/conformance/NDC-D1-AMENDMENT-001.md` — approved 2026-11-24; digest `a2087aff7bcadb5aae90eea3f7893ac3147e2e8cbecce9fcb9357481e7e49894`; D1 approved bytes and digest unchanged |
 | Canonical wire schema ratification | `engineering/decisions/WS-NDC-2026-11-24-003-canonical-profile-1-wire-schema.md` — **RATIFIED 2026-11-24** by owner direction; digest `417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119`; resolves DP-01..DP-30 |
 | Canonical wire authority | One third, language-independent canonical NDC v2 Profile 1 wire schema; neither Rust representation is normative; both repositories keep independent internal representations with explicit serialization/deserialization mappings; no shared runtime crate; B8 published the schema package |
@@ -52,18 +52,18 @@ component exists. These layers are recorded separately:
 | Final NDC serialization schema | **Profile 1 version and digests registered; canonical schema package published by WP-B8 (2026-11-24)** | `engineering/conformance/ndc-v2-schema-digest.json` registers the exact version, profile and D1 amendment digests, strict unknown-field policy and the source of truth. The B8 canonical schema package at `engineering/conformance/ndc-v2-schema-profile-1/` is the standalone published wire artifact (digest `6e8c1e48…`, 26 files). At the WP-5 recorded heads no such file existed and the typed structs in both repositories were the implementation authorities; those heads are historical evidence, not the normative wire representation. Cross-execution was NOT_STARTED at the WP-5 heads; the Phase 3 non-streaming binary cross-execution is recorded in the Phase 3 acceptance record (HISTORICAL); actual B16 streaming cross-execution is NOT_RUN and not evidence in Phase 3A - see the Phase 3A acceptance record |
 | Resource policy | **Ratified rule**: versioned normative consumer resource policy, no manifest `limits`, producer and verifier enforce independently; numerical maxima pending workload qualification | `WS-NDC-2026-11-24-002` Decision F; `WS-STREAM-001` (2026-11-25) adds the normative immutable versioned `ResourceProfile` contract with role-specific profiles, trusted local selection, consumer local ceiling and stricter-of effective limits, but approves no number or profile digest |
 | Publication durability | **Ratified rule**: staged, synced, atomic no-replace rename with parent-directory sync and durable receipt; uncertain-publication recovery after rename before parent sync | `WS-NDC-2026-11-24-002` Decision G |
-| Publication durability failure model | **Ratified rule (WS-DUR-001)**: five tiers D0–D4 with profile-scoped booleans, an error-only sync acknowledgement contract, per-platform primitive qualification and no global durability Boolean; not a D1 claim | `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` — **RATIFIED 2026-11-24** by owner direction; current digest `931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` (FB-DUR-002 full-matrix evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` preserved as historical in `engineering/evidence/REVIEW-LOG.md`) |
+| Publication durability failure model | **Ratified rule (WS-DUR-001)**: five tiers D0–D4 with profile-scoped booleans, an error-only sync acknowledgement contract, per-platform primitive qualification and no global durability Boolean; not a D1 claim | `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` — **RATIFIED 2026-11-24** by owner direction; current digest `931e7477faa7…` (historical; current file digest `b1b2a4b91824…` — see `engineering/DIGEST-RECONCILIATION-2026-11-26.json`) (FB-DUR-002 full-matrix evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` preserved as historical in `engineering/evidence/REVIEW-LOG.md`) |
 | Trusted publisher registry | **Ratified rule**: out-of-band registry with key states and revocation evidence; Batch B trust interface with injected test keys only | `WS-NDC-2026-11-24-002` Decision H |
 | Runtime implementation | Producer and independent verifier implemented; bounded streaming implementation complete at Phase 3A final heads FB `acbd9b68` / NZ `c2c51757`; actual B16 streaming cross-execution NOT_RUN and not evidence | WP-5 acceptance matrix records exact test evidence at Fieldbook `2ef88a9` and Nirnay `2dad496` (historical package heads where cross-execution was NOT_STARTED); Phase 3 non-streaming binary cross-execution at FB `8216197` / NZ `c1c2f0d` is HISTORICAL in `engineering/conformance/phase-3-acceptance-2026-11-25.md`; current Phase 3A evidence in `engineering/conformance/phase-3a-acceptance-2026-11-25.md`; no shared invocation boundary or connector, no verification promotion |
 | Consumer verification capability | Independent `release-verifier` crate implemented at Nirnay `2dad496`; **Proposed consumer-use proposal unchanged** | Twelve-stage verifier with abstract tests; no shared crate; the separate consumer-use document below is not approved and is not an authority for this capability |
 | B15/B16 streaming architecture | **RATIFIED 2026-11-25** by owner direction (`WS-STREAM-001`): bounded interfaces and pipelines, two-intent lifecycle, byte-derived ordering, Profile 1 digests, incremental digests, bounded parsing and decompression, typed failure semantics, descriptor-relative snapshots, independent implementations and separate receipts | Contract only; numeric resource maxima and codec identifier deferred; `STREAM_RESOURCE_PROFILE_RATIFIED` pending; both design documents remain PROPOSED |
-| Phase 3 evidence acceptance (HISTORICAL) | **ACCEPTED 2026-11-25** at FB `8216197` (PR #75) / NZ `c1c2f0d` (PR #145), CI `45491963354` 2/2 and `45491893837` 12/12; `STREAMING_IMPLEMENTATION_COMPLETE` achieved under finite `TEST_ONLY` profiles; superseded for current status by Phase 3A | `engineering/conformance/phase-3-acceptance-2026-11-25.md` (digest `3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4`); stage 6 `REJECT_RIGHTS_EVIDENCE`, `RIGHTS_ADMISSION_REFUSED`, no admission receipt, no surviving snapshot; no capability or durability promotion |
+| Phase 3 evidence acceptance (HISTORICAL) | **ACCEPTED 2026-11-25** at FB `8216197` (PR #75) / NZ `c1c2f0d` (PR #145), CI `45491963354` 2/2 and `45491893837` 12/12; `STREAMING_IMPLEMENTATION_COMPLETE` achieved under finite `TEST_ONLY` profiles; superseded for current status by Phase 3A | `engineering/conformance/phase-3-acceptance-2026-11-25.md` (digest `3a823688f59b…` (historical; current file digest `c4f15d801b2f…` — see `engineering/DIGEST-RECONCILIATION-2026-11-26.json`)); stage 6 `REJECT_RIGHTS_EVIDENCE`, `RIGHTS_ADMISSION_REFUSED`, no admission receipt, no surviving snapshot; no capability or durability promotion |
 
 ## NDC v2 Release Serialization Profile 1 (ratified 2026-11-24)
 
 Ratification: `engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md`
 (status RATIFIED by owner 2026-11-24, digest
-`fb8a4992d63aabb41f02286317d1d69aeaec9a0e35836bd8ce6eff2754cb01fc`). It approves exactly
+`fb8a4992d63a…` (historical; current file digest `bd4dd9b70cb2…` — see `engineering/DIGEST-RECONCILIATION-2026-11-26.json`)). It approves exactly
 these nine decisions; no other profile is registered.
 
 | Decision | Subject | Ratified rule (summary) |
@@ -119,7 +119,7 @@ below. This decision supersedes neither approved semantics nor the freeze; it cl
 
 Ratification: `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md`
 (status **RATIFIED by owner direction 2026-11-24**, current digest
-`931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` after the FB-DUR-002
+`931e7477faa7…` (historical; current file digest `b1b2a4b91824…` — see `engineering/DIGEST-RECONCILIATION-2026-11-26.json`) after the FB-DUR-002
 full-matrix D0 evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original
 ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` are preserved as historical in `engineering/evidence/REVIEW-LOG.md`).
 The owner directed that
@@ -195,7 +195,7 @@ evidence. See `engineering/conformance/phase-3a-acceptance-2026-11-25.md`.
   notice and Appendix B. Original §§1–10 and §§1–12 respectively are retained unchanged as PROPOSED
   proposal history; no approved byte, historical record or capability state was rewritten.
 - Both appendices point to `WS-STREAM-001` (2026-11-25, decision digest
-  `f74153024c1d526fe5c9d49b22e541263581c52c0dbae19a67e8d2ea841a4fe1`) for the twelve ratified
+  `f74153024c1d…` (historical; current file digest `ec7932591ca1…` — see `engineering/DIGEST-RECONCILIATION-2026-11-26.json`)) for the twelve ratified
   architecture and interface contracts A-01..A-12 and for the individually resolved OD-01..OD-10
   and D1..D10. All numeric maxima remain DEFERRED, role-specific `ResourceProfile` values and
   digests are not approved, `STREAM_RESOURCE_PROFILE_RATIFIED` is PENDING, and `PERF_001_QUALIFIED`
@@ -224,7 +224,7 @@ evidence. See `engineering/conformance/phase-3a-acceptance-2026-11-25.md`.
 
 | Item | Record |
 |---|---|
-| Acceptance record (HISTORICAL) | `engineering/conformance/phase-3-acceptance-2026-11-25.md` — digest `3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4` (`shasum -a 256`), docs/JSON only, no commit; preserved unchanged |
+| Acceptance record (HISTORICAL) | `engineering/conformance/phase-3-acceptance-2026-11-25.md` — digest `3a823688f59b…` (historical; current file digest `c4f15d801b2f…` — see `engineering/DIGEST-RECONCILIATION-2026-11-26.json`) (`shasum -a 256`), docs/JSON only, no commit; preserved unchanged |
 | Final heads | Fieldbook `8216197124d33466fbe651e417b7c19505e4155e` (PR #75), Nirnay `c1c2f0d984bee11a63eb1df98833ee8723cd8629` (PR #145); Workspace base `6dcca8b`; audited subject `6d45af2` and packaged head / evidence commit `95580f5` unchanged |
 | Hosted CI | FB `45491963354` success 2/2 after stale-branch rerun; NZ `45491893837` success 12/12; Workspace hosted CI `NOT_RUN` |
 | Cross-execution | producer PASS; structural, manifest, signature, publisher, artifact and ordering PASS; stage 6 `REJECT_RIGHTS_EVIDENCE`; `RIGHTS_ADMISSION_REFUSED`; no Nirnay admission receipt; no surviving snapshot; dataset `BLOCKED` |
@@ -239,7 +239,7 @@ records are preserved unchanged and are not rewritten by this registry entry. Th
 
 | Item | Record |
 |---|---|
-| Acceptance record | `engineering/conformance/phase-3a-acceptance-2026-11-25.md` — digest `497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866` (`shasum -a 256`), docs/JSON only, no commit |
+| Acceptance record | `engineering/conformance/phase-3a-acceptance-2026-11-25.md` — digest `497df40aa13f…` (historical; current file digest `c3e4e15a7912…` — see `engineering/DIGEST-RECONCILIATION-2026-11-26.json`) (`shasum -a 256`), docs/JSON only, no commit |
 | Final heads | Fieldbook `acbd9b683d86ba6fbb62f7170f8852b23876e3aa`, Nirnay `c2c51757b0aeca94d2eacf651e8861e1937f74c8`; Workspace base `d12b5b9880e23085c17f206dd48ec73e7fe13f61`; audited subject `6d45af2` and packaged head / evidence commit `95580f5` unchanged |
 | Hosted CI | FB `45621903705` success 2/2 after deleting stale merged remote branches and rerunning; NZ `45612047715` success 12/12; Workspace hosted CI `NOT_RUN` |
 | Merged packages | NZ #146 (NZ-RES-001), FB #76 (FB-STREAM-001), NZ #147 (NZ-REG-001), NZ #148 (NZ-LIMIT-001), FB #77 (FB-LIMIT-001), FB #78 (FB-STREAM-002), NZ #149 (NZ-LIMIT-002), FB #79 (FB-SPOOL-001), FB #80 (FB-SOURCE-001), NZ #150 (NZ-API-001 harness), WS #31/#32 |
@@ -284,7 +284,7 @@ Profile 1.
 |---|---|
 | Package | WS-NDC-INT-001 / WP-5 cross-repository NDC v2 conformance package |
 | Exact heads | Fieldbook `2ef88a955f74a7c88e4573683267446e331465e9` (PR #62 producer merged); Nirnay `2dad4962b584c557237d219c1c5356fc58bc4b69` (PR #142 verifier merged); Workspace `959143e8996960bfaee233e03cf40d063c47316e` (WP-2 ratified) |
-| Schema registration | `engineering/conformance/ndc-v2-schema-digest.json` — Profile 1 ratification digest `fb8a4992d63aabb41f02286317d1d69aeaec9a0e35836bd8ce6eff2754cb01fc`; D1 amendment digest `a2087aff7bcadb5aae90eea3f7893ac3147e2e8cbecce9fcb9357481e7e49894` |
+| Schema registration | `engineering/conformance/ndc-v2-schema-digest.json` — Profile 1 ratification digest `fb8a4992d63a…` (historical; current file digest `bd4dd9b70cb2…` — see `engineering/DIGEST-RECONCILIATION-2026-11-26.json`); D1 amendment digest `a2087aff7bcadb5aae90eea3f7893ac3147e2e8cbecce9fcb9357481e7e49894` |
 | Acceptance matrix | `engineering/conformance/ndc-v2-acceptance-matrix.md` — ten WP-5 checks with exact producer and verifier test evidence, both sides' states and typed rejection codes |
 | Vectors | `engineering/conformance/ndc-v2-conformance-vectors/VECTORS.md` — seven abstract non-market vector files with SHA-256 values |
 | Evidence checker | `scripts/check_ndc_conformance_vectors.py` — workspace evidence tool; not a producer, verifier, connector or shared runtime crate |
@@ -325,3 +325,5 @@ repository's NDC document. Compatibility is decided by those rules, not by a tra
    approved bytes silently. An amendment is a new dated revision document with its own digest
    (as `NDC-D1-AMENDMENT-001.md` does for D1); the historical digest and approved bytes stay
    unchanged.
+
+See `engineering/DIGEST-RECONCILIATION-2026-11-26.json` for current file digests; original ratified digests remain historical.

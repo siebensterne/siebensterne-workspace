@@ -1,5 +1,7 @@
 # NDC v2 WP-5 acceptance matrix — producer and verifier evidence
 
+> **CURRENT STATUS: HISTORICAL.** WP-5 acceptance at older heads; current schema is `ndc-v2-schema-profile-1/` and current evidence is Phase 3A.
+
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
 **Status:** documentation and workspace evidence only. This matrix records independent

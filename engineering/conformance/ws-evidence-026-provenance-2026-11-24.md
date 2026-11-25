@@ -1,5 +1,7 @@
 # WS-EVIDENCE-026 — Workspace head provenance and D0 evidence scope (2026-11-24)
 
+> **CURRENT STATUS: HISTORICAL.** The three-case subprocess scope was superseded by `d0-full-matrix-evidence-2026-11-24.md`.
+
 Status: documentation and JSON reconciliation only. No source, schema, right, data, provider,
 India, experiment, release, key or dataset change. No commit is created. Freeze unchanged: rights
 `UNKNOWN` (21), dataset acceptance `BLOCKED`, budget INR 0, collection `DISABLED`, experiments

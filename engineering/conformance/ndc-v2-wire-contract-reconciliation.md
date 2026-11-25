@@ -1,5 +1,7 @@
 # NDC v2 full field-level wire contract reconciliation
 
+> **CURRENT STATUS: HISTORICAL.** DP-01..DP-30 were resolved by WS-NDC-003 and the B8 schema package was published.
+
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
 Status: **PROPOSED / AWAITING OWNER DECISION.** This is a documentation and review record only.

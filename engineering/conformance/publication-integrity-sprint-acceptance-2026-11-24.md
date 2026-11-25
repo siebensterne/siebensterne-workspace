@@ -1,5 +1,7 @@
 # Publication Integrity Sprint — acceptance record (2026-11-24)
 
+> **CURRENT STATUS: HISTORICAL.** Its "remaining gates" list is superseded by the Phase 3 and Phase 3A acceptance records.
+
 Status: **EXECUTED** at the exact heads below. This is a release-correctness
 milestone. It does not establish production readiness, power-loss durability or
 operational qualification.

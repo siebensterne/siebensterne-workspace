@@ -1,5 +1,7 @@
 # B16 — Bounded streaming Nirnay release verifier design
 
+> **CURRENT STATUS: DESIGN HISTORY.** Architecture ratified by WS-STREAM-001; implementation closed in Phase 3A. Numeric maxima remain deferred.
+
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
 Date: 2026-11-25. Work package: WP-3 / B16, the Nirnay consumer half of the open
