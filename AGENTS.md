@@ -1,52 +1,16 @@
-# Workspace agent rules
+# Agent instructions
 
-1. Read `WORKSPACE.md` and `WORKSPACE.lock.json` before cross-repository work.
-2. Record both repository commits, branches, dirty states, remotes and CI runs.
-3. Keep changes inside one repository unless the contract requires coordinated
-   changes. For an NDC change, prepare paired PRs and preserve compatibility.
-4. Never add a parent Git repository, submodule, shared Cargo workspace or
-   unapproved shared crate.
-5. Fieldbook publishes NDC. Nirnay consumes immutable releases. Nirnay must not
-   acquire or archive raw provider data.
-6. Do not contact providers, call market-data APIs, download market data,
-   scrape websites or run collection commands without written rights and
-   explicit owner approval for the exact operation and scope.
-7. Never disguise automation, evade bans, bypass CAPTCHA, rotate identities,
-   circumvent rate limits, use proxy/VPN paths to evade restrictions or use
-   undocumented endpoints.
-8. Do not create synthetic market observations, price bars, order books, trades,
-   universes, reference histories or strategy returns. Do not treat historical
-   synthetic assets as research evidence. Pure mathematical tests are allowed.
-9. Do not run Fieldbook's full fixture/e2e suite until its market-shaped
-   fixture inventory has been reviewed against the owner policy. Static gates
-   are available through this workspace.
-10. Keep rights `UNKNOWN` until evidence exists. Public availability, a
-    successful connection, a token or a checksum does not grant retention,
-    replay, analytics or redistribution rights.
-11. Do not claim zero loss, nanosecond precision, HFT, full market coverage,
-    profitability or live readiness without a measured and independently
-    reviewed evidence package.
-12. Keep live order submission disabled. No code or CI task in this workspace
-    authorizes it.
-13. Each repository's own AGENTS/CONTRIBUTING/Git policy remains binding.
-14. Report exact commits, commands, exits, test counts, skipped tests and
-    unresolved gates. Never promote `Implemented` to `Verified` by wording.
+This repository coordinates Fieldbook and Nirnay. It contains no product source.
 
-15. Use `TOOL-MATRIX.md` for canonical versions and commands, `ADR-REGISTRY.md` and
-    `NDC-REGISTRY.md` for identities, and `PAIRED-PR-CHECKLIST.md` for any cross-repository
-    change. Run `make consistency` before paired work.
-16. This repository contains no source code, no vendored checkouts and no build output.
-    `fieldbook/` and `nirnay/` are local clones and are never committed here.
-17. Do not force byte identity for files classified repository-local in `SHARED-FILES.md`.
-18. Standardisation never weakens a gate, changes a test policy, or upgrades a tool beyond
-    the shared pins without a paired, reviewed decision.
-
-19. Adopt `engineering/style/DOCUMENTATION-STANDARD.md` for all cross-repository
-    documentation: Markdown for human-maintained docs, rustdoc `///` and `//!` for Rust
-    API/module contracts, `//` for implementation reasoning, `// SAFETY:` for unsafe
-    justification, and Markdown ADRs for permanent decisions. Canonical language
-    references: Rust rustdoc https://doc.rust-lang.org/rustdoc/how-to-write-documentation.html
-    and https://doc.rust-lang.org/reference/, C++ https://isocpp.org/ and
-    https://en.cppreference.com/w/, Python 3 https://docs.python.org/3/, Bash
-    https://www.gnu.org/software/bash/manual/. Fix tautologies, banned promotional or
-    black-box terms, first-person pronouns and intent adverbs before running gates.
+- Use `README.md` to find documents. Use `CURRENT-STATE.json` for current status, permissions and freezes.
+- Read `WORKSPACE.md` and `WORKSPACE.lock.json` for ownership, programme boundaries and bootstrap work.
+- Read only the contract, decision, implementation and tests that own the task. Do not load the history corpus by default.
+- Workspace owns cross-repository decisions and registries. Fieldbook owns source data and NDC publication. Nirnay owns NDC consumption, research, simulation, portfolio and risk.
+- Keep the repositories independent. Coordinate interface changes with paired, compatible PRs. Do not create shared source, crates or workspaces without a measured need and an accepted decision.
+- Inspect the exact base commit, branch and worktree before editing. Trace callers and tests. Implement the change; do not stop at a plan.
+- Make one coherent change per PR. Add regression, boundary and failure tests. Run the owning repository's required gates.
+- Preserve historical evidence and approved contract bytes. Add a new decision or evidence record when state changes; never rewrite history to make it current.
+- Use `CURRENT-STATE.json` for authorization. Do not infer data rights or permission from a URL, token, successful connection or checksum. Do not broaden collection, experiments, dataset acceptance or execution authority.
+- Keep D11 synthetic-market-data retirements, the M4 holdout and live-execution controls in force. Pure mathematical and abstract protocol tests remain separate from market evidence.
+- Do not claim durability, scale, latency, coverage, profitability or readiness without scoped, measured and reviewed evidence.
+- Report exact commits, commands, exits, test scope, CI head, evidence and remaining gaps.
