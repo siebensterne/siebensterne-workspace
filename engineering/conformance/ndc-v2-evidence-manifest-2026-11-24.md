@@ -26,7 +26,7 @@ themselves were not changed. The workspace head was pushed before this task.
 | Evidence item | SHA-256 | Command | Supports |
 |---|---|---|---|
 | `WORKSPACE.lock.json` | `009c1f0c177ca41d4971ab1209ebbaf9f24ab632e037594b3a4cc1a15242d2b2` | `shasum -a 256 WORKSPACE.lock.json` | dated source-head reconciliation block; `current_source_head` |
-| `REVIEW-LOG.md` | `9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c` | `shasum -a 256 REVIEW-LOG.md` | hosted CI run IDs and outcomes; `ci_verified_source_head` and `reviewed_source_head` |
+| `engineering/evidence/REVIEW-LOG.md` | `9be4a1fdb7e6b2749846b43c885fd9ec003b3de7f77604b23fe90fa4140b562c` | `shasum -a 256 engineering/evidence/REVIEW-LOG.md` | hosted CI run IDs and outcomes; `ci_verified_source_head` and `reviewed_source_head` |
 | `engineering/conformance/ndc-v2-cross-execution-2026-11-24.md` | `82bc253760ada2e932931877092d93e7238f95a33709844a956870140dea1f0b` | `shasum -a 256 engineering/conformance/ndc-v2-cross-execution-2026-11-24.md` | canonical cross-execution record; `cross_execution_source_head` |
 | `engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md` | `a81b0f0256ac214db44a0843961f5c9a6c13db3d29fa9926558a588580e8fc58` | `shasum -a 256 engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md` | dated current baseline record; receipts distinction |
 
@@ -66,7 +66,7 @@ re-run by this documentation work, and no test count was combined across heads.
 - `engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md`:
   exact commits, commands, release layout, stage results and the two-receipt
   distinction.
-- `README.md` document map and `REVIEW-LOG.md`: dated entries matching the
+- `README.md` document map and `engineering/evidence/REVIEW-LOG.md`: dated entries matching the
   heads, run IDs, digests and gate results above.
 - `WORKSPACE.lock.json`: dated source-head reconciliation block; historical
   bootstrap `baseline_commit` pins unchanged.

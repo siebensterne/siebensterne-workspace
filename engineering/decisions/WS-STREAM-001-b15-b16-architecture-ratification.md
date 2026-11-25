@@ -196,7 +196,7 @@ state is claimed.
 
 - Approved digests, schema versions, rejection codes, canonical vectors and historical records
   are preserved. `NDC-REGISTRY.md`, `ADR-REGISTRY.md`, the README document map and
-  `REVIEW-LOG.md` record this decision without editing an approved byte.
+  `engineering/evidence/REVIEW-LOG.md` record this decision without editing an approved byte.
 - Both design documents remain `PROPOSED / AWAITING OWNER APPROVAL`; a ratification pointer
   states that the architecture is ratified and the resource numbers remain deferred.
 - This decision creates no source file, schema artifact, right, dataset, release, key, receipt,
@@ -208,7 +208,7 @@ state is claimed.
 
 ## 7. Gates
 
-Gate results and exact commands are recorded in `REVIEW-LOG.md` under 2026-11-25. Temporary
+Gate results and exact commands are recorded in `engineering/evidence/REVIEW-LOG.md` under 2026-11-25. Temporary
 local clone symlinks used for the gate runs are removed afterwards. No gate was weakened and
 no Fieldbook fixture/e2e suite, Nirnay full suite, hosted CI run or cross-execution was run by
 this documentation decision.

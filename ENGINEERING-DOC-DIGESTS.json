@@ -80,7 +80,7 @@
     "status": "Proposed pending separate India design approval"
   },
   "w11_completion": {
-    "path": "W1.1-COMPLETION-RECORD.md",
+    "path": "engineering/evidence/W1.1-COMPLETION-RECORD.md",
     "sha256": "02e2e3cec965f0e90f084bf5e900fd6e533674930b17d5a986f77e313eba5100",
     "status": "Historical — preserved unchanged under D11"
   },

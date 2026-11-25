@@ -25,7 +25,7 @@ rights, release identity, calendar semantics or dataset admission.
 - [ ] Producer and consumer validators agree on the same version and field semantics.
 - [ ] `make consistency` passes in the workspace.
 - [ ] Hosted CI conclusion recorded with exact head SHA.
-- [ ] `REVIEW-LOG.md` updated with both commits and PR numbers.
+- [ ] `engineering/evidence/REVIEW-LOG.md` updated with both commits and PR numbers.
 - [ ] `ADR-REGISTRY.md` and `NDC-REGISTRY.md` updated if identities or versions changed.
 
 ## Merge order

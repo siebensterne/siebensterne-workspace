@@ -11,7 +11,7 @@ registry gives each a canonical ID without renaming historical files.
 | `FB-ADR-0002` | Fieldbook | `docs/adr/0002-persist-transport-observations-without-changing-receive-order.md` | journal observation identity | implemented |
 | `WS-NDC-2026-11-24-002` | Workspace (cross-repository) | `engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md` | NDC v2 Release Serialization Profile 1: manifest digest, ordering, artifacts, data digest, corrections, limits, publication, keys, independence | **Ratified 2026-11-24** by owner |
 | `WS-NDC-2026-11-24-003` | Workspace (cross-repository) | `engineering/decisions/WS-NDC-2026-11-24-003-canonical-profile-1-wire-schema.md` | Canonical NDC v2 Profile 1 wire schema: language-independent wire authority, strict canonical encoding, instants/numbers, byte-derived tagged record ordering, typed operations/evidence, source scope, rights, coverage, lineage, registered compression, versioned schema package; resolves DP-01..DP-30 | **Ratified 2026-11-24** by owner direction; digest `417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119` |
-| `WS-DUR-001` | Workspace (cross-repository) | `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` | Publication durability as a failure model: tiers D0–D4, profile-scoped booleans, error-only sync acknowledgement contract, per-platform primitive qualification, permissible claim language, journal and pending-package relationship, invariants I-01..I-15 | **Ratified 2026-11-24** by owner direction; current digest `931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` (FB-DUR-002 full-matrix evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` preserved as historical in `REVIEW-LOG.md`) |
+| `WS-DUR-001` | Workspace (cross-repository) | `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` | Publication durability as a failure model: tiers D0–D4, profile-scoped booleans, error-only sync acknowledgement contract, per-platform primitive qualification, permissible claim language, journal and pending-package relationship, invariants I-01..I-15 | **Ratified 2026-11-24** by owner direction; current digest `931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` (FB-DUR-002 full-matrix evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` preserved as historical in `engineering/evidence/REVIEW-LOG.md`) |
 | `WS-STREAM-001` | Workspace (cross-repository) | `engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md` | B15/B16 bounded streaming architecture and interface contracts A-01..A-12; normative immutable versioned `ResourceProfile` contract with role-specific profiles and trusted local selection; OD-01..OD-10 and D1..D10 resolved individually | **Ratified 2026-11-25** by owner direction; implementation completed under finite `TEST_ONLY` profiles; Phase 3A conformance packages merged at FB `acbd9b683d86ba6fbb62f7170f8852b23876e3aa` / NZ `c2c51757b0aeca94d2eacf651e8861e1937f74c8`, not `Verified`, and actual B16 streaming cross-execution NOT_RUN (not evidence); all numeric resource maxima, codec identifier and operational qualification deferred; `STREAM_RESOURCE_PROFILE_RATIFIED` pending |
 
 Nirnay also carries `NR-ARCH-ADR-INDEX.md` under `engineering/architecture/decisions/`.
@@ -75,14 +75,14 @@ registers **no new canonical ADR**, changes no ADR status, approves no numeric m
 digest, promotes no `Implemented`/`Verified`/`PERF_001_QUALIFIED`/`OPERATIONALLY_QUALIFIED` state,
 and does not ratify `NDC-RECEIPT-001` (still **PROPOSED**; publication and admission receipts stay
 separate). Workspace hosted CI remains `NOT_RUN`. Exact commands, gate outcomes and the freeze
-statement are in the `REVIEW-LOG.md` entry dated 2026-11-25.
+statement are in the `engineering/evidence/REVIEW-LOG.md` entry dated 2026-11-25.
 
 The ownership decision `NR-ARCH-ADR-0001` was **Accepted 2026-11-23** by owner
 ratification (`engineering/decisions/OWNER-RATIFICATION-2026-11-23.md`, Decision A), which
 also named responsible roles. Acceptance grants no data rights.
 
 Status cross-check (W2.1-A): this registry, `NDC-REGISTRY.md`,
-`ENGINEERING-DOC-DIGESTS.json`, `CURRENT-STATE.json` and `REVIEW-LOG.md` all express the
+`ENGINEERING-DOC-DIGESTS.json`, `CURRENT-STATE.json` and `engineering/evidence/REVIEW-LOG.md` all express the
 same decision state — ownership ADR Accepted, NDC v2 semantics Approved, v1 historical.
 Ratification of ownership does **not** ratify the W2 India domain design; the India
 ownership crosswalk, coverage register, Fieldbook India reference design and Nirnay

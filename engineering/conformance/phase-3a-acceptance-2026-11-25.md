@@ -158,7 +158,7 @@ the new run IDs and preserve the Phase 3 runs as HISTORICAL; `evidence_manifest`
 `workspace_static_gates`, `workspace_head_terminology`, `production_builder_parity` and
 `publication_integrity_sprint` pointers are reconciled to Phase 3A current status. Phase 3 evidence
 is retained by pointer and its record files are unchanged. `NDC-REGISTRY.md`, `ADR-REGISTRY.md`,
-`ENGINEERING-DOC-DIGESTS.json`, the `README.md` document map and `REVIEW-LOG.md` carry matching
+`ENGINEERING-DOC-DIGESTS.json`, the `README.md` document map and `engineering/evidence/REVIEW-LOG.md` carry matching
 dated entries. No summary claims an actual streaming cross-execution, a production profile, a
 numeric maximum, PERF-001, a new durability tier or a capability promotion.
 
@@ -177,5 +177,5 @@ re-run or combined across heads here.
 - `make audit` — exit 0 (`status` + `consistency` + Fieldbook `make check-static` + Nirnay
   `make check-static`, 47 PASS lines) at the same heads.
 
-Exact commands, exits and observed heads are recorded in `REVIEW-LOG.md` under 2026-11-25.
+Exact commands, exits and observed heads are recorded in `engineering/evidence/REVIEW-LOG.md` under 2026-11-25.
 No commit was created.

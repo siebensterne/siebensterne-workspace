@@ -141,7 +141,7 @@ evidence at their own heads.
 supersession note), `engineering/conformance/publication-integrity-sprint-acceptance-2026-11-24.md`
 (historical sprint scope with a dated post-sprint note), `CURRENT-STATE.json` (durability profile
 booleans, digests, evidence head and journal/package note), `NDC-REGISTRY.md`, `ADR-REGISTRY.md`,
-`README.md` and `REVIEW-LOG.md` agree on this scope. No external-facing QA summary is present in
+`README.md` and `engineering/evidence/REVIEW-LOG.md` agree on this scope. No external-facing QA summary is present in
 this workspace and none is edited here.
 
 ## 7. Gate evidence
@@ -149,7 +149,7 @@ this workspace and none is edited here.
 Commands are read-only and were run in the docs-only worktree with clean local clones symlinked in
 only for the runs; the symlinks were removed afterwards. No Fieldbook fixture/e2e suite, Nirnay
 full suite, CI run, hosted CI job, test count or cross-execution was re-run or combined across
-heads. Exact commands, exits and observed heads are recorded in `REVIEW-LOG.md`.
+heads. Exact commands, exits and observed heads are recorded in `engineering/evidence/REVIEW-LOG.md`.
 
 - `make consistency` — exit 0, `CONSISTENCY OK`.
 - `make audit` — exit 0 (read-only status, consistency, Fieldbook `make check-static` and Nirnay

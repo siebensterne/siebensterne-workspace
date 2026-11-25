@@ -372,7 +372,7 @@ follows; the reconciliation's PROPOSED status and historical text are unchanged.
 
 ## 17. Registry effects
 
-`NDC-REGISTRY.md`, `ADR-REGISTRY.md`, `REVIEW-LOG.md`, the README document map and a pointer in
+`NDC-REGISTRY.md`, `ADR-REGISTRY.md`, `engineering/evidence/REVIEW-LOG.md`, the README document map and a pointer in
 `engineering/conformance/ndc-v2-wire-contract-reconciliation.md` are updated to register this
 decision and the DP-01..DP-30 resolution. Historical ADRs are not renumbered, no approved byte is
 rewritten, and no historical digest is changed.

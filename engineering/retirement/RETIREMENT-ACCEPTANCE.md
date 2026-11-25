@@ -1,7 +1,7 @@
 # Retirement acceptance gates — RRP-002 to RRP-007
 
 Status: **gates defined, none claimed passed**. RRP-001 is documentation only; executing a
-gate requires a reviewed PR with exact commits and evidence recorded in `REVIEW-LOG.md`.
+gate requires a reviewed PR with exact commits and evidence recorded in `engineering/evidence/REVIEW-LOG.md`.
 No file may be deleted from a source repository in this workspace PR.
 
 ## 0. No-deletion-before-replacement rules (binding)
@@ -120,7 +120,7 @@ target audit; documentation link audit; license/provenance audit; architecture b
 check; workspace consistency audit; full permitted test suites.
 
 **Must publish:** a new deterministic review package with manifest and bundles; updated
-`CURRENT-STATE.json`, `REVIEW-LOG.md` and test-retirement record. Test counts stay tied to
+`CURRENT-STATE.json`, `engineering/evidence/REVIEW-LOG.md` and test-retirement record. Test counts stay tied to
 their exact commits and repositories (Fieldbook, Nirnay Python, Nirnay Rust separately).
 
 **Fail conditions:** any orphaned dependency, dead Make/CI target, stale capability claim,
@@ -138,6 +138,6 @@ untracked data import, or registry/digest disagreement.
 | RRP-006 | Analytics/SBE ownership decision | Pending review |
 | RRP-007 | Dependency and repository validation | Pending |
 
-No gate is marked PASS until its evidence is recorded with exact commits in `REVIEW-LOG.md`.
+No gate is marked PASS until its evidence is recorded with exact commits in `engineering/evidence/REVIEW-LOG.md`.
 After all gates pass, and only after separate India design ratification, W2.3 implementation
 may begin.

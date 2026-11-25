@@ -75,7 +75,7 @@ the stated three-case scope: the scope is neither narrowed to false nor broadene
 `CURRENT-STATE.json` (explicit provenance fields, five Workspace head entries, `durability_profiles`
 and both amended document digests), `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md`,
 `engineering/conformance/publication-integrity-sprint-acceptance-2026-11-24.md`, `README.md`
-document map, `REVIEW-LOG.md`, `NDC-REGISTRY.md` and `ADR-REGISTRY.md` all state the same head
+document map, `engineering/evidence/REVIEW-LOG.md`, `NDC-REGISTRY.md` and `ADR-REGISTRY.md` all state the same head
 roles, D0 scope, gate result and hosted-CI status. No derived summary is left stale. No
 external-facing QA summary is present inside this workspace; the external
 `REVIEW-PACKAGE-QA.md` remains the package-head attestation authority and is not edited here.
@@ -116,6 +116,6 @@ NOT ACHIEVED. The five head concepts and packaged-head attestation in §1–§2 
 
 Full row-level table, digests, claim discipline and gate pointers are in
 `engineering/conformance/d0-full-matrix-evidence-2026-11-24.md`; `WS-DUR-001` §2.1, §5, §6 and §7,
-both registries, `README.md`, `REVIEW-LOG.md` and `CURRENT-STATE.json` were reconciled to agree.
+both registries, `README.md`, `engineering/evidence/REVIEW-LOG.md` and `CURRENT-STATE.json` were reconciled to agree.
 The amended WS-DUR-001 digest is recorded there; the WS-EVIDENCE-026-era digest `d3a18e62…` and
 the original ratification digest `2b04f9b…` remain historical.
