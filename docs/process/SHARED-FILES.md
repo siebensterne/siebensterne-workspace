@@ -15,6 +15,12 @@ Verified by `make consistency` with `cmp`:
 | `ORIGIN.md` | provenance and originality policy |
 | `quality-contract.json` | tool version pins |
 | `scripts/check_prose_unified.py` | prose gate |
+| `.clang-format` | C++20 formatter contract |
+| `.clang-tidy` | strict static-analysis contract, every diagnostic an error |
+| `CMakeLists.txt` | strict C++20 compiler baseline |
+| `CMakePresets.json` | GCC and Clang configure/build/test workflow |
+| `q-style.json` | machine-readable q/kdb+ style contract |
+| `.pre-commit-config.yaml` | pinned offline hook set |
 | `requirements-dev.txt` | pinned Python tooling |
 
 ## Same semantics, repository-local content
@@ -23,7 +29,6 @@ Verified by `make consistency` with `cmp`:
 |---|---|
 | `ruff.toml` | shared core rules are identical; local sections list each repo's source roots and test-path exceptions |
 | `.editorconfig` | repo-specific file classes (captures, SBE, fixtures) |
-| `.clang-format` | Nirnay has C++ sources; Fieldbook has none |
 | `.gitignore` | Fieldbook ignores captures; Nirnay ignores data, keys and secrets |
 | `.gitattributes` | per-repository binary and verbatim evidence rules |
 | `git-policy.json` | different merge-history grandfathering |

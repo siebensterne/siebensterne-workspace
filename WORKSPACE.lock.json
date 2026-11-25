@@ -35,7 +35,12 @@
     "ruff": "0.17.5",
     "pyink": "26.5.1",
     "shellcheck": "0.11.0.1",
-    "clang_format": "21.1.8"
+    "clang_format": "21.1.8",
+    "cmake": "3.25",
+    "ninja": "1.11",
+    "clang_tidy": "21.1.8",
+    "pre_commit": "4.0.0",
+    "pre_commit_hooks": "v6.0.0"
   },
   "canonical_command_surface": [
     "check",

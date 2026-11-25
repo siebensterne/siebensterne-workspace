@@ -1,0 +1,116 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/cmake-${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "BUILD_TESTING": "ON"
+      },
+      "warnings": {
+        "dev": true,
+        "deprecated": true,
+        "uninitialized": true
+      }
+    },
+    {
+      "name": "strict-gcc-configure",
+      "inherits": "base",
+      "displayName": "Strict C++20 (GCC)",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "strict-clang-configure",
+      "inherits": "base",
+      "displayName": "Strict C++20 (Clang)",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "strict-gcc-build",
+      "configurePreset": "strict-gcc-configure"
+    },
+    {
+      "name": "strict-clang-build",
+      "configurePreset": "strict-clang-configure"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "strict-gcc-test",
+      "configurePreset": "strict-gcc-configure",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "ignore",
+        "stopOnFailure": true
+      }
+    },
+    {
+      "name": "strict-clang-test",
+      "configurePreset": "strict-clang-configure",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "ignore",
+        "stopOnFailure": true
+      }
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "strict-gcc",
+      "displayName": "Full strict C++20 workflow (GCC)",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "strict-gcc-configure"
+        },
+        {
+          "type": "build",
+          "name": "strict-gcc-build"
+        },
+        {
+          "type": "test",
+          "name": "strict-gcc-test"
+        }
+      ]
+    },
+    {
+      "name": "strict-clang",
+      "displayName": "Full strict C++20 workflow (Clang)",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "strict-clang-configure"
+        },
+        {
+          "type": "build",
+          "name": "strict-clang-build"
+        },
+        {
+          "type": "test",
+          "name": "strict-clang-test"
+        }
+      ]
+    }
+  ]
+}

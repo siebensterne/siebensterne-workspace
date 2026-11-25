@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: Apache-2.0
+# Offline, deterministic hook set shared byte-for-byte by all three
+# repositories. Remote hook revisions and local tool versions are pinned in
+# quality-contract.json (and WORKSPACE.lock.json at workspace level). Every
+# hook fails closed: no repository, language or check is exempt.
+minimum_pre_commit_version: "4.0.0"
+default_stages: [pre-commit]
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-json
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      - id: q-style
+        name: q / kdb+ added-line style (q-style.json)
+        entry: bash -c 'python3 scripts/check_q_style.py --self-test && python3 scripts/check_q_style.py' --
+        language: system
+        always_run: true
+        pass_filenames: false
+
+      - id: clang-format
+        name: clang-format 21.1.8 dry-run (.clang-format)
+        entry: clang-format --style=file --dry-run --Werror
+        language: system
+        files: '\.(c|cc|cpp|cxx|h|hpp|hxx)$'
+        exclude: '^(build|target)/'
+        require_serial: true
+
+      - id: clang-tidy
+        name: clang-tidy strict analysis (.clang-tidy, WarningsAsErrors *)
+        entry: bash -c 'cmake --preset strict-gcc-configure >/dev/null && clang-tidy --config-file=.clang-tidy -p build/cmake-strict-gcc-configure "$@"' --
+        language: system
+        files: '\.(c|cc|cpp|cxx|h|hpp|hxx)$'
+        exclude: '^(build|target)/'
+        require_serial: true
+
+      - id: cmake-strict
+        name: CMake strict workflow (GCC and Clang, build and ctest)
+        entry: bash -c 'cmake --workflow --preset strict-gcc && cmake --workflow --preset strict-clang' --
+        language: system
+        always_run: true
+        pass_filenames: false

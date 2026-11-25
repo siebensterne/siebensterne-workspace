@@ -13,6 +13,18 @@ is listed here with a reason. `make consistency` checks the machine-verifiable r
 | Pyink | 26.5.1 | same | same |
 | shellcheck-py | 0.11.0.1 | same | same |
 | clang-format | 21.1.8 | same | same |
+| clang-tidy | 21.1.8 | same | same |
+| CMake / Ninja | 3.25 / 1.11 | same | same |
+| pre-commit / hooks | 4.0.0 / v6.0.0 | same | same |
+
+## Shared tooling configs
+
+`.clang-format`, `.clang-tidy`, `CMakeLists.txt`, `CMakePresets.json`,
+`q-style.json` and `.pre-commit-config.yaml` are byte-identical in all three
+repositories. The C++ baseline uses C++20, strict warnings-as-errors and the
+same two-compiler preset workflow everywhere, including repositories without
+C++ sources. The q/kdb+ contract is machine-readable and loaded by
+`scripts/check_q_style.py`; no waivers are permitted.
 
 ## Canonical command surface
 

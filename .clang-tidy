@@ -1,0 +1,22 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# Strict static-analysis policy shared byte-for-byte by all three repositories.
+# No check is disabled, no NOLINT waiver is accepted, and every diagnostic is
+# an error. Pinned analyzer: clang-tidy 21.1.8.
+Checks: >
+  -*,
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+SystemHeaders: false
+FormatStyle: file
+CheckOptions: []
