@@ -50,6 +50,19 @@ invocation without an approved role profile; PERF-001 and D1 are not run. The ev
 `3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4`). It is an acceptance record,
 not a new numbered ADR, and changes no approved decision byte.
 
+**WS-DOC-001 design-document synchronization pointer (2026-11-25):** docs-only current-status
+notices and conformance appendices were added to `engineering/design/b15-streaming-producer-design.md`
+(Appendix A) and `engineering/design/b16-streaming-verifier-design.md` (Appendix B). They point to
+the `WS-STREAM-001` decision digest `f74153024c1d526fe5c9d49b22e541263581c52c0dbae19a67e8d2ea841a4fe1`
+and to the Phase 3 acceptance record; B16 names the ratified D2 dedicated `parser.max_string_bytes`
+field and D3 stage-five refusal at detection as superseding the original proposal assumptions, and
+both appendices list Phase 3A corrective work packages as pointers only. This synchronization
+registers **no new canonical ADR**, changes no ADR status, approves no numeric maximum or profile
+digest, promotes no `Implemented`/`Verified`/`PERF_001_QUALIFIED`/`OPERATIONALLY_QUALIFIED` state,
+and does not ratify `NDC-RECEIPT-001` (still **PROPOSED**; publication and admission receipts stay
+separate). Workspace hosted CI remains `NOT_RUN`. Exact commands, gate outcomes and the freeze
+statement are in the `REVIEW-LOG.md` entry dated 2026-11-25.
+
 The ownership decision `NR-ARCH-ADR-0001` was **Accepted 2026-11-23** by owner
 ratification (`engineering/decisions/OWNER-RATIFICATION-2026-11-23.md`, Decision A), which
 also named responsible roles. Acceptance grants no data rights.

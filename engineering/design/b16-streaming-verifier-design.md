@@ -12,6 +12,41 @@ Ratification pointer (2026-11-25): `engineering/decisions/WS-STREAM-001-b15-b16-
 ratifies the B15/B16 architecture and interface contracts. All numeric resource maxima remain
 DEFERRED; this design keeps its PROPOSED status.
 
+### Current-status notice (2026-11-25, WS-DOC-001)
+
+- **Ratified:** the architecture and interface contracts selected by `WS-STREAM-001` —
+  A-01..A-12, covering both B15 and this verifier design — were **RATIFIED by owner direction on
+  2026-11-25**, at contract level only. Decision digest (`shasum -a 256`):
+  `f74153024c1d526fe5c9d49b22e541263581c52c0dbae19a67e8d2ea841a4fe1`. See
+  `engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md` §1. This notice does
+  not claim an implemented, tested or verified state.
+- **Proposal history:** this document remains **PROPOSED / AWAITING OWNER APPROVAL**. Its original
+  §§1–12 are retained unchanged as proposal history; Appendix B identifies assumptions that the
+  ratified decisions supersede. A pointer to a ratification does not convert a design package into
+  an implementation, profile approval or qualification record; the ratified choices govern.
+- **Deferred and not approved:** every numeric resource maximum, the stored/expanded chunk number,
+  parser bounds, concurrency values and the codec identifier remain **DEFERRED**; no deferred item
+  is a silent default. The normative `ResourceProfile` contract is role-specific (`PRODUCER`,
+  `VERIFIER`, `RECOVERY`, `SNAPSHOT`), but **no profile value or profile digest is approved** by
+  `WS-STREAM-001`; `STREAM_RESOURCE_PROFILE_RATIFIED` is PENDING. A verifier invocation without an
+  approved `VERIFIER` profile selected by trusted local policy fails closed; its own local ceiling
+  is always applied and a producer declaration cannot raise it.
+- **Blocked:** `PERF_001_QUALIFIED` and `OPERATIONALLY_QUALIFIED` remain **BLOCKED**;
+  `PUBLICATION_DURABILITY_VERIFIED` remains `false`; rights `UNKNOWN`, dataset acceptance
+  `BLOCKED`, budget INR 0, collection `DISABLED`, experiments `BLOCKED`, live execution `DISABLED`
+  and D11 strict. The freeze is unchanged.
+- **Evidence pointers:** the merged Phase 3 implementation and cross-execution evidence is
+  `engineering/conformance/phase-3-acceptance-2026-11-25.md` (FB `8216197` / NZ `c1c2f0d`, finite
+  explicitly marked `TEST_ONLY` profiles, `STREAMING_IMPLEMENTATION_COMPLETE`, not `Verified`).
+  Phase 3A implementation/evidence records are tracked by their work-package identifiers listed in
+  Appendix B and in the `REVIEW-LOG.md` entry dated 2026-11-25; this notice carries pointers only
+  and claims no merge, commit, gate result or capability change for any work package that has not
+  been recorded by the parent.
+- **Receipts and CI:** `NDC-RECEIPT-001` remains explicitly **PROPOSED / AWAITING OWNER
+  RATIFICATION**; the Fieldbook publication receipt and the Nirnay admission receipt remain
+  separate objects (A-12), and neither is created from the other. Workspace hosted CI remains
+  `NOT_RUN`.
+
 ## 1. Authority, scope and freeze
 
 ### 1.1 Governing documents
@@ -459,3 +494,54 @@ log entry. It changes no capability state, no approved digest, no registered
 schema version, no source repository and no freeze term. Approval of this design
 is a separate owner gate from implementation authority and from any later
 `Implemented` or `Verified` claim.
+
+## Appendix B — Ratified-decision conformance and superseded assumptions (2026-11-25, WS-DOC-001)
+
+Status: **additive conformance appendix only**. The original §§1–12 text above is retained
+unchanged as PROPOSED proposal history; no original line was rewritten. `WS-STREAM-001`
+(2026-11-25, decision digest
+`f74153024c1d526fe5c9d49b22e541263581c52c0dbae19a67e8d2ea841a4fe1`) governs wherever a ratified
+choice differs from a proposal. Nothing here approves a number, a profile digest, a schema byte, a
+rejection-code change beyond the recorded selections, an implementation state or a capability
+promotion.
+
+### B.1 Proposal assumptions visibly superseded by the ratified decisions
+
+| Original proposal assumption (retained as history) | Superseded by | Ratified choice that governs |
+|---|---|---|
+| §5.1 string-length row: "Derived from `max_record_bytes` ... A dedicated `max_string_bytes` field is **not** introduced without owner approval"; §5.2 test row "Single string longer than the derived string cap" | **D2** | A **dedicated `parser.max_string_bytes` profile field is selected**; a cap derived from `max_record_bytes` alone is **not** sufficient. The bound is finite, not above `max_record_bytes`, enforced during the strict one-line parse; its value is DEFERRED. |
+| §3.3 invariant: envelope mismatch "**deferred to stage nine**" with a later stage-five failure winning as first refusal; §9 failure-matrix row "Deferred flag read / stage 9 `REJECT_SCHEMA_ENVELOPE`"; §11 migration step 2 "the envelope flag is consumed at stage nine" | **D3** | **Refusal occurs at stage five at the point of detection, with no deferral to stage nine; the first refusal is the detection itself.** Stable code `REJECT_SCHEMA_ENVELOPE` is retained, the observable stage becomes 5, the other eleven stage numbers and all other codes are unchanged, and no schema amendment is made. |
+| §5.1 closing paragraph: "The chunk size is an internal fixed constant ... not a caller policy number" | **D1** | The stored/expanded chunk size comes from the role profile `io_chunk_bytes`; no built-in default and no approved number. |
+| §3.1 step 6: "event-registry membership" as the per-event check | **D6** | The ratified per-event payload schema registry is enforced at stage five with typed registry-miss code `REJECT_PAYLOAD_REGISTRY`; registry digest unchanged and no admission receipt on a miss. |
+
+"Superseded" means the quoted wording is preserved verbatim as proposal history and must not be
+read as the governing rule. The original text above was not edited, and the ratified choices in the
+right-hand column govern conformance.
+
+### B.2 Phase 3A implementation pointers — no merge claim
+
+| Package | Implementation pointer | Ratified anchor |
+|---|---|---|
+| `NZ-REG-001` | Per-event payload registry implementation, including the stage-five `REJECT_PAYLOAD_REGISTRY` miss path | D6; `WS-STREAM-001` §4.2 |
+| `NZ-RES-001` | Profile resolver: trusted local selection by name and version, role match, consumer ceiling and stricter-of effective limits | `WS-STREAM-001` §3.3, A-08, D9 |
+| `NZ-LIMIT-001` | Exact parser bounds in the one-line strict parse, including the dedicated `parser.max_string_bytes` field | D2, D5, A-08; `WS-STREAM-001` §3.2 |
+| `NZ-LIMIT-002` | Artifact/concurrency separation, including the parallel artifact/staging/verify descriptor minimum and finite queue bounds | D9, A-09, A-10 |
+
+These identifiers are **pointers to Phase 3A corrective work**. This documentation work records no
+merge, commit, exact head, CI run, gate result, test count or capability claim for any of them; the
+parent's dated implementation/evidence records govern if and when a package is recorded. Phase 3
+evidence already recorded is `engineering/conformance/phase-3-acceptance-2026-11-25.md`; it does
+not by itself record any Phase 3A corrective package above.
+
+### B.3 Unchanged status and non-claims
+
+Architecture and interface contracts A-01..A-12 are **RATIFIED**; this design is still **PROPOSED /
+AWAITING OWNER APPROVAL** as proposal history. All numeric maxima remain **DEFERRED**, role-specific
+profiles are **not approved**, `STREAM_RESOURCE_PROFILE_RATIFIED` is PENDING, and `PERF_001_QUALIFIED`
+and `OPERATIONALLY_QUALIFIED` are BLOCKED. `NDC-RECEIPT-001` remains explicitly **PROPOSED**, not
+ratified; the Fieldbook publication receipt and the Nirnay admission receipt remain separate.
+Workspace hosted CI remains `NOT_RUN`. No source, schema, right, data, provider, India or experiment
+artefact is changed; rights `UNKNOWN`, dataset acceptance `BLOCKED`, budget INR 0, collection
+`DISABLED`, experiments `BLOCKED`, live execution `DISABLED`, D11 strict and
+`PUBLICATION_DURABILITY_VERIFIED` `false`. No approved digest, historical record or capability
+state was rewritten to make this appendix consistent.
