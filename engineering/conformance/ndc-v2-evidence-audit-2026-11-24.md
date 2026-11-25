@@ -1,5 +1,7 @@
 # WP-B6A — evidence-led engineering audit of NDC v2 reviewer findings
 
+> **CURRENT STATUS: HISTORICAL.** B15/B16 and streaming remediation were closed under WS-STREAM-001 and Phase 3A.
+
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
 Status: **DOCUMENTATION AUDIT, READ-ONLY SOURCE INSPECTION.** This record maps the reviewer's

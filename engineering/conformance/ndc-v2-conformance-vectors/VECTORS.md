@@ -1,5 +1,7 @@
 # NDC v2 conformance vectors — index
 
+> **CURRENT STATUS: HISTORICAL.** Original WP-5 vectors; canonical vectors are in `../ndc-v2-schema-profile-1/vectors/`.
+
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
 Status: workspace evidence package for WP-5 / WS-NDC-INT-001. These files are abstract,

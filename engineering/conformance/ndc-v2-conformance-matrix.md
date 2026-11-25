@@ -1,5 +1,7 @@
 # NDC v2 paired conformance matrix — W2.1 D/E
 
+> **CURRENT STATUS: HISTORICAL.** W2.1 D/E matrix; superseded by the canonical wire schema and Phase 3A evidence.
+
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
 **Status:** conformance record and design input. Documentation only. This matrix does not

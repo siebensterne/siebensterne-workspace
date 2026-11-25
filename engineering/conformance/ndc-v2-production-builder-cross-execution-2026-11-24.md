@@ -1,5 +1,7 @@
 # WS-NDC-INT-002 / FB-NDC-013 — production-builder cross-execution evidence baseline, 2026-11-24
 
+> **CURRENT STATUS: HISTORICAL.** Superseded for current evidence by `phase-3a-acceptance-2026-11-25.md`.
+
 Status: **EVIDENCE RECONCILIATION (docs only)**, dated `2026-11-24`,
 verification timestamp `2026-11-24T15:06:04Z`. This dated record consolidates the
 final production-builder cross-execution evidence at the exact commits below.

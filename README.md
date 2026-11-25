@@ -17,14 +17,17 @@ and the freeze. Do not copy mutable status into prose documents.
 Bootstrap pins and tool policy: `WORKSPACE.lock.json`. The pins are historical
 bootstrap baselines, not current heads.
 
-Ownership and programme boundaries: `WORKSPACE.md`. Historical phase records
-are in `engineering/evidence/`; they are not current status.
+Ownership and programme boundaries: `WORKSPACE.md`. The current status map is
+`engineering/STATUS.md`; `engineering/evidence/REVIEW-LOG.md` is the active decision
+ledger. Historical phase records are evidence, not current status.
 
 ## Authority map
 
 | Topic | Owning document |
 |---|---|
 | Agent workflow | `AGENTS.md` |
+| Current status authority map | `engineering/STATUS.md` |
+| Digest reconciliation | `engineering/DIGEST-RECONCILIATION-2026-11-26.json` |
 | Ownership and boundaries | `WORKSPACE.md` |
 | Cross-repository ADR identities | `ADR-REGISTRY.md` |
 | NDC versions, digests and contract status | `NDC-REGISTRY.md` |
@@ -33,7 +36,7 @@ are in `engineering/evidence/`; they are not current status.
 | Architecture, design, coverage and style | `engineering/architecture/`, `engineering/design/`, `engineering/coverage/`, `engineering/style/` |
 | NDC conformance, schema packages and phase evidence | `engineering/conformance/` |
 | Retirement decisions and manifests | `engineering/retirement/` |
-| Historical phase and review records | `engineering/evidence/` |
+| Active ledger and historical phase records | `engineering/evidence/REVIEW-LOG.md` (active), `engineering/evidence/` and `engineering/conformance/` (historical) |
 | Pairing, tool commands and shared-file policy | `docs/process/` |
 
 Read the owning document for a task. Older records answer historical questions;

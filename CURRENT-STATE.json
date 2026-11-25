@@ -16,7 +16,7 @@
     "date": "2026-11-25",
     "status": "ACCEPTED; documentation and JSON evidence record only; no commit; freeze unchanged",
     "record": "engineering/conformance/phase-3-acceptance-2026-11-25.md",
-    "digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4",
+    "digest": "c4f15d801b2f4999633984a84c8f077c7ba8f1d49102f3b5ffbcc80d0e7dcf18",
     "digest_command": "shasum -a 256 engineering/conformance/phase-3-acceptance-2026-11-25.md",
     "branch": "docs/phase3-acceptance",
     "base_commit": "6dcca8b",
@@ -76,13 +76,14 @@
     ],
     "no_internal_self_hash": true,
     "note": "This record updates the five source-head concepts to the Phase 3 final heads. The Workspace audited-subject and packaged/evidence-commit concepts are unchanged; no committed Workspace file contains its own final commit hash.",
-    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md is the current Phase 3A status; this Phase 3 record and its heads, CI and evidence are HISTORICAL and preserved unchanged."
+    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md is the current Phase 3A status; this Phase 3 record and its heads, CI and evidence are HISTORICAL and preserved unchanged.",
+    "original_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
   },
   "phase3a_acceptance": {
     "date": "2026-11-25",
     "status": "ACCEPTED; documentation and JSON evidence record only; no commit; freeze unchanged",
     "record": "engineering/conformance/phase-3a-acceptance-2026-11-25.md",
-    "digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+    "digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
     "digest_command": "shasum -a 256 engineering/conformance/phase-3a-acceptance-2026-11-25.md",
     "branch": "docs/phase3a-acceptance",
     "base_commit": "d12b5b9880e23085c17f206dd48ec73e7fe13f61",
@@ -153,7 +154,8 @@
       "no Implemented-to-Verified promotion; no internal self-hash"
     ],
     "no_internal_self_hash": true,
-    "note": "Phase 3A supersedes Phase 3 as current status. Phase 3 heads, CI runs, capability states and evidence records are preserved unchanged as HISTORICAL. No actual streaming cross-execution, production profile, numeric maximum, PERF-001, PERF-BASE-001, durability tier or capability promotion is claimed."
+    "note": "Phase 3A supersedes Phase 3 as current status. Phase 3 heads, CI runs, capability states and evidence records are preserved unchanged as HISTORICAL. No actual streaming cross-execution, production profile, numeric maximum, PERF-001, PERF-BASE-001, durability tier or capability promotion is claimed.",
+    "original_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866"
   },
   "phase3_capability_states": {
     "STREAMING_IMPLEMENTATION_COMPLETE": "ACHIEVED",
@@ -229,7 +231,7 @@
       "run_id": "PHASE3A_FINAL_HEAD",
       "result": "HEAD_CONFIRMED_CLEAN",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "Phase 3A acceptance head; supersedes the Phase 3 head 8216197124d33466fbe651e417b7c19505e4155e for current status. The earlier value is preserved in historical_source_head_evidence; evidence_digest is the Phase 3A acceptance record digest."
     },
     "nirnay": {
@@ -241,7 +243,7 @@
       "run_id": "PHASE3A_FINAL_HEAD",
       "result": "HEAD_CONFIRMED_CLEAN",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "Phase 3A acceptance head; supersedes the Phase 3 head c1c2f0d984bee11a63eb1df98833ee8723cd8629 for current status. The earlier value is preserved in historical_source_head_evidence; evidence_digest is the Phase 3A acceptance record digest."
     },
     "workspace": {
@@ -254,7 +256,7 @@
       "run_id": "WS_EVIDENCE_026_PACKAGED_HEAD",
       "result": "PACKAGED_HEAD_CONFIRMED_CLEAN",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "Audited subject 6d45af29793485e5b3fce03840228f5d97a34cd9 and packaged head 95580f5c92480c6965a4b72d54bf0b6af30f5dbd are unchanged by Phase 3A; workspace base for this PR is d12b5b9880e23085c17f206dd48ec73e7fe13f61. evidence_digest is the Phase 3A acceptance record digest, not a digest of the packaged head."
     }
   },
@@ -268,7 +270,7 @@
       "run_id": "45621903705",
       "result": "SUCCESS; 2/2 after stale-branch rerun",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "SUCCESS at the Phase 3A final head after deleting stale merged remote branches and rerunning. The Phase 3 CI run 45491963354 is preserved as HISTORICAL."
     },
     "nirnay": {
@@ -280,7 +282,7 @@
       "run_id": "45612047715",
       "result": "SUCCESS; 12/12",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "SUCCESS at the Phase 3A final head. The Phase 3 CI run 45491893837 is preserved as HISTORICAL."
     },
     "workspace": {
@@ -294,7 +296,7 @@
       "result": "CONSISTENCY OK; audit exit 0 (static gates, not hosted CI)",
       "hosted_ci": "NOT_RUN",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "Workspace hosted CI NOT_RUN; unchanged by Phase 3A. evidence_digest is the Phase 3A acceptance record digest."
     }
   },
@@ -308,7 +310,7 @@
       "run_id": "PHASE3A_LOCAL_GATES",
       "result": "ALL_GATES_PASS",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "Phase 3A acceptance head; static gates re-observed in the docs-only worktree. Full test suites were not re-run here."
     },
     "nirnay": {
@@ -320,7 +322,7 @@
       "run_id": "PHASE3A_LOCAL_GATES",
       "result": "ALL_GATES_PASS",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "Phase 3A acceptance head; static gates re-observed in the docs-only worktree. Full test suites were not re-run here."
     },
     "workspace": {
@@ -333,7 +335,7 @@
       "run_id": "PHASE3A_LOCAL_STATIC_GATES",
       "result": "STATIC_GATES_PASS; no full test suite run in this repository",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "Audited subject 6d45af29793485e5b3fce03840228f5d97a34cd9 and packaged head 95580f5c92480c6965a4b72d54bf0b6af30f5dbd unchanged; evidence_digest is the Phase 3A acceptance record digest."
     }
   },
@@ -347,7 +349,7 @@
       "run_id": "PHASE3A_NZ_API_001_STREAMING",
       "result": "NOT_RUN - actual B15-producer-to-B16-verifier streaming cross-execution not run; NZ-API-001 harness skips with explicit reason (no external B15 streaming producer binary, cfg(test)-only TEST_ONLY helpers); not counted as evidence",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "This concept records the Phase 3A streaming cross-execution status (NOT_RUN). The Phase 3 non-streaming binary cross-execution at FB 8216197124d33466fbe651e417b7c19505e4155e / NZ c1c2f0d984bee11a63eb1df98833ee8723cd8629 (stage 6 REJECT_RIGHTS_EVIDENCE) and the earlier conformance-path and production-builder runs are HISTORICAL, preserved in historical_source_head_evidence and their dated records, and are not streaming evidence."
     },
     "nirnay": {
@@ -359,7 +361,7 @@
       "run_id": "PHASE3A_NZ_API_001_STREAMING",
       "result": "NOT_RUN - actual B15-producer-to-B16-verifier streaming cross-execution not run; NZ-API-001 harness skips with explicit reason (no external B15 streaming producer binary, cfg(test)-only TEST_ONLY helpers); not counted as evidence",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "This concept records the Phase 3A streaming cross-execution status (NOT_RUN). The Phase 3 non-streaming binary cross-execution at FB 8216197124d33466fbe651e417b7c19505e4155e / NZ c1c2f0d984bee11a63eb1df98833ee8723cd8629 (stage 6 REJECT_RIGHTS_EVIDENCE) and the earlier conformance-path and production-builder runs are HISTORICAL, preserved in historical_source_head_evidence and their dated records, and are not streaming evidence."
     },
     "workspace": {
@@ -372,7 +374,7 @@
       "run_id": "PHASE3A_NZ_API_001_STREAMING",
       "result": "NOT_RUN - actual B15-producer-to-B16-verifier streaming cross-execution not run; NZ-API-001 harness skips with explicit reason (no external B15 streaming producer binary, cfg(test)-only TEST_ONLY helpers); not counted as evidence",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "This concept records the Phase 3A streaming cross-execution status (NOT_RUN). The Phase 3 non-streaming binary cross-execution at FB 8216197124d33466fbe651e417b7c19505e4155e / NZ c1c2f0d984bee11a63eb1df98833ee8723cd8629 (stage 6 REJECT_RIGHTS_EVIDENCE) and the earlier conformance-path and production-builder runs are HISTORICAL, preserved in historical_source_head_evidence and their dated records, and are not streaming evidence."
     }
   },
@@ -386,7 +388,7 @@
       "run_id": "PHASE3A_REVIEWS",
       "result": "ALL_APPROVED_AT_EXACT_HEADS",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "Phase 3A review evidence at the exact heads; earlier Phase 3 review heads are preserved as HISTORICAL."
     },
     "nirnay": {
@@ -398,7 +400,7 @@
       "run_id": "PHASE3A_REVIEWS",
       "result": "ALL_APPROVED_AT_EXACT_HEADS",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "Phase 3A review evidence at the exact heads; earlier Phase 3 review heads are preserved as HISTORICAL."
     },
     "workspace": {
@@ -411,7 +413,7 @@
       "run_id": "PHASE3A_REVIEWS",
       "result": "ALL_APPROVED_AT_EXACT_HEADS",
       "verification_timestamp": "2026-11-25T13:34:30Z",
-      "evidence_digest": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+      "evidence_digest": "c3e4e15a791285ac648ef6eb1ddf2c1e729458ee9f861a23723723f568ad8350",
       "note": "Audited subject and packaged head unchanged by Phase 3A; workspace base for this PR is d12b5b9880e23085c17f206dd48ec73e7fe13f61."
     }
   },
@@ -631,7 +633,7 @@
         "run_id": "PHASE3_FINAL_HEAD",
         "result": "HISTORICAL: Phase 3 final head; superseded for current status by Phase 3A final head acbd9b683d86ba6fbb62f7170f8852b23876e3aa",
         "verification_timestamp": "2026-11-24T21:43:42Z",
-        "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+        "evidence_digest": "c4f15d801b2f4999633984a84c8f077c7ba8f1d49102f3b5ffbcc80d0e7dcf18"
       },
       {
         "id": "HIST-PHASE3-FINAL-NZ-C1C2F0D",
@@ -644,7 +646,7 @@
         "run_id": "PHASE3_FINAL_HEAD",
         "result": "HISTORICAL: Phase 3 final head; superseded for current status by Phase 3A final head c2c51757b0aeca94d2eacf651e8861e1937f74c8",
         "verification_timestamp": "2026-11-24T21:43:42Z",
-        "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+        "evidence_digest": "c4f15d801b2f4999633984a84c8f077c7ba8f1d49102f3b5ffbcc80d0e7dcf18"
       },
       {
         "id": "HIST-PHASE3-CROSS-EXECUTION",
@@ -657,7 +659,7 @@
         "run_id": "PHASE3_FINAL_CROSS_EXECUTION",
         "result": "HISTORICAL: structural stages PASS, stage 6 REJECT_RIGHTS_EVIDENCE, no admission receipt, dataset BLOCKED; not a B15/B16 streaming cross-execution and not Phase 3A evidence",
         "verification_timestamp": "2026-11-24T21:43:42Z",
-        "evidence_digest": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4"
+        "evidence_digest": "c4f15d801b2f4999633984a84c8f077c7ba8f1d49102f3b5ffbcc80d0e7dcf18"
       }
     ]
   },
@@ -669,7 +671,10 @@
     "purpose": "Dated evidence manifest entry for the PR 0 evidence baseline reconciliation: exact commits, evidence digests, commands and gate results",
     "note": "The manifest does not digest this file or itself; no circular evidence claim. Its SHA-256 was the local_tested_source_head evidence_digest at the 2026-11-24 reconciliation; Phase 3 head concepts use the acceptance-record digest instead.",
     "phase3_pointer": "engineering/conformance/phase-3-acceptance-2026-11-25.md is the HISTORICAL Phase 3 evidence record; this 2026-11-24 manifest is preserved unchanged and is no longer the source of current head, CI or capability evidence.",
-    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md is the current Phase 3A evidence record; this 2026-11-24 manifest remains preserved unchanged and is not the source of current head, CI or capability evidence."
+    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md is the current Phase 3A evidence record; this 2026-11-24 manifest remains preserved unchanged and is not the source of current head, CI or capability evidence.",
+    "ratified_sha256": "b0f342e12fea3b144c70fc6bffec327f695879af2bfcf3e4bbff4612286ba0b5",
+    "current_file_sha256": "ba1aa44d78379d49badf553f2f1a9b01f1ecdeda516ff1f425b1f49a670c9f8c",
+    "digest_note": "Ratified/recorded digest preserved; current file digest from path/status-header amendment in DIGEST-RECONCILIATION-2026-11-26.json"
   },
   "static_gate_results": {
     "workspace": {
@@ -786,7 +791,7 @@
     "live_execution": "DISABLED",
     "ownership_adr": "ACCEPTED 2026-11-23 (NR-ARCH-ADR-0001; owner ratification record)",
     "ndc_v1": "HISTORICAL; superseded by approved v2; v1 digests preserved unchanged",
-    "ndc_v2": "APPROVED 2026-11-23; active contract version; producer and consumer digests above; C0 digest 3dace660c362e683790ba7e56a785ded8af836abda36f6eab06ed284de49eed2",
+    "ndc_v2": "APPROVED 2026-11-23; active contract version; producer and consumer digests above; C0 ratified digest 3dace660c362e683790ba7e56a785ded8af836abda36f6eab06ed284de49eed2 preserved; current file digest e56268ddc8823436fc4268071ab24a6f4a0c58bc673db8db8f5d6a61dc844d11 in DIGEST-RECONCILIATION-2026-11-26.json",
     "ndc_consumer_use_v2_proposed": "PROPOSED; not approved; separate implementation proposal digest 4b9d1fe7190de08151989fc8895f42e1daa737021e8dae019ddc3325f9603a2c",
     "w2_india_design": "PROPOSED pending a separate India design approval (ownership ratification does not ratify the domain model)",
     "final_ndc_serialization_schema": "NDC v2 Release Serialization Profile 1 canonical schema package published (26 files, digest 6e8c1e48e27289b8c3d3e959a06a805e736d0759b4fb244edbb074f65e107bab) and wire authority ratified; the earlier 'Not yet implemented' value is HISTORICAL as at the W2.1 heads and is not rewritten; see NDC-REGISTRY.md and engineering/conformance/phase-3-acceptance-2026-11-25.md; Phase 3A current status and heads in engineering/conformance/phase-3a-acceptance-2026-11-25.md",
@@ -914,9 +919,9 @@
     "status": "RATIFIED 2026-11-24 by owner direction: publication durability is failure-model scoped, not a test count; governing programme contract for durability claims; not a claim that D1 is achieved and not a capability-state promotion",
     "sha256": "931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb",
     "prior_ratification_sha256": "d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6",
-    "prior_digest_role": "HISTORICAL — WS-EVIDENCE-026 three-case terminology correction digest; superseded for current evidence by FB-DUR-002 full matrix, not deleted",
+    "prior_digest_role": "HISTORICAL \u2014 WS-EVIDENCE-026 three-case terminology correction digest; superseded for current evidence by FB-DUR-002 full matrix, not deleted",
     "original_ratification_sha256": "2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71",
-    "original_digest_role": "HISTORICAL — original 2026-11-24 owner ratification digest, preserved in engineering/evidence/REVIEW-LOG.md",
+    "original_digest_role": "HISTORICAL \u2014 original 2026-11-24 owner ratification digest, preserved in engineering/evidence/REVIEW-LOG.md",
     "d0_full_matrix_evidence_record": "engineering/conformance/d0-full-matrix-evidence-2026-11-24.md",
     "scope": "docs/JSON only; no source, schema, right, data, provider, India, experiment, release, key or dataset change; no commit",
     "tiers": [
@@ -948,11 +953,11 @@
         "workspace_record": "engineering/conformance/d0-full-matrix-evidence-2026-11-24.md"
       },
       "D0_historical_subprocess_cases": [
-        "publish_before — process restart after the rename syscall but before the rename journal commit",
-        "publish_staging — process restart after the durable staging-tree journal commit",
-        "publish_rename — process restart after the durable rename journal commit"
+        "publish_before \u2014 process restart after the rename syscall but before the rename journal commit",
+        "publish_staging \u2014 process restart after the durable staging-tree journal commit",
+        "publish_rename \u2014 process restart after the durable rename journal commit"
       ],
-      "D0_historical_scope_note": "HISTORICAL — the exactly-three-case WS-EVIDENCE-026 scope was accurate at its own commit; preserved, not deleted, and superseded for current D0 evidence by the 28-exit-point matrix above. The three modes remain as harness aliases.",
+      "D0_historical_scope_note": "HISTORICAL \u2014 the exactly-three-case WS-EVIDENCE-026 scope was accurate at its own commit; preserved, not deleted, and superseded for current D0 evidence by the 28-exit-point matrix above. The three modes remain as harness aliases.",
       "D0_other_boundaries": "In-process fault injection only, not fresh-process/subprocess evidence and not counted in the 28 exit points: journal directory sync failure, staging mkdir, root sync, artifacts mkdir, each file write/sync, both directory syncs, rename root sync, receipt and marker write/sync/ledger sync, recovery from staging and final directory, v1-record readability and mixed-version refusal",
       "D0_scope_note": "D0 is process termination only. D1 OS/filesystem crash, D1b physical power loss and D2-D4 remain unqualified; PUBLICATION_DURABILITY_VERIFIED remains NOT ACHIEVED and no global durability claim is made. See WS-DUR-001 section 2.1 and engineering/conformance/d0-full-matrix-evidence-2026-11-24.md.",
       "D1_APFS_QUALIFIED": false,
@@ -979,10 +984,13 @@
     "invariants": "I-01..I-15 are normative in WS-DUR-001 section 7.",
     "freeze": "unchanged",
     "phase3_pointer": "HISTORICAL: engineering/conformance/phase-3-acceptance-2026-11-25.md reconciled Phase 3 capability states without promoting any durability tier; D0 remains profile-scoped at 4e0f2f5 and D1/D1b/D2-D4 remain unqualified.",
-    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md reconciles Phase 3A capability states without promoting any durability tier; D0 remains profile-scoped at 4e0f2f5 and D1/D1b/D2-D4 remain unqualified."
+    "phase3a_pointer": "engineering/conformance/phase-3a-acceptance-2026-11-25.md reconciles Phase 3A capability states without promoting any durability tier; D0 remains profile-scoped at 4e0f2f5 and D1/D1b/D2-D4 remain unqualified.",
+    "ratified_sha256": "931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb",
+    "current_file_sha256": "b1b2a4b918241d3e1de17a0a1859d0a4aaf15153130b59b2db756685fa65e479",
+    "digest_note": "Ratified digest preserved; current file digest from dated evidence extension in DIGEST-RECONCILIATION-2026-11-26.json"
   },
   "production_builder_parity": {
-    "status": "HISTORICAL — preserved unchanged as earlier production-builder parity evidence; not the current head at this reconciliation",
+    "status": "HISTORICAL \u2014 preserved unchanged as earlier production-builder parity evidence; not the current head at this reconciliation",
     "superseded_by": "engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md (dated current evidence baseline; earlier sections preserved, not overwritten)",
     "record": "engineering/conformance/ndc-v2-cross-execution-2026-11-24.md, section 'Production builder parity cross-execution (FB-NDC-013)'",
     "fieldbook_pr_head": "001e2688ed4863919e2eb8d35c47ee05615e755a",
@@ -1030,5 +1038,9 @@
     "superseded_by": "engineering/conformance/phase-3-acceptance-2026-11-25.md",
     "note": "HISTORICAL sprint record preserved unchanged: final heads fd4b542 / d3b66f5 / 6d45af2 and digest 6e18f8ce9fc739573fba055c8c52925eaec79622bb6e3028c889a9f135920e9c remain as at the sprint. Phase 3 current heads, CI and capability states are recorded in engineering/conformance/phase-3-acceptance-2026-11-25.md; D0 evidence was separately superseded by the 28-boundary matrix at 4e0f2f5.",
     "phase3a_pointer": "Phase 3A current status is recorded in engineering/conformance/phase-3a-acceptance-2026-11-25.md at FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa / NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8; the Phase 3 acceptance record remains the direct HISTORICAL superseder of this sprint record."
+  },
+  "digest_reconciliation": {
+    "path": "engineering/DIGEST-RECONCILIATION-2026-11-26.json",
+    "purpose": "Current file digests after path/status-header amendments; ratified digests preserved"
   }
 }

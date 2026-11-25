@@ -1,5 +1,7 @@
 # B15 — Bounded streaming Fieldbook producer lifecycle (design)
 
+> **CURRENT STATUS: DESIGN HISTORY.** Architecture ratified by WS-STREAM-001; implementation closed in Phase 3A. Numeric maxima remain deferred.
+
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
 Status: **PROPOSED / AWAITING OWNER APPROVAL**. This is a design package, not a ratification.
