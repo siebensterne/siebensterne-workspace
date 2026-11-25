@@ -10,9 +10,9 @@ submodule or monorepo. The two directories are local clones ignored by Git.
 
 ## Current state
 
-Machine-readable authority: `CURRENT-STATE.json`. It holds the five separately
-evidenced source-head concepts, CI results, capability states, open decisions
-and the freeze. Do not copy mutable status into prose documents.
+Machine-readable authority: `CURRENT-STATE.json`. It holds current source heads with their tested CI runs, capability states,
+open decisions and the freeze. Historical head concepts and phase bodies are
+kept in dated evidence, not copied into prose or current state. Do not copy mutable status into prose documents.
 
 Bootstrap pins and tool policy: `WORKSPACE.lock.json`. The pins are historical
 bootstrap baselines, not current heads.
