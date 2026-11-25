@@ -12,3 +12,6 @@ target/
 # Local source clones are never part of this repository
 /fieldbook/
 /nirnay/
+
+# CMake preset output
+/build/

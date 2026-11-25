@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "language": "q",
+  "dialect": "kdb+/KDB-X",
+  "purpose": "Machine-readable q / kdb+ style contract shared by all three repositories; loaded by scripts/check_q_style.py so the JSON is binding rather than documentation.",
+  "rules": {
+    "max_columns": 100,
+    "tabs": "forbidden",
+    "trailing_whitespace": "forbidden",
+    "final_newline": "required",
+    "bare_slash_line": "forbidden",
+    "unparenthesised_count_comparison": "forbidden",
+    "dotted_column_access_in_lambda": "forbidden",
+    "required_index_form": "t[`col]"
+  },
+  "namespaces": [
+    ".an",
+    ".fieldbook",
+    ".h",
+    ".j",
+    ".KU",
+    ".m",
+    ".nirnay",
+    ".pq",
+    ".q",
+    ".Q",
+    ".z"
+  ],
+  "enforcement": {
+    "checker": "scripts/check_q_style.py",
+    "self_test": "scripts/check_q_style.py --self-test",
+    "scope": "added .q lines relative to the configured base ref",
+    "pre_commit_hook": "q-style",
+    "waivers": "none"
+  }
+}

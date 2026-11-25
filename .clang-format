@@ -1,0 +1,64 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# C++20 formatting policy shared byte-for-byte by all three repositories.
+# Pinned formatter: clang-format 21.1.8 (quality-contract.json and
+# WORKSPACE.lock.json). Formatter settings are binding, not advisory.
+Language: Cpp
+BasedOnStyle: LLVM
+Standard: c++20
+ColumnLimit: 100
+IndentWidth: 2
+TabWidth: 8
+UseTab: Never
+ContinuationIndentWidth: 4
+ConstructorInitializerIndentWidth: 4
+
+BreakBeforeBraces: Attach
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: BeforeColon
+AlwaysBreakTemplateDeclarations: Yes
+AlwaysBreakAfterReturnType: None
+
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: All
+AllowShortLoopsOnASingleLine: false
+
+BinPackArguments: true
+BinPackParameters: true
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignOperands: Align
+AlignTrailingComments: true
+
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+DerivePointerAlignment: false
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: false
+SpacesBeforeTrailingComments: 2
+SpacesInAngles: Never
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+SortIncludes: CaseSensitive
+SortUsingDeclarations: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"'
+    Priority: 1
+  - Regex: '^<[a-z_]+\.h>'
+    Priority: 2
+  - Regex: '^<'
+    Priority: 3
+
+FixNamespaceComments: true
+ReflowComments: true
+CommentPragmas: '^NOLINT|^clang-format|^pragma'
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false
