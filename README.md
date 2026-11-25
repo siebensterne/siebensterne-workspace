@@ -1,116 +1,63 @@
 # siebensterne development workspace
 
-Orchestration repository for two independent source repositories:
+Orchestration repository for two independent repositories:
 
-- `siebensterne/fieldbook` — market-data acquisition, raw archive and release producer.
-- `siebensterne/nirnay` — research, simulation, portfolio, risk and NDC consumer.
+- `fieldbook/` — acquisition, preservation, reference facts, NDC publication.
+- `nirnay/` — independent verification, research, portfolio, risk and OMS.
 
-This repository contains **only** workspace instructions, scripts and registries. It is
-not a monorepo, not a parent Git repository, and it has no submodules, shared Cargo
-workspace or source copies. `fieldbook/` and `nirnay/` are local clones and are ignored
-by this repository's `.gitignore`.
+This repository has no product source, parent Git repository, shared crate,
+submodule or monorepo. The two directories are local clones ignored by Git.
 
-## Start here
+## Current state
 
-| Document | Purpose |
+Machine-readable authority: `CURRENT-STATE.json`. It holds the five separately
+evidenced source-head concepts, CI results, capability states, open decisions
+and the freeze. Do not copy mutable status into prose documents.
+
+Bootstrap pins and tool policy: `WORKSPACE.lock.json`. The pins are historical
+bootstrap baselines, not current heads.
+
+Ownership and programme boundaries: `WORKSPACE.md`. Historical phase records
+are in `engineering/evidence/`; they are not current status.
+
+## Authority map
+
+| Topic | Owning document |
 |---|---|
-| `WORKSPACE.md` | full programme, ownership and operating rules |
-| `WORKSPACE.lock.json` | pinned bootstrap baselines and tool policy |
-| `CURRENT-STATE.json` | current separately evidenced source-head concepts (`current_source_head`, `ci_verified_source_head`, `local_tested_source_head`, `cross_execution_source_head`, `reviewed_source_head`) at Phase 3A final heads FB `acbd9b683d86ba6fbb62f7170f8852b23876e3aa` / NZ `c2c51757b0aeca94d2eacf651e8861e1937f74c8` with hosted CI `45621903705` 2/2 and `45612047715` 12/12; `cross_execution_source_head` records actual B16 streaming cross-execution NOT_RUN (harness skip; not evidence); explicit Workspace provenance (`workspace_audited_subject_head` `6d45af2`, `workspace_evidence_commit` / packaged bundle head `95580f5`, `workspace_hosted_ci` `NOT_RUN`, `workspace_static_gates` `PASS`, external package-head attestation, no self-hash), `phase3a_acceptance` and `phase3a_capability_states`; Phase 3 heads, CI, capability states and record preserved as HISTORICAL, as are the legacy head and CI keys; static/test separation and open owner decisions; `generated_utc_date` 2026-11-25 |
-| `engineering/evidence/W1.1-COMPLETION-RECORD.md` | W1.1 work packages, CI, test-policy outcome, contract digests and remaining owner gates |
-| `engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md` | C0 normative rights/operation/data-object model; settles action, grant, purpose, time, revocation, trust and coverage semantics before implementation |
-| `engineering/architecture/india-domain-ownership-crosswalk.md` | W1.2-D1 ownership map for every India domain type; Fieldbook authority, Nirnay projections, frozen legacy |
-| `engineering/decisions/OWNER-RATIFICATION-2026-11-23.md` | ratified ownership roles and NDC v2 semantics with approved document digests; not a data licence |
-| `ENGINEERING-DOC-DIGESTS.json` | digests of workspace engineering documents |
-| `engineering/architecture/india-domain-ownership-crosswalk.md` | W1.2-D1 domain-by-domain Fieldbook-authority vs Nirnay-code crosswalk, ownership rule, verified defect findings and migration phases I1–I6; documentation only; ownership ADR Accepted 2026-11-23 |
-| `engineering/coverage/india-coverage-register.md` | W2-A measurable-coverage axes, I1–I6 India priority register and per-dimension denominators from C0 §6; development sequence only, no coverage figure claimed, rights UNKNOWN, dataset BLOCKED |
-| `docs/process/TOOL-MATRIX.md` | canonical tool versions, command surface and preserved differences |
-| `ADR-REGISTRY.md` | collision-free canonical ADR IDs across both repositories |
-| `NDC-REGISTRY.md` | NDC version, active `v2` contract, approved digests, consumer-use proposal status and compatibility rules |
-| `engineering/conformance/ndc-v2-conformance-matrix.md` | W2.1 D paired 15-area NDC v2 matrix: normative source and digest, contract field, actual producer/consumer file, role, validation rule, failure code, abstract-only test category, evidence and per-side state; no shared crate |
-| `engineering/conformance/ndc-v2-release-format-design.md` | W2.1 D **design only**: exact manifest content, RFC 8785 JCS signed bytes, detached Ed25519 sidecar, artifact paths, record order, schema versioning, digests, correction links, immutability, size maxima and verification/use race policy; serializer and verifier not implemented; no transport/broker/database |
-| `engineering/conformance/ndc-v2-schema-digest.json` | WP-5 schema registration: final Profile 1 version, profile and D1 amendment digests, strict unknown-field policy and source of truth; no standalone published schema artifact exists; typed structs are the implementation authorities |
-| `engineering/conformance/ndc-v2-acceptance-matrix.md` | WP-5 ten-check acceptance matrix: exact producer and verifier implementation/test evidence at the merged PR heads, both sides' states and typed rejection codes; cross-execution NOT_STARTED; no shared validator crate |
-| `engineering/conformance/ndc-v2-conformance-vectors/VECTORS.md` | WP-5 abstract non-market vector index with SHA-256 for each vector: RFC 8785 JCS, RFC 8032 public test key, canonical manifest and sidecar examples, and described adversarial cases |
-| `scripts/check_ndc_conformance_vectors.py` | WP-5 workspace evidence checker: verifies vector digests, index literal scans and cited test names at exact heads when clones are present; not a producer, verifier or connector |
-| `engineering/evidence/W2.1-READINESS-REPORT.md` | W2.1 E readiness: exact heads, approved digests, PR #6/#137–#140 and Fieldbook #52–#55 review/CI record, head-tagged and D11 test disposition, abstract 600 ms lease measurement, one status per requirement, rights state, open defects, gates and India design status |
-| `engineering/conformance/publication-integrity-sprint-acceptance-2026-11-24.md` | publication-integrity sprint acceptance: PUB-019/020/021, NZ-SNAP-001, FB-API-001, DUR-001, final heads and capability states; its three-case D0 scope and DUR-002 "remaining gate" are HISTORICAL as at sprint head `fd4b542` and superseded for current evidence by the D0 full-matrix record and, for Phase 3 heads, CI and capability states, by the phase-3 acceptance record and, for current Phase 3A status, by the phase-3a acceptance record; preserved unchanged |
-| `engineering/decisions/WS-SCOPE-2026-11-24-001-global-reference-core-india-first.md` | owner-ratified scope: global reference core with India first; ownership, model rules and work ordering |
-| `engineering/design/india-national-domain-catalogue.md` | IN-CAT-001 **PROPOSED** domain work breakdown, amended in place under IN-CAT-002/003/004: 20 cohorts IN-01..IN-20 with per-cohort object, family, contract, relationship, identifier, term, lifecycle, venue, time, authority, denominator, capability and rights declarations; explicit listed/OTC and four-way interest-rate subpopulations, three IN-20 subdomains, three IN-19 object contracts, mandatory Q01–Q20 cross-domain answers per cohort, ontology non-conflation rules, population types and I1–I6 migration sequence; not a population or provider claim |
-| `engineering/decisions/IN-COUNTRY-001-india-country-pack-design.md` | IN-COUNTRY-001 **PROPOSED** India country pack, amended in place under IN-COUNTRY-002: versioned extension of the global core with nine-field component evidence, immutable admitted pack versions, mainland/IFSC partition definitions submitted for owner approval, jurisdiction/authorities/infrastructure/venues/segments/identifiers/currencies/calendars/settlement/instrument rules/actions/regulation/provenance, bitemporal policy, 20-cohort completeness policy aligned to split subpopulations and global-core crosswalk; no rights, collection, reference ingestion, implementation or dataset acceptance |
-| `engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md` | owner-ratified NDC v2 Release Serialization Profile 1 (2026-11-24): Decisions A–I on manifest digest, ordering, artifacts, data digest, corrections, limits, publication, keys and independence; docs only |
-| `engineering/conformance/NDC-D1-AMENDMENT-001.md` | approved 2026-11-24 amendment to D1 §5.8/§7.2 with its own digest; complete-manifest JCS and sidecar-only `manifest_sha256`; D1 approved bytes and historical digest unchanged |
-| `engineering/conformance/ndc-v2-wire-contract-reconciliation.md` | WP-B6 PROPOSED field-level wire reconciliation: single 102-row matrix across D0/D1/D2/Profile 1 and both exact-head typed implementations, with semantic invariants, recommended canonical forms, decision authority and test vectors; 30 owner decision points; DP-01..DP-30 resolved by WS-NDC-2026-11-24-003; no Rust type normative, no cross-execution |
-| `engineering/decisions/WS-NDC-2026-11-24-003-canonical-profile-1-wire-schema.md` | owner-ratified canonical NDC v2 Profile 1 wire schema (2026-11-24): one language-independent wire authority with independent per-repository internal representations and no shared crate; strict JCS/UTF-8, decimal-string instants, byte-derived tagged ordering, typed operations/evidence, source scope, rights, coverage, lineage, registered compression, versioned schema package with one digest; resolves DP-01..DP-30; docs only, B8 builds the package |
-| `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` | owner-ratified publication durability as a failure model (2026-11-24; amended for FB-DUR-002 evidence): tiers D0 process termination through D4 disaster recovery with profile-scoped booleans and no global durability Boolean; error-only sync acknowledgement contract for five publication states; Linux `renameat2(RENAME_NOREPLACE)` and macOS `renamex_np(RENAME_EXCL)` with `fsync`, with macOS `F_FULLFSYNC` not yet used or qualified; VM reset distinguished from D1b physical power loss; Fieldbook v2 journal with PUB-019/020/021 and DUR-002 at exact commits; invariants I-01..I-15; current D0 evidence: 28 fresh-process exit points over 24 owner boundary names at Fieldbook `4e0f2f5` (outcomes 1/17/2/7/1, idempotent second recovery), in-process fault injection separate; the WS-EVIDENCE-026 three-case scope is preserved as HISTORICAL; D1 OS/filesystem crash, D1b power loss and D2–D4 unqualified; `PUBLICATION_DURABILITY_VERIFIED` remains NOT ACHIEVED; no global durability claim; docs only |
-| `engineering/design/b15-streaming-producer-design.md` | WP-2 / B15 **PROPOSED / AWAITING OWNER APPROVAL** bounded streaming Fieldbook producer lifecycle at `fd4b542`: bounded record-source API and framer, byte-derived order checking without whole-dataset sort, incremental digests and deterministic gzip, two-intent PreparationIntent/SealedPublicationIntent lifecycle with replay and non-replayable spool rules, Profile 1 digest compatibility, unapproved numeric resource-profile proposals, failure matrix, test plan, batch compatibility adapter and open decisions; no implementation, ratification, resource-maximum approval or capability promotion; 2026-11-25 WS-DOC-001 current-status notice and Appendix A record the ratified A-01..A-12 contract pointer (`WS-STREAM-001`, digest `f7415302…`) and Phase 3A corrective-work pointers (`FB-STREAM-001`, `FB-STREAM-002`, `FB-SPOOL-001`, `FB-LIMIT-001`, `FB-SOURCE-001`) with no merge claim at that time; subsequent merges are recorded in the phase-3a acceptance record; design remains PROPOSED and maxima DEFERRED |
-| `engineering/conformance/ndc-v2-schema-profile-1/VECTORS.md` | WP-B8 canonical schema package index: SHA-256 of all 26 files (8 strict JSON Schemas, 16 canonical abstract vectors, 2 normative documents); package identity `6e8c1e48…`; no secret or external observation |
-| `engineering/conformance/ndc-v2-cross-execution-2026-11-24.md` | WS-NDC-INT-002 canonical real producer-to-verifier cross-execution: exact commits, commands, stage results, rights refusal and mutation check. The conformance-path section at Fieldbook `071da27` and the FB-NDC-013 production-builder parity section at Fieldbook `5703185` (PR #66) / Nirnay `70716eb` are explicitly HISTORICAL and preserved unchanged; a 2026-11-24 reconciliation section points to the dated current record |
-| `engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md` | Dated current evidence baseline at Fieldbook `475dc34` / Nirnay `70716eb` / Workspace `62b617c`: exact commits and commands, exact release layout, stage results and capability states; supersedes stale head wording and the ambiguous "no receipt" phrasing by distinguishing the Fieldbook publication receipt from the Nirnay admission receipt (`receipt_written:false` means no Nirnay admission receipt); historical records preserved |
-| `engineering/conformance/ndc-v2-evidence-manifest-2026-11-24.md` | Dated PR 0 reconciliation evidence manifest: exact commits, evidence digests with `shasum -a 256` commands, `make consistency` / `make audit` gate results, derived summaries reconciled and freeze statement |
-| `engineering/conformance/ws-evidence-026-provenance-2026-11-24.md` | WS-EVIDENCE-026 terminology note: Workspace audited subject `6d45af2` vs packaged bundle head / evidence commit `95580f5`; hosted CI `NOT_RUN`; static gates `PASS`; meaning of all five head concepts; **HISTORICAL** three-D0-subprocess-case scope with all other boundaries in-process only, superseded for current evidence by FB-DUR-002 §6; external package-manifest head attestation and no internal self-hash |
-| `engineering/conformance/d0-full-matrix-evidence-2026-11-24.md` | Dated D0 evidence record for Fieldbook DUR-002 (PR #74, merged `4e0f2f5`): 28 fresh-process exit points over 24 owner boundary names, expected-outcome distribution (1 `NO_EVIDENCE`, 17 `UNCERTAIN_PUBLICATION_QUARANTINED`, 2 `RECOVERED_STAGED`, 7 `RECOVERED_PUBLISHED`, 1 `ALREADY_AVAILABLE`), idempotent second recovery, gate-record digest, in-process fault injection kept separate, historical three-case scope preserved, D1/D1b and D2–D4 unqualified, no global durability claim; docs only |
-| `engineering/conformance/ndc-v2-evidence-audit-2026-11-24.md` | WP-B6A evidence-led audit mapping the reviewer's twelve findings to current WIRE-CROSS source at Fieldbook `dd90899` (finding 2 re-evaluated at `071da27`) and Nirnay `70716eb`: 9 RESOLVED, 1 REMAINING (B15/B16), 1 OWNER-DECISION, 1 SEPARATE GATE as at the 2026-11-24 audit (HISTORICAL; B15/B16 subsequently implemented under WS-STREAM-001 and accepted in Phase 3 — see the phase-3 acceptance record); nine-state milestone assessment; docs only, no state promotion |
-| `engineering/design/b16-streaming-verifier-design.md` | WP-3 / B16 **PROPOSED / AWAITING OWNER APPROVAL** bounded streaming Nirnay release verifier design: chunked stored reader, streaming decompressor with a pre-materialization emission cap, reusable bounded framer and one-record parser, constant-size per-artifact state, metadata-only snapshot with the NZ #144 cleanup contract, eight-item owner acceptance list, failure matrix, open decisions and staged migration; docs only, no source or state change; 2026-11-25 WS-DOC-001 current-status notice and Appendix B visibly identify the superseded D2 assumption (dedicated `parser.max_string_bytes`, not derived from `max_record_bytes`) and D3 assumption (stage-five refusal at detection, not stage-nine deferral), with ratified choices governing and Phase 3A pointers only (`NZ-REG-001`, `NZ-RES-001`, `NZ-LIMIT-001`, `NZ-LIMIT-002`) at that time; subsequent merges are recorded in the phase-3a acceptance record |
-| `engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md` | owner-ratified B15/B16 streaming architecture and interface contracts (2026-11-25): twelve approved contract items; normative immutable versioned role-specific `ResourceProfile` with trusted local selection and stricter-of effective limits; OD-01..OD-10 and D1..D10 resolved individually; all numeric maxima, codec identifier and operational qualification deferred; implementation may proceed with finite `TEST_ONLY` profiles; `STREAM_RESOURCE_PROFILE_RATIFIED` pending, `PERF_001_QUALIFIED` and `OPERATIONALLY_QUALIFIED` blocked, `PUBLICATION_DURABILITY_VERIFIED` false; implementation completed under finite `TEST_ONLY` profiles at Phase 3 heads FB `8216197` / NZ `c1c2f0d` (HISTORICAL) and Phase 3A conformance packages merged at FB `acbd9b683d86ba6fbb62f7170f8852b23876e3aa` / NZ `c2c51757b0aeca94d2eacf651e8861e1937f74c8`; `STREAMING_IMPLEMENTATION_COMPLETE` ACHIEVED but not `Verified`; actual B16 streaming cross-execution NOT_RUN and not evidence; docs only |
-| `engineering/conformance/phase-3-acceptance-2026-11-25.md` | **HISTORICAL** Phase 3 evidence acceptance (2026-11-25, digest `3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4`): final heads FB `8216197` / NZ `c1c2f0d`, CI `45491963354` 2/2 and `45491893837` 12/12, merged WS #25/#26/#27/#28/#29/#30, FB #73/#74/#75 and NZ #145 package ledger, final binary cross-execution with stages 1–5 PASS, stage 6 `REJECT_RIGHTS_EVIDENCE`, `RIGHTS_ADMISSION_REFUSED`, no admission receipt, no surviving snapshot and dataset `BLOCKED`; numeric maxima deferred, no production invocation without an approved role `ResourceProfile`, verifier local ceiling stricter, PERF-001 and D1 not run, freeze unchanged; docs/JSON only; preserved unchanged and superseded as current status by the phase-3a acceptance record |
-| `engineering/conformance/phase-3a-acceptance-2026-11-25.md` | Phase 3A evidence acceptance (2026-11-25, digest `497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866`): final heads FB `acbd9b683d86ba6fbb62f7170f8852b23876e3aa` / NZ `c2c51757b0aeca94d2eacf651e8861e1937f74c8`, Workspace base `d12b5b9`, CI `45621903705` 2/2 and `45612047715` 12/12, merged NZ #146-#150 / FB #76-#80 / WS #31-#32 package ledger, stream-contract items closed except actual B16 streaming cross-execution which is **NOT_RUN** and not evidence, `STREAMING_IMPLEMENTATION_COMPLETE` ACHIEVED, `STREAM_RESOURCE_PROFILE_RATIFIED` PENDING, `PERF_001_QUALIFIED` BLOCKED, PUBLICATION_DURABILITY_VERIFIED false, freeze unchanged; no production profile, no numeric maxima, no PERF-001; docs/JSON only |
-| `engineering/decisions/NDC-RECEIPT-001-publication-receipt-consumer-contract.md` | WP-9 / NDC-RECEIPT-001 **PROPOSED / AWAITING OWNER RATIFICATION** consumer-side publication receipt contract: Fieldbook local publication receipt kept separate from the Nirnay admission receipt; independently signed receipt with a dedicated `RECEIPT_SIGNING` key purpose and separate out-of-band registry; normative wire fields and JCS/decimal-string canonicalization; strict verification pipeline with typed refusals; no rights grant, UNKNOWN promotion, dataset acceptance, experiment or execution; no ratified schema change, no shared crate and no production key; docs only, no implementation or state change |
-| `engineering/conformance/ndc-v2-schema-profile-1/manifest.schema.json` | WP-B8 canonical manifest JSON Schema (draft 2020-12): single root `contract_version`, required scope identifiers, typed operations/evidence, rights, coverage, lineage and payload registry, sole `artifacts[]`, `additionalProperties:false` throughout; sidecar, envelope, ordering, rights, coverage, lineage and registry schemas alongside it |
-| `engineering/conformance/ndc-v2-schema-profile-1/semantic-constraints.md` | WP-B8 cross-field rules JSON Schema cannot express: manifest digest location, sidecar binding, byte-derived ordering, artifact and dataset digests, rights separation, coverage arithmetic, lineage cycles and revision, key lifecycle, resource policy, availability and receipt, five distinct status states; structural validation insufficient |
-| `engineering/conformance/ndc-v2-schema-profile-1/compatibility-and-evolution.md` | WP-B8 strictness baseline and evolution rules: unknown/missing/wrong-type/coercion reject, no unversioned extensions, explicit version bump rules and breaking semantic changes |
-| `scripts/check_ndc_schema_package.py` | WP-B8 workspace checker: verifies every indexed digest, JSON parseability, strict schema structure and vector patterns; prints the single reproducible `SCHEMA-PACKAGE-DIGEST`; not a producer, verifier, shared validator or connector |
-| `engineering/style/DOCUMENTATION-STANDARD.md` | adopted documentation standard: Markdown, rustdoc, source comments, official language references and sweep-before-gates rule |
-| `engineering/retirement/RRP-001.md` | owner directive D11, six dispositions, per-file record schema, P0/P1/P2 priorities and binding retirement rules |
-| `engineering/retirement/FIELD-BOOK-RETIREMENT-MANIFEST.csv` | measured Fieldbook retirement candidates with path, commit, SHA-256, size, disposition and reason (219 rows) |
-| `engineering/retirement/NIRNAY-RETIREMENT-MANIFEST.csv` | measured Nirnay retirement candidates with the same record schema (76 rows) |
-| `engineering/retirement/DEPENDENCY-CROSSWALK.csv` | retired paths to the module registrations, commands, CI targets and docs that must be updated (45 rows) |
-| `engineering/retirement/RETIREMENT-ACCEPTANCE.md` | RRP-002..RRP-007 acceptance gates and no-deletion-before-replacement rules |
-| `engineering/retirement/RRP-006-analytics-sbe-decision.md` | RRP-006 decision: Nirnay owns research analytics, KDB/q and experiments; NDC v2 is the only cross-repo semantic contract; custom SBE format, Fieldbook offline analytics and the generated/decoder codecs are CONDITIONAL and deprecate after first accepted NDC v2 release publication |
-| `engineering/evidence/REVIEW-LOG.md` | cross-repository decisions with exact commits |
-| `docs/process/PAIRED-PR-CHECKLIST.md` | required checks for any cross-repository change |
-| `docs/process/SHARED-FILES.md` | byte-identical versus repository-local file classification |
-| `AGENTS.md` | binding rules for agents working in this workspace |
+| Agent workflow | `AGENTS.md` |
+| Ownership and boundaries | `WORKSPACE.md` |
+| Cross-repository ADR identities | `ADR-REGISTRY.md` |
+| NDC versions, digests and contract status | `NDC-REGISTRY.md` |
+| Engineering document digests | `ENGINEERING-DOC-DIGESTS.json` |
+| Ownership, contracts and decisions | `engineering/decisions/` |
+| Architecture, design, coverage and style | `engineering/architecture/`, `engineering/design/`, `engineering/coverage/`, `engineering/style/` |
+| NDC conformance, schema packages and phase evidence | `engineering/conformance/` |
+| Retirement decisions and manifests | `engineering/retirement/` |
+| Historical phase and review records | `engineering/evidence/` |
+| Pairing, tool commands and shared-file policy | `docs/process/` |
 
-**WS-DOC-001 streaming design-document sync (2026-11-25):** the B15 and B16 rows above gained
-additive current-status notices and conformance appendices pointing to the ratified `WS-STREAM-001`
-decision (`f7415302…`) and to Phase 3A corrective work packages by identifier only. No package
-merge, outcome, capability promotion or new ADR is claimed; `NDC-RECEIPT-001` stays PROPOSED, the
-publication and admission receipts stay separate, and Workspace hosted CI stays `NOT_RUN`. See the
-`engineering/evidence/REVIEW-LOG.md` entry dated 2026-11-25.
+Read the owning document for a task. Older records answer historical questions;
+they do not override the current authority.
 
-**Phase 3A evidence acceptance (2026-11-25):** the five `CURRENT-STATE.json` head concepts now carry
-the Phase 3A final heads FB `acbd9b683d86ba6fbb62f7170f8852b23876e3aa` / NZ `c2c51757b0aeca94d2eacf651e8861e1937f74c8` and CI runs `45621903705` (2/2) and
-`45612047715` (12/12). The `phase-3a-acceptance-2026-11-25.md` record, registries, document map and
-review log reconcile the merged Phase 3A packages and explicitly state that actual B16 streaming
-cross-execution remains `NOT_RUN` and is not evidence; no production `ResourceProfile`, no numeric
-maxima, no PERF-001 or PERF-BASE-001 result, no D1 qualification and no capability promotion is
-claimed. The Phase 3 and earlier records remain HISTORICAL and unchanged. See the `engineering/evidence/REVIEW-LOG.md`
-entry dated 2026-11-25 for Phase 3A.
+## Freeze
+
+Rights remain `UNKNOWN`, dataset acceptance `BLOCKED`, budget `INR 0`, provider
+collection `DISABLED`, experiments `BLOCKED`, M4 holdout untouched, synthetic
+market-shaped tests retired under D11 and live execution `DISABLED`. No
+document in this repository grants data rights or operational authority.
 
 ## Commands
 
 ```
-make bootstrap        clone or verify both repositories at the pinned baselines
-make status           read-only head, branch, dirt and lock-skew report
-make ci-report        latest hosted CI conclusion per repository
-make consistency      read-only tool, canonical-file and lock audit
-make check-all        both static gate surfaces
-make check-nirnay     Nirnay's full local gate
-make audit            status + consistency + check-all
-python3 scripts/check_ndc_conformance_vectors.py   verify the WP-5 vector package
-python3 scripts/check_ndc_schema_package.py     verify the WP-B8 canonical schema package and print its digest
+make bootstrap        verify pinned local clones
+make status           heads, dirt, remotes and CI
+make consistency      tool, canonical-file and lock audit
+make check-all        both repository static gate surfaces
+make check-nirnay     Nirnay full local suite
+make audit            status + consistency + static gates
+make ci-report        latest hosted CI conclusions
+make package-review   deterministic source/history ZIPs
 ```
 
-`make check-fieldbook-static` and `make check-nirnay-static` share one meaning: static
-gates only, no tests, no e2e, no provider contact. Under owner directive D11 the Fieldbook
-synthetic fixture inventory is being retired rather than merely disabled, and the Nirnay
-`market_shaped_fixture` deselection is being replaced by removal. The W1.1/W1.2 test-policy
-records, counts and digests remain historical and unchanged; see `engineering/retirement/`.
-
-## Boundaries
-
-No provider contact, market-data download, scraper, collector execution, experiment,
-live order, synthetic market observation, shared crate, queue, database or transport
-choice is authorised by this repository. Rights remain `UNKNOWN` and dataset acceptance
-remains `BLOCKED` until written evidence and owner approval exist.
+See `docs/process/TOOL-MATRIX.md` for pinned versions and repository-specific
+commands, and `docs/process/PAIRED-PR-CHECKLIST.md` for coordinated changes.
