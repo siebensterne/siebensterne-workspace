@@ -83,6 +83,45 @@ else
   fail=1
 fi
 
+printf '\n[documentation budgets]\n'
+for repo in "$ROOT" "$FB" "$NR"; do
+  name="$(basename "$repo")"
+  if [[ ! -f "$repo/README.md" || ! -f "$repo/AGENTS.md" ]]; then
+    printf 'FAIL %-34s missing README or AGENTS\n' "$name"
+    fail=1
+    continue
+  fi
+  readme_lines="$(wc -l < "$repo/README.md" | tr -d ' ')"
+  agents_bytes="$(wc -c < "$repo/AGENTS.md" | tr -d ' ')"
+  if [[ "$readme_lines" -gt 100 ]]; then
+    printf 'FAIL %-34s README lines=%s\n' "$name" "$readme_lines"
+    fail=1
+  else
+    printf 'PASS %-34s README lines=%s\n' "$name" "$readme_lines"
+  fi
+  if [[ "$agents_bytes" -gt 2048 ]]; then
+    printf 'FAIL %-34s AGENTS bytes=%s\n' "$name" "$agents_bytes"
+    fail=1
+  else
+    printf 'PASS %-34s AGENTS bytes=%s\n' "$name" "$agents_bytes"
+  fi
+done
+
+state_bytes="$(wc -c < "$ROOT/CURRENT-STATE.json" | tr -d ' ')"
+if [[ "$state_bytes" -gt 16384 ]]; then
+  printf 'FAIL %-34s bytes=%s\n' 'CURRENT-STATE.json' "$state_bytes"
+  fail=1
+else
+  printf 'PASS %-34s bytes=%s\n' 'CURRENT-STATE.json' "$state_bytes"
+fi
+
+if grep -Eq '<!--[[:space:]]*CURRENT-STATE' "$NR/README.md"; then
+  printf 'FAIL %-34s local status snapshot found\n' 'nirnay status authority'
+  fail=1
+else
+  printf 'PASS %-34s no local snapshot\n' 'nirnay status authority'
+fi
+
 if [[ "$fail" -ne 0 ]]; then
   printf '\nCONSISTENCY FAILED\n' >&2
   exit 1
