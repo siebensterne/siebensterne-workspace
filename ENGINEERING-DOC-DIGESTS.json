@@ -128,16 +128,25 @@
     "path": "engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md",
     "sha256": "f74153024c1d526fe5c9d49b22e541263581c52c0dbae19a67e8d2ea841a4fe1",
     "date": "2026-11-25",
-    "status": "Ratified by owner direction 2026-11-25; implementation completed at Phase 3 final heads under finite TEST_ONLY profiles",
+    "status": "Ratified by owner direction 2026-11-25; implementation completed at Phase 3A final heads under finite TEST_ONLY profiles",
     "command": "shasum -a 256 engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md",
-    "note": "Contracts A-01..A-12 and all twenty source decisions ratified at contract level. Implemented at FB 8216197 (PR #75) / NZ c1c2f0d (PR #145) as STREAMING_IMPLEMENTATION_COMPLETE, not Verified. Numeric maxima, codec identifier, STREAM_RESOURCE_PROFILE_RATIFIED and PERF_001_QUALIFIED remain deferred or blocked. See phase3_acceptance_2026_11_25."
+    "note": "Contracts A-01..A-12 and all twenty source decisions ratified at contract level. Phase 3 heads FB 8216197 / NZ c1c2f0d are HISTORICAL; Phase 3A conformance packages merged at FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa / NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8 as STREAMING_IMPLEMENTATION_COMPLETE, not Verified, with actual B16 streaming cross-execution NOT_RUN and not evidence. Numeric maxima, codec identifier, STREAM_RESOURCE_PROFILE_RATIFIED and PERF_001_QUALIFIED remain deferred or blocked. See phase3a_acceptance_2026_11_25."
   },
   "phase3_acceptance_2026_11_25": {
     "path": "engineering/conformance/phase-3-acceptance-2026-11-25.md",
     "sha256": "3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4",
     "date": "2026-11-25",
-    "status": "Accepted — docs/JSON evidence record only; no commit",
+    "status": "HISTORICAL — accepted Phase 3 docs/JSON evidence record only; no commit; preserved unchanged",
     "command": "shasum -a 256 engineering/conformance/phase-3-acceptance-2026-11-25.md",
-    "note": "Final heads FB 8216197 / NZ c1c2f0d, hosted CI 45491963354 (2/2) and 45491893837 (12/12), merged package ledger, final binary cross-execution with stage 6 REJECT_RIGHTS_EVIDENCE and RIGHTS_ADMISSION_REFUSED, capability states and claim discipline. Numeric maxima deferred; no production invocation without an approved role ResourceProfile; PERF-001 and D1 not run."
+    "note": "Final heads FB 8216197 / NZ c1c2f0d, hosted CI 45491963354 (2/2) and 45491893837 (12/12), merged package ledger, final binary cross-execution with stage 6 REJECT_RIGHTS_EVIDENCE and RIGHTS_ADMISSION_REFUSED, capability states and claim discipline. Numeric maxima deferred; no production invocation without an approved role ResourceProfile; PERF-001 and D1 not run.",
+    "phase3a_pointer": "phase3a_acceptance_2026_11_25 is the current Phase 3A status; this Phase 3 record and its heads, CI and cross-execution are preserved unchanged."
+  },
+  "phase3a_acceptance_2026_11_25": {
+    "path": "engineering/conformance/phase-3a-acceptance-2026-11-25.md",
+    "sha256": "497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866",
+    "date": "2026-11-25",
+    "status": "Accepted — current Phase 3A docs/JSON evidence record only; no commit",
+    "command": "shasum -a 256 engineering/conformance/phase-3a-acceptance-2026-11-25.md",
+    "note": "Final heads FB acbd9b683d86ba6fbb62f7170f8852b23876e3aa / NZ c2c51757b0aeca94d2eacf651e8861e1937f74c8, hosted CI 45621903705 (2/2) and 45612047715 (12/12), merged Phase 3A package ledger, actual B16 streaming cross-execution NOT_RUN (harness skip, not evidence), no production ResourceProfile, no numeric maxima, PERF-001 and PERF-BASE-001 not run, PUBLICATION_DURABILITY_VERIFIED false, freeze unchanged. Supersedes Phase 3 as current status; Phase 3 evidence preserved unchanged."
   }
 }

@@ -12,7 +12,7 @@ registry gives each a canonical ID without renaming historical files.
 | `WS-NDC-2026-11-24-002` | Workspace (cross-repository) | `engineering/decisions/WS-NDC-2026-11-24-002-ndc-v2-release-serialization-profile-1.md` | NDC v2 Release Serialization Profile 1: manifest digest, ordering, artifacts, data digest, corrections, limits, publication, keys, independence | **Ratified 2026-11-24** by owner |
 | `WS-NDC-2026-11-24-003` | Workspace (cross-repository) | `engineering/decisions/WS-NDC-2026-11-24-003-canonical-profile-1-wire-schema.md` | Canonical NDC v2 Profile 1 wire schema: language-independent wire authority, strict canonical encoding, instants/numbers, byte-derived tagged record ordering, typed operations/evidence, source scope, rights, coverage, lineage, registered compression, versioned schema package; resolves DP-01..DP-30 | **Ratified 2026-11-24** by owner direction; digest `417bd4e5e9904d21d2da5905b3ac68905d677f800526eeedcf25fab897ce2119` |
 | `WS-DUR-001` | Workspace (cross-repository) | `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` | Publication durability as a failure model: tiers D0–D4, profile-scoped booleans, error-only sync acknowledgement contract, per-platform primitive qualification, permissible claim language, journal and pending-package relationship, invariants I-01..I-15 | **Ratified 2026-11-24** by owner direction; current digest `931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` (FB-DUR-002 full-matrix evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` preserved as historical in `REVIEW-LOG.md`) |
-| `WS-STREAM-001` | Workspace (cross-repository) | `engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md` | B15/B16 bounded streaming architecture and interface contracts A-01..A-12; normative immutable versioned `ResourceProfile` contract with role-specific profiles and trusted local selection; OD-01..OD-10 and D1..D10 resolved individually | **Ratified 2026-11-25** by owner direction; implementation completed under finite `TEST_ONLY` profiles at FB `8216197` (PR #75) / NZ `c1c2f0d` (PR #145) per Phase 3 acceptance, not `Verified`; all numeric resource maxima, codec identifier and operational qualification deferred; `STREAM_RESOURCE_PROFILE_RATIFIED` pending |
+| `WS-STREAM-001` | Workspace (cross-repository) | `engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md` | B15/B16 bounded streaming architecture and interface contracts A-01..A-12; normative immutable versioned `ResourceProfile` contract with role-specific profiles and trusted local selection; OD-01..OD-10 and D1..D10 resolved individually | **Ratified 2026-11-25** by owner direction; implementation completed under finite `TEST_ONLY` profiles; Phase 3A conformance packages merged at FB `acbd9b683d86ba6fbb62f7170f8852b23876e3aa` / NZ `c2c51757b0aeca94d2eacf651e8861e1937f74c8`, not `Verified`, and actual B16 streaming cross-execution NOT_RUN (not evidence); all numeric resource maxima, codec identifier and operational qualification deferred; `STREAM_RESOURCE_PROFILE_RATIFIED` pending |
 
 Nirnay also carries `NR-ARCH-ADR-INDEX.md` under `engineering/architecture/decisions/`.
 New ADRs must register here in the same commit that adds them, using the repository
@@ -48,7 +48,19 @@ at FB `8216197124d33466fbe651e417b7c19505e4155e` (B15, PR #75) and NZ
 invocation without an approved role profile; PERF-001 and D1 are not run. The evidence record is
 `engineering/conformance/phase-3-acceptance-2026-11-25.md` (digest
 `3a823688f59bca1fd78ba8f02231b97f8d40d98647430551fbc2e805a0cb2ee4`). It is an acceptance record,
-not a new numbered ADR, and changes no approved decision byte.
+not a new numbered ADR, and changes no approved decision byte. This Phase 3 pointer is **HISTORICAL**;
+current status is in the Phase 3A pointer below.
+
+**Phase 3A evidence acceptance pointer (2026-11-25):** Phase 3A conformance packages merged at FB
+`acbd9b683d86ba6fbb62f7170f8852b23876e3aa` and NZ `c2c51757b0aeca94d2eacf651e8861e1937f74c8` (NZ #146-#150, FB #76-#80, WS #31/#32); hosted CI `45621903705`
+(2/2) and `45612047715` (12/12); Workspace hosted CI `NOT_RUN`. The evidence record is
+`engineering/conformance/phase-3a-acceptance-2026-11-25.md` (digest `497df40aa13fa6d610e36f85f7f3d225ccc575232e9a09ecee219b304afc1866`). It is an acceptance record, not a new
+numbered ADR, and changes no approved decision byte. The B15/B16 stream-contract conformance items
+are closed except actual B16 streaming cross-execution, which is **NOT_RUN** (NZ-API-001 harness
+skips with an explicit reason; no external B15 streaming producer binary; `cfg(test)`-only
+`TEST_ONLY` helpers) and must not be counted as evidence. No production `ResourceProfile`, no
+numeric maxima, no PERF-001 or PERF-BASE-001 result, no D1 qualification, no `Implemented`-to-`Verified`
+promotion and no change to the freeze. `WS-STREAM-001` remains RATIFIED at contract level only.
 
 **WS-DOC-001 design-document synchronization pointer (2026-11-25):** docs-only current-status
 notices and conformance appendices were added to `engineering/design/b15-streaming-producer-design.md`
@@ -56,7 +68,9 @@ notices and conformance appendices were added to `engineering/design/b15-streami
 the `WS-STREAM-001` decision digest `f74153024c1d526fe5c9d49b22e541263581c52c0dbae19a67e8d2ea841a4fe1`
 and to the Phase 3 acceptance record; B16 names the ratified D2 dedicated `parser.max_string_bytes`
 field and D3 stage-five refusal at detection as superseding the original proposal assumptions, and
-both appendices list Phase 3A corrective work packages as pointers only. This synchronization
+both appendices list Phase 3A corrective work packages as pointers only at that time; their
+subsequent merges are recorded in the Phase 3A acceptance record with actual B16 streaming
+cross-execution NOT_RUN and not evidence. This synchronization
 registers **no new canonical ADR**, changes no ADR status, approves no numeric maximum or profile
 digest, promotes no `Implemented`/`Verified`/`PERF_001_QUALIFIED`/`OPERATIONALLY_QUALIFIED` state,
 and does not ratify `NDC-RECEIPT-001` (still **PROPOSED**; publication and admission receipts stay
