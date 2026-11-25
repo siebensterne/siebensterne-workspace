@@ -17,14 +17,14 @@ by this repository's `.gitignore`.
 | `WORKSPACE.md` | full programme, ownership and operating rules |
 | `WORKSPACE.lock.json` | pinned bootstrap baselines and tool policy |
 | `CURRENT-STATE.json` | current separately evidenced source-head concepts (`current_source_head`, `ci_verified_source_head`, `local_tested_source_head`, `cross_execution_source_head`, `reviewed_source_head`) at Phase 3A final heads FB `acbd9b683d86ba6fbb62f7170f8852b23876e3aa` / NZ `c2c51757b0aeca94d2eacf651e8861e1937f74c8` with hosted CI `45621903705` 2/2 and `45612047715` 12/12; `cross_execution_source_head` records actual B16 streaming cross-execution NOT_RUN (harness skip; not evidence); explicit Workspace provenance (`workspace_audited_subject_head` `6d45af2`, `workspace_evidence_commit` / packaged bundle head `95580f5`, `workspace_hosted_ci` `NOT_RUN`, `workspace_static_gates` `PASS`, external package-head attestation, no self-hash), `phase3a_acceptance` and `phase3a_capability_states`; Phase 3 heads, CI, capability states and record preserved as HISTORICAL, as are the legacy head and CI keys; static/test separation and open owner decisions; `generated_utc_date` 2026-11-25 |
-| `W1.1-COMPLETION-RECORD.md` | W1.1 work packages, CI, test-policy outcome, contract digests and remaining owner gates |
+| `engineering/evidence/W1.1-COMPLETION-RECORD.md` | W1.1 work packages, CI, test-policy outcome, contract digests and remaining owner gates |
 | `engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md` | C0 normative rights/operation/data-object model; settles action, grant, purpose, time, revocation, trust and coverage semantics before implementation |
 | `engineering/architecture/india-domain-ownership-crosswalk.md` | W1.2-D1 ownership map for every India domain type; Fieldbook authority, Nirnay projections, frozen legacy |
 | `engineering/decisions/OWNER-RATIFICATION-2026-11-23.md` | ratified ownership roles and NDC v2 semantics with approved document digests; not a data licence |
 | `ENGINEERING-DOC-DIGESTS.json` | digests of workspace engineering documents |
 | `engineering/architecture/india-domain-ownership-crosswalk.md` | W1.2-D1 domain-by-domain Fieldbook-authority vs Nirnay-code crosswalk, ownership rule, verified defect findings and migration phases I1–I6; documentation only; ownership ADR Accepted 2026-11-23 |
 | `engineering/coverage/india-coverage-register.md` | W2-A measurable-coverage axes, I1–I6 India priority register and per-dimension denominators from C0 §6; development sequence only, no coverage figure claimed, rights UNKNOWN, dataset BLOCKED |
-| `TOOL-MATRIX.md` | canonical tool versions, command surface and preserved differences |
+| `docs/process/TOOL-MATRIX.md` | canonical tool versions, command surface and preserved differences |
 | `ADR-REGISTRY.md` | collision-free canonical ADR IDs across both repositories |
 | `NDC-REGISTRY.md` | NDC version, active `v2` contract, approved digests, consumer-use proposal status and compatibility rules |
 | `engineering/conformance/ndc-v2-conformance-matrix.md` | W2.1 D paired 15-area NDC v2 matrix: normative source and digest, contract field, actual producer/consumer file, role, validation rule, failure code, abstract-only test category, evidence and per-side state; no shared crate |
@@ -33,7 +33,7 @@ by this repository's `.gitignore`.
 | `engineering/conformance/ndc-v2-acceptance-matrix.md` | WP-5 ten-check acceptance matrix: exact producer and verifier implementation/test evidence at the merged PR heads, both sides' states and typed rejection codes; cross-execution NOT_STARTED; no shared validator crate |
 | `engineering/conformance/ndc-v2-conformance-vectors/VECTORS.md` | WP-5 abstract non-market vector index with SHA-256 for each vector: RFC 8785 JCS, RFC 8032 public test key, canonical manifest and sidecar examples, and described adversarial cases |
 | `scripts/check_ndc_conformance_vectors.py` | WP-5 workspace evidence checker: verifies vector digests, index literal scans and cited test names at exact heads when clones are present; not a producer, verifier or connector |
-| `W2.1-READINESS-REPORT.md` | W2.1 E readiness: exact heads, approved digests, PR #6/#137–#140 and Fieldbook #52–#55 review/CI record, head-tagged and D11 test disposition, abstract 600 ms lease measurement, one status per requirement, rights state, open defects, gates and India design status |
+| `engineering/evidence/W2.1-READINESS-REPORT.md` | W2.1 E readiness: exact heads, approved digests, PR #6/#137–#140 and Fieldbook #52–#55 review/CI record, head-tagged and D11 test disposition, abstract 600 ms lease measurement, one status per requirement, rights state, open defects, gates and India design status |
 | `engineering/conformance/publication-integrity-sprint-acceptance-2026-11-24.md` | publication-integrity sprint acceptance: PUB-019/020/021, NZ-SNAP-001, FB-API-001, DUR-001, final heads and capability states; its three-case D0 scope and DUR-002 "remaining gate" are HISTORICAL as at sprint head `fd4b542` and superseded for current evidence by the D0 full-matrix record and, for Phase 3 heads, CI and capability states, by the phase-3 acceptance record and, for current Phase 3A status, by the phase-3a acceptance record; preserved unchanged |
 | `engineering/decisions/WS-SCOPE-2026-11-24-001-global-reference-core-india-first.md` | owner-ratified scope: global reference core with India first; ownership, model rules and work ordering |
 | `engineering/design/india-national-domain-catalogue.md` | IN-CAT-001 **PROPOSED** domain work breakdown, amended in place under IN-CAT-002/003/004: 20 cohorts IN-01..IN-20 with per-cohort object, family, contract, relationship, identifier, term, lifecycle, venue, time, authority, denominator, capability and rights declarations; explicit listed/OTC and four-way interest-rate subpopulations, three IN-20 subdomains, three IN-19 object contracts, mandatory Q01–Q20 cross-domain answers per cohort, ontology non-conflation rules, population types and I1–I6 migration sequence; not a population or provider claim |
@@ -67,9 +67,9 @@ by this repository's `.gitignore`.
 | `engineering/retirement/DEPENDENCY-CROSSWALK.csv` | retired paths to the module registrations, commands, CI targets and docs that must be updated (45 rows) |
 | `engineering/retirement/RETIREMENT-ACCEPTANCE.md` | RRP-002..RRP-007 acceptance gates and no-deletion-before-replacement rules |
 | `engineering/retirement/RRP-006-analytics-sbe-decision.md` | RRP-006 decision: Nirnay owns research analytics, KDB/q and experiments; NDC v2 is the only cross-repo semantic contract; custom SBE format, Fieldbook offline analytics and the generated/decoder codecs are CONDITIONAL and deprecate after first accepted NDC v2 release publication |
-| `REVIEW-LOG.md` | cross-repository decisions with exact commits |
-| `PAIRED-PR-CHECKLIST.md` | required checks for any cross-repository change |
-| `SHARED-FILES.md` | byte-identical versus repository-local file classification |
+| `engineering/evidence/REVIEW-LOG.md` | cross-repository decisions with exact commits |
+| `docs/process/PAIRED-PR-CHECKLIST.md` | required checks for any cross-repository change |
+| `docs/process/SHARED-FILES.md` | byte-identical versus repository-local file classification |
 | `AGENTS.md` | binding rules for agents working in this workspace |
 
 **WS-DOC-001 streaming design-document sync (2026-11-25):** the B15 and B16 rows above gained
@@ -77,7 +77,7 @@ additive current-status notices and conformance appendices pointing to the ratif
 decision (`f7415302…`) and to Phase 3A corrective work packages by identifier only. No package
 merge, outcome, capability promotion or new ADR is claimed; `NDC-RECEIPT-001` stays PROPOSED, the
 publication and admission receipts stay separate, and Workspace hosted CI stays `NOT_RUN`. See the
-`REVIEW-LOG.md` entry dated 2026-11-25.
+`engineering/evidence/REVIEW-LOG.md` entry dated 2026-11-25.
 
 **Phase 3A evidence acceptance (2026-11-25):** the five `CURRENT-STATE.json` head concepts now carry
 the Phase 3A final heads FB `acbd9b683d86ba6fbb62f7170f8852b23876e3aa` / NZ `c2c51757b0aeca94d2eacf651e8861e1937f74c8` and CI runs `45621903705` (2/2) and
@@ -85,7 +85,7 @@ the Phase 3A final heads FB `acbd9b683d86ba6fbb62f7170f8852b23876e3aa` / NZ `c2c
 review log reconcile the merged Phase 3A packages and explicitly state that actual B16 streaming
 cross-execution remains `NOT_RUN` and is not evidence; no production `ResourceProfile`, no numeric
 maxima, no PERF-001 or PERF-BASE-001 result, no D1 qualification and no capability promotion is
-claimed. The Phase 3 and earlier records remain HISTORICAL and unchanged. See the `REVIEW-LOG.md`
+claimed. The Phase 3 and earlier records remain HISTORICAL and unchanged. See the `engineering/evidence/REVIEW-LOG.md`
 entry dated 2026-11-25 for Phase 3A.
 
 ## Commands

@@ -214,7 +214,7 @@ re-run any binary, alter any source repository or claim any new capability.
 | Workspace | `62b617c380ea97cd2a68f67c880a1f652ef14961` | current, local-tested (workspace `make audit`), reviewed; clean `main`; **no CI run recorded** |
 
 Fieldbook CI run `45406722498` (2/2 success) and Nirnay CI run `45357742748`
-(12/12 success) are recorded in `REVIEW-LOG.md`. No hosted CI run is recorded
+(12/12 success) are recorded in `engineering/evidence/REVIEW-LOG.md`. No hosted CI run is recorded
 for the workspace orchestration repository; its verification method is the
 workspace `make audit` gate, not CI.
 
@@ -232,7 +232,7 @@ workspace `make audit` gate, not CI.
 ### Current final cross-execution outcome
 
 The final production-builder cross-execution at Fieldbook `475dc34f` / Nirnay
-`70716eb` is recorded in `REVIEW-LOG.md` (2026-11-24 final release-correctness
+`70716eb` is recorded in `engineering/evidence/REVIEW-LOG.md` (2026-11-24 final release-correctness
 baseline entry): structural, manifest, signature, publisher, artifact and
 ordering stages PASS; stage 6 returns `REJECT_RIGHTS_EVIDENCE` under
 `rights_state: UNKNOWN`; outcome `RIGHTS_ADMISSION_REFUSED`; stages 7-12

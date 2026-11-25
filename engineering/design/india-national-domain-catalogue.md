@@ -1081,4 +1081,4 @@ denominator.
 - `engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md` — C0 scope containment, bitemporal
   semantics, provenance and denominator rules.
 - `README.md` — document map; `CURRENT-STATE.json` — rights, budget and acceptance state;
-  `REVIEW-LOG.md` — owner-decision record.
+  `engineering/evidence/REVIEW-LOG.md` — owner-decision record.

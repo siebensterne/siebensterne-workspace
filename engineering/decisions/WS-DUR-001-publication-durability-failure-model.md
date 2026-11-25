@@ -26,7 +26,7 @@ fresh-process (subprocess) D0 cases from in-process fault injection. The ratifie
 tier booleans, acknowledgement contract and invariants are unchanged. At that time the correction
 neither broadened D0 beyond its then-stated three-case scope nor narrowed the achieved scope to
 false; `PUBLICATION_DURABILITY_VERIFIED` remains NOT ACHIEVED. The original ratification digest,
-the WS-EVIDENCE-026-era digest and the current amended digest are recorded in `REVIEW-LOG.md`,
+the WS-EVIDENCE-026-era digest and the current amended digest are recorded in `engineering/evidence/REVIEW-LOG.md`,
 `CURRENT-STATE.json`, `NDC-REGISTRY.md` and `ADR-REGISTRY.md`. See
 `engineering/conformance/ws-evidence-026-provenance-2026-11-24.md`.
 
@@ -43,7 +43,7 @@ crash, D1b physical power loss, D2 local device failure, D3 host failure and D4 
 remain unqualified, and no global durability claim is made. The amended decision digest is
 recorded in `CURRENT-STATE.json`, `NDC-REGISTRY.md` and `ADR-REGISTRY.md`; the prior WS-EVIDENCE-026
 digest `d3a18e62…` and the original ratification digest `2b04f9b…` are preserved as historical in
-`REVIEW-LOG.md`. See `engineering/conformance/d0-full-matrix-evidence-2026-11-24.md`.
+`engineering/evidence/REVIEW-LOG.md`. See `engineering/conformance/d0-full-matrix-evidence-2026-11-24.md`.
 
 ## 1. Governing decision
 
@@ -255,7 +255,7 @@ or one device class never transfers to another profile.
    gate record at `df0b1d5`; PUB-021 at merged main `e87a043`; FB-API-001 at `fd4b542`; and
    DUR-002 at merged main `4e0f2f5`. These commits are evidence pointers only: this documentation
    work neither re-runs their gates nor changes a source head, and earlier ratification wording
-   that listed PUB-020/PUB-021 as pending is HISTORICAL and preserved in `REVIEW-LOG.md`.
+   that listed PUB-020/PUB-021 as pending is HISTORICAL and preserved in `engineering/evidence/REVIEW-LOG.md`.
    `D0_PROCESS_RECOVERY_VERIFIED=true` is the profile-scoped predicate evidenced by the recorded
    PUB-020 and DUR-002 merges; D1 OS/filesystem crash and D1b power loss stay unqualified, no
    global durability claim is made, and no `Implemented` package is promoted to `Verified`.
@@ -291,7 +291,7 @@ gate has been re-run by this documentation work.
 | I-11 | No historical pack replacement. | NDC contract owner (Kartik Jangid) | Fieldbook; Nirnay | `FB::pack_update_with_new_version_is_accepted`; `FB::schema_v1_records_remain_readable_and_auditable`; `FB::mixed_schema_journal_chain_fails_closed`; `NZ::revisions_are_immutable_on_update`; `NZ::reference_revisions_and_head_are_immutable` |
 | I-12 | No coverage percentage without denominator. | NDC contract owner (Kartik Jangid) | Fieldbook; Nirnay | `NZ::absent_denominator_is_refused`; `NZ::coverage_requires_nonzero_denominator_and_exhaustive_parts`; `FB::unmeasurable_universe_invents_no_denominator`; `FB::zero_denominator_yields_no_ratio` |
 | I-13 | No durability claim outside a qualified profile. | Programme owner (Kartik Jangid) | Workspace; Fieldbook | This decision (§2, §4, §5); `FB::no_replace_rename_fails_closed_on_other_platforms`; `make consistency`; `make audit` |
-| I-14 | No source-head claim without an exact commit. | Programme owner (Kartik Jangid) | Workspace | `CURRENT-STATE.json` five separately evidenced head concepts; `make status`; `make audit`; exact commits in `REVIEW-LOG.md` |
+| I-14 | No source-head claim without an exact commit. | Programme owner (Kartik Jangid) | Workspace | `CURRENT-STATE.json` five separately evidenced head concepts; `make status`; `make audit`; exact commits in `engineering/evidence/REVIEW-LOG.md` |
 | I-15 | No silent deletion of uncertain publication evidence. | Fieldbook producer owner (Kartik Jangid) | Fieldbook; Workspace (RRP) | `FB::recovery_without_evidence_is_empty`; `FB::rename_before_root_sync_crash_is_quarantined`; `FB::schema_v1_records_remain_readable_and_auditable`; `RETIREMENT-ACCEPTANCE.md` no-deletion-before-replacement rules |
 
 The `FB::every_committed_journal_stage_survives_a_process_restart` name cited for I-02 is an
@@ -303,14 +303,14 @@ a separate evidence class.
 
 `FB::` names cite Fieldbook tests at or after the publication-journal work; `NZ::` names cite
 Nirnay verifier or domain tests. Exact commits, gate commands and exits belong in the dated
-records and `REVIEW-LOG.md`; none is re-run, re-counted or promoted by this decision.
+records and `engineering/evidence/REVIEW-LOG.md`; none is re-run, re-counted or promoted by this decision.
 
 ## 8. Effect
 
 `NDC-REGISTRY.md`, `ADR-REGISTRY.md`, `CURRENT-STATE.json`, the `README.md` document map and
-`REVIEW-LOG.md` gain pointers to this decision and to the dated
+`engineering/evidence/REVIEW-LOG.md` gain pointers to this decision and to the dated
 `engineering/conformance/d0-full-matrix-evidence-2026-11-24.md` record. `CURRENT-STATE.json`
 gains a `durability_profiles` field; the amended decision digest supersedes but does not delete the
-prior ratification digests, which remain historical in `REVIEW-LOG.md`. No existing source-head
+prior ratification digests, which remain historical in `engineering/evidence/REVIEW-LOG.md`. No existing source-head
 field, capability state, D1–D4 predicate, `PUBLICATION_DURABILITY_VERIFIED` value or freeze term is
 altered, and no commit is created in any repository.

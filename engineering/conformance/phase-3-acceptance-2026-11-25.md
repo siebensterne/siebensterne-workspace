@@ -127,7 +127,7 @@ the passing stages.
 `CURRENT-STATE.json` (five head concepts, CI runs, legacy `current_source_heads`, capability flags,
 `phase3_acceptance` record, journal/package and sprint pointers, evidence-manifest pointer,
 durability profiles), `NDC-REGISTRY.md`, `ADR-REGISTRY.md`, `ENGINEERING-DOC-DIGESTS.json`, the
-`README.md` document map and `REVIEW-LOG.md` all point to this acceptance record for Phase 3
+`README.md` document map and `engineering/evidence/REVIEW-LOG.md` all point to this acceptance record for Phase 3
 current status. Historical records — the sprint acceptance record, WS-EVIDENCE-026, the D0
 full-matrix record, the dated cross-execution and evidence-manifest records, and the earlier head
 and CI observations — are preserved unchanged and referenced by pointer, not rewritten.
@@ -143,5 +143,5 @@ suite, hosted CI job, test count or cross-execution was re-run or combined acros
   `make check-static`, 47 PASS lines) at the same heads. A fresh `CARGO_TARGET_DIR` was used for
   the Nirnay gate so that `cargo xtask` rebuilt from the exact clone in use rather than reusing a
   stale locally cached binary from another worktree; this changed no source or gate definition.
-- Exact commands, exits and observed heads are recorded in `REVIEW-LOG.md` under 2026-11-25.
+- Exact commands, exits and observed heads are recorded in `engineering/evidence/REVIEW-LOG.md` under 2026-11-25.
   No commit was created.

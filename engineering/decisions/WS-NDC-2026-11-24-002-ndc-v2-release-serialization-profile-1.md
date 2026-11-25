@@ -208,6 +208,6 @@ Ratified:
 ## Effect on registries
 
 `NDC-REGISTRY.md`, `ADR-REGISTRY.md`, `ENGINEERING-DOC-DIGESTS.json`, the conformance design,
-the conformance matrix, `REVIEW-LOG.md` and the workspace README are updated to register this
+the conformance matrix, `engineering/evidence/REVIEW-LOG.md` and the workspace README are updated to register this
 decision and its amendment. Historical ADRs are not renumbered and no approved byte is
 rewritten.

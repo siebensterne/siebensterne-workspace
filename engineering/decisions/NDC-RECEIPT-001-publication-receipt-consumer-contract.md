@@ -375,7 +375,7 @@ must satisfy all of the following before any status is claimed:
 ## 8. Effect
 
 This document adds one PROPOSED decision record to the workspace document map
-and one entry to `REVIEW-LOG.md`. It changes no approved digest, no registered
+and one entry to `engineering/evidence/REVIEW-LOG.md`. It changes no approved digest, no registered
 schema version, no capability state, no source repository, no registry entry
 and no freeze term. Ratification, schema entry, implementation and any later
 `Implemented` or `Verified` claim are separate owner gates.

@@ -24,7 +24,7 @@ are explicitly **HISTORICAL** and preserved unchanged there.
 Hosted CI evidence: Fieldbook run `45406722498` (2/2 success) at
 `475dc34c8cc510ac8dfba158dfdedbd91950f219`; Nirnay run `45357742748` (12/12
 success) at `70716ebf66289a86335641847724fd92bf6bcce7`. Both conclusions are
-recorded in `REVIEW-LOG.md`. No hosted CI run is recorded for the workspace
+recorded in `engineering/evidence/REVIEW-LOG.md`. No hosted CI run is recorded for the workspace
 repository; its verification method is the workspace `make audit` gate, not CI.
 CI executes static gates only; neither full test suite was run by CI and no test
 count is combined across heads.
@@ -80,7 +80,7 @@ make consistency
 make audit
 python3 scripts/check_ndc_schema_package.py
 shasum -a 256 WORKSPACE.lock.json
-shasum -a 256 REVIEW-LOG.md
+shasum -a 256 engineering/evidence/REVIEW-LOG.md
 shasum -a 256 engineering/conformance/ndc-v2-cross-execution-2026-11-24.md
 shasum -a 256 engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md
 ```

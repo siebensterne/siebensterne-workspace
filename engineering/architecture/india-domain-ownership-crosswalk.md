@@ -18,7 +18,7 @@
 |---|---|---|
 | Fieldbook | `340f829` | `src/domain/identity.rs`, `src/domain/reference_data.rs`, `src/domain/event_model.rs`, `src/domain/taxonomy.rs`, `src/acquisition/exchange/mod.rs`, `src/governance/coverage_certification.rs`, `docs/adr/0001-instrument-and-venue-reference-model.md`, `docs/specifications/instrument-master.md`, `AGENTS.md` |
 | Nirnay | `d73e145` | `crates/india-domain/src/{lib,instrument,provenance,reference_history,corporate_actions}.rs`, `crates/india-reference/src/{lib,identity,csv}.rs`, `schemas/india/instrument.v1.json`, `schemas/india/instrument.v2.json`, `schemas/research/dataset-{manifest,row,publication}.v1.schema.json`, `engineering/architecture/decisions/ADR-0001-data-ownership.md`, `engineering/architecture/reviews/FIELDBOOK-ARCHITECTURE-REVIEW-2026-11-22.md`, `engineering/architecture/reviews/FIELDBOOK-REVIEW-REFRESH-2026-11-23.md`, `AGENTS.md` |
-| Workspace | `ddb379a` | `README.md`, `ADR-REGISTRY.md`, `NDC-REGISTRY.md`, `REVIEW-LOG.md`, `engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md`, `AGENTS.md` |
+| Workspace | `ddb379a` | `README.md`, `ADR-REGISTRY.md`, `NDC-REGISTRY.md`, `engineering/evidence/REVIEW-LOG.md`, `engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md`, `AGENTS.md` |
 
 ## 1. Ownership rule (proposed; follows C0 and the registered ADR)
 
@@ -210,4 +210,4 @@ state or the `BLOCKED` dataset-acceptance state.
   It is **Proposed, not ratified**, and this document does not ratify it. Fieldbook's `FB-ADR-0001`
   governs instrument/venue identity inside the producer.
 - **Related registries:** `NDC-REGISTRY.md` (producer Fieldbook, consumer Nirnay, version-change
-  procedure) and `REVIEW-LOG.md` (exact commits for cross-repository decisions).
+  procedure) and `engineering/evidence/REVIEW-LOG.md` (exact commits for cross-repository decisions).

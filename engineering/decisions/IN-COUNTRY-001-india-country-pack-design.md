@@ -418,4 +418,4 @@ any object is forced into an existing class. No cohort is admitted by crosswalk 
 - `engineering/design/NDC-SEMANTIC-MODEL-V2-PROPOSED.md` — C0 bitemporal, provenance and
   denominator semantics.
 - `README.md` — document map; `CURRENT-STATE.json` — rights, budget and acceptance state;
-  `REVIEW-LOG.md` — decision record.
+  `engineering/evidence/REVIEW-LOG.md` — decision record.

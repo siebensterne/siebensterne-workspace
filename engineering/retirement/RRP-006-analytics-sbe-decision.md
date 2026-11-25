@@ -4,7 +4,7 @@ Status: **decision record issued under Gate RRP-006** (`RETIREMENT-ACCEPTANCE.md
 is a documentation change in the workspace worktree `docs/rrp-006` (base `c36d1d7`). It
 deletes nothing, edits no source repository, contacts no provider, changes no right or
 data state, and makes no commit. Recording a decision is not gate acceptance: the gate
-still requires a reviewed PR with paths, commits and evidence in `REVIEW-LOG.md`.
+still requires a reviewed PR with paths, commits and evidence in `engineering/evidence/REVIEW-LOG.md`.
 
 ## Source of truth inspected (read-only)
 
@@ -139,7 +139,7 @@ the numeric/book oracle.
    `scripts/analytics/`, `analytics/python/` and the offline staging/verification code
    become removable legacy.
 5. Removal executes per path, after `DEPENDENCY-CROSSWALK.csv` updates and a reviewed
-   PR; record paths, hashes and exact commits in a dated record and `REVIEW-LOG.md`.
+   PR; record paths, hashes and exact commits in a dated record and `engineering/evidence/REVIEW-LOG.md`.
    Normal `git rm` preserves history; no history rewrite, no bulk removal and no new
    synthetic replacement (RRP-001 §6, `RETIREMENT-ACCEPTANCE.md` §0).
 6. RRP-007 runs the final dependency, build-target, documentation-link and generated-path

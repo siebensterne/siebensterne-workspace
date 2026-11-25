@@ -50,9 +50,9 @@
   "registries": [
     "ADR-REGISTRY.md",
     "NDC-REGISTRY.md",
-    "REVIEW-LOG.md",
-    "TOOL-MATRIX.md",
-    "SHARED-FILES.md"
+    "engineering/evidence/REVIEW-LOG.md",
+    "docs/process/TOOL-MATRIX.md",
+    "docs/process/SHARED-FILES.md"
   ],
   "workspace_repository": "https://github.com/siebensterne/siebensterne-workspace.git",
   "source_head_reconciliation_2026_11_24": {

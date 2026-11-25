@@ -52,7 +52,7 @@ component exists. These layers are recorded separately:
 | Final NDC serialization schema | **Profile 1 version and digests registered; canonical schema package published by WP-B8 (2026-11-24)** | `engineering/conformance/ndc-v2-schema-digest.json` registers the exact version, profile and D1 amendment digests, strict unknown-field policy and the source of truth. The B8 canonical schema package at `engineering/conformance/ndc-v2-schema-profile-1/` is the standalone published wire artifact (digest `6e8c1e48…`, 26 files). At the WP-5 recorded heads no such file existed and the typed structs in both repositories were the implementation authorities; those heads are historical evidence, not the normative wire representation. Cross-execution was NOT_STARTED at the WP-5 heads; the Phase 3 non-streaming binary cross-execution is recorded in the Phase 3 acceptance record (HISTORICAL); actual B16 streaming cross-execution is NOT_RUN and not evidence in Phase 3A - see the Phase 3A acceptance record |
 | Resource policy | **Ratified rule**: versioned normative consumer resource policy, no manifest `limits`, producer and verifier enforce independently; numerical maxima pending workload qualification | `WS-NDC-2026-11-24-002` Decision F; `WS-STREAM-001` (2026-11-25) adds the normative immutable versioned `ResourceProfile` contract with role-specific profiles, trusted local selection, consumer local ceiling and stricter-of effective limits, but approves no number or profile digest |
 | Publication durability | **Ratified rule**: staged, synced, atomic no-replace rename with parent-directory sync and durable receipt; uncertain-publication recovery after rename before parent sync | `WS-NDC-2026-11-24-002` Decision G |
-| Publication durability failure model | **Ratified rule (WS-DUR-001)**: five tiers D0–D4 with profile-scoped booleans, an error-only sync acknowledgement contract, per-platform primitive qualification and no global durability Boolean; not a D1 claim | `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` — **RATIFIED 2026-11-24** by owner direction; current digest `931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` (FB-DUR-002 full-matrix evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` preserved as historical in `REVIEW-LOG.md`) |
+| Publication durability failure model | **Ratified rule (WS-DUR-001)**: five tiers D0–D4 with profile-scoped booleans, an error-only sync acknowledgement contract, per-platform primitive qualification and no global durability Boolean; not a D1 claim | `engineering/decisions/WS-DUR-001-publication-durability-failure-model.md` — **RATIFIED 2026-11-24** by owner direction; current digest `931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` (FB-DUR-002 full-matrix evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` preserved as historical in `engineering/evidence/REVIEW-LOG.md`) |
 | Trusted publisher registry | **Ratified rule**: out-of-band registry with key states and revocation evidence; Batch B trust interface with injected test keys only | `WS-NDC-2026-11-24-002` Decision H |
 | Runtime implementation | Producer and independent verifier implemented; bounded streaming implementation complete at Phase 3A final heads FB `acbd9b68` / NZ `c2c51757`; actual B16 streaming cross-execution NOT_RUN and not evidence | WP-5 acceptance matrix records exact test evidence at Fieldbook `2ef88a9` and Nirnay `2dad496` (historical package heads where cross-execution was NOT_STARTED); Phase 3 non-streaming binary cross-execution at FB `8216197` / NZ `c1c2f0d` is HISTORICAL in `engineering/conformance/phase-3-acceptance-2026-11-25.md`; current Phase 3A evidence in `engineering/conformance/phase-3a-acceptance-2026-11-25.md`; no shared invocation boundary or connector, no verification promotion |
 | Consumer verification capability | Independent `release-verifier` crate implemented at Nirnay `2dad496`; **Proposed consumer-use proposal unchanged** | Twelve-stage verifier with abstract tests; no shared crate; the separate consumer-use document below is not approved and is not an authority for this capability |
@@ -121,7 +121,7 @@ Ratification: `engineering/decisions/WS-DUR-001-publication-durability-failure-m
 (status **RATIFIED by owner direction 2026-11-24**, current digest
 `931e7477faa7752248a2392d7b79f34c317ab95a838a88ee491f448eac6dbcfb` after the FB-DUR-002
 full-matrix D0 evidence extension; prior WS-EVIDENCE-026 digest `d3a18e62bd31d6e9492078edf6d3cfb80ae2e69fa977a497780b54ef00aea8b6` and original
-ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` are preserved as historical in `REVIEW-LOG.md`).
+ratification digest `2b04f9b40fd395973f0f0ab99bc47a73f1e82a8b375e2ec4c5de211e85095b71` are preserved as historical in `engineering/evidence/REVIEW-LOG.md`).
 The owner directed that
 durability be scoped to a failure model rather than a test count. This is the governing programme
 contract for durability claims; it is not a new claim that D1 is achieved and it promotes no
@@ -217,7 +217,7 @@ evidence. See `engineering/conformance/phase-3a-acceptance-2026-11-25.md`.
 - `NDC-RECEIPT-001` remains **PROPOSED / AWAITING OWNER RATIFICATION**, not ratified; the Fieldbook
   publication receipt and the Nirnay admission receipt remain separate objects (A-12). Workspace
   hosted CI remains `NOT_RUN`. The freeze is unchanged and no Phase 3 or Phase 3A capability state
-  was promoted by this synchronization. Gate outcomes are recorded in the `REVIEW-LOG.md` entry
+  was promoted by this synchronization. Gate outcomes are recorded in the `engineering/evidence/REVIEW-LOG.md` entry
   dated 2026-11-25.
 
 ## Phase 3 evidence acceptance (2026-11-25)
@@ -320,7 +320,7 @@ repository's NDC document. Compatibility is decided by those rules, not by a tra
 2. Keep producer and consumer validators in lockstep; neither may drift ahead.
 3. Run `make check-static` in both repositories and `make consistency` here.
 4. Obtain independent review for each PR and record CI runs.
-5. Register the resulting commits in `REVIEW-LOG.md`.
+5. Register the resulting commits in `engineering/evidence/REVIEW-LOG.md`.
 6. Change an approved digest only through a separately approved revision; never edit the
    approved bytes silently. An amendment is a new dated revision document with its own digest
    (as `NDC-D1-AMENDMENT-001.md` does for D1); the historical digest and approved bytes stay

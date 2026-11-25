@@ -39,7 +39,7 @@ DEFERRED; this design keeps its PROPOSED status.
   `engineering/conformance/phase-3-acceptance-2026-11-25.md` (FB `8216197` / NZ `c1c2f0d`, finite
   explicitly marked `TEST_ONLY` profiles, `STREAMING_IMPLEMENTATION_COMPLETE`, not `Verified`).
   Phase 3A implementation/evidence records are tracked by their work-package identifiers listed in
-  Appendix B and in the `REVIEW-LOG.md` entry dated 2026-11-25; this notice carries pointers only
+  Appendix B and in the `engineering/evidence/REVIEW-LOG.md` entry dated 2026-11-25; this notice carries pointers only
   and claims no merge, commit, gate result or capability change for any work package that has not
   been recorded by the parent.
 - **Receipts and CI:** `NDC-RECEIPT-001` remains explicitly **PROPOSED / AWAITING OWNER
