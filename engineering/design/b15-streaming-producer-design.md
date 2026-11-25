@@ -11,6 +11,40 @@ Ratification pointer (2026-11-25): `engineering/decisions/WS-STREAM-001-b15-b16-
 ratifies the B15/B16 architecture and interface contracts. All numeric resource maxima remain
 DEFERRED; this design keeps its PROPOSED status.
 
+### Current-status notice (2026-11-25, WS-DOC-001)
+
+- **Ratified:** the architecture and interface contracts selected by `WS-STREAM-001` —
+  A-01..A-12, covering both this producer design and B16 — were **RATIFIED by owner direction on
+  2026-11-25**, at contract level only. Decision digest (`shasum -a 256`):
+  `f74153024c1d526fe5c9d49b22e541263581c52c0dbae19a67e8d2ea841a4fe1`. See
+  `engineering/decisions/WS-STREAM-001-b15-b16-architecture-ratification.md` §1. This notice does
+  not claim an implemented, tested or verified state.
+- **Proposal history:** this document remains **PROPOSED / AWAITING OWNER APPROVAL**. Its original
+  §§1–10 are retained unchanged as proposal history; a pointer to a ratification does not convert
+  a design package into an implementation, profile approval or qualification record. Where a
+  proposal differs from a ratified decision, the ratified decision governs (Appendix A).
+- **Deferred and not approved:** every numeric resource maximum in §6.2, the codec identifier and
+  all concurrency, throughput and CPU numbers remain **DEFERRED**; no deferred item is a silent
+  default. The normative `ResourceProfile` contract is role-specific (`PRODUCER`, `VERIFIER`,
+  `RECOVERY`, `SNAPSHOT`), but **no profile value or profile digest is approved** by
+  `WS-STREAM-001`; `STREAM_RESOURCE_PROFILE_RATIFIED` is PENDING. A production invocation without
+  an approved role profile selected by trusted local policy fails closed.
+- **Blocked:** `PERF_001_QUALIFIED` and `OPERATIONALLY_QUALIFIED` remain **BLOCKED**;
+  `PUBLICATION_DURABILITY_VERIFIED` remains `false`; rights `UNKNOWN`, dataset acceptance
+  `BLOCKED`, budget INR 0, collection `DISABLED`, experiments `BLOCKED`, live execution `DISABLED`
+  and D11 strict. The freeze is unchanged.
+- **Evidence pointers:** the merged Phase 3 implementation and cross-execution evidence is
+  `engineering/conformance/phase-3-acceptance-2026-11-25.md` (FB `8216197` / NZ `c1c2f0d`, finite
+  explicitly marked `TEST_ONLY` profiles, `STREAMING_IMPLEMENTATION_COMPLETE`, not `Verified`).
+  Phase 3A implementation/evidence records are tracked by their work-package identifiers listed in
+  Appendix A and in the `REVIEW-LOG.md` entry dated 2026-11-25; this notice carries pointers only
+  and claims no merge, commit, gate result or capability change for any work package that has not
+  been recorded by the parent.
+- **Receipts and CI:** `NDC-RECEIPT-001` remains explicitly **PROPOSED / AWAITING OWNER
+  RATIFICATION**; the Fieldbook publication receipt and the Nirnay admission receipt remain
+  separate objects (A-12), and neither is created from the other. Workspace hosted CI remains
+  `NOT_RUN`.
+
 Scope: documentation only. The worktree is `docs/b15-streaming-producer-design` on workspace
 base `95580f5`. No source file, schema file, right record, data file, provider record, India
 record, experiment, release, key, dataset or CI configuration was changed. No commit was
@@ -552,3 +586,61 @@ This package specifies a lifecycle. It does not implement it, does not qualify a
 device tier, does not ratify a resource number, does not grant a source right, does not accept a
 dataset and does not establish a cross-execution result with Nirnay. Status remains **PROPOSED
 / AWAITING OWNER APPROVAL**.
+
+## Appendix A — Ratified-decision conformance and Phase 3A corrective work (2026-11-25, WS-DOC-001)
+
+Status: **additive conformance appendix only**. The original §§1–10 text above is retained
+unchanged as PROPOSED proposal history. `WS-STREAM-001` (2026-11-25, decision digest
+`f74153024c1d526fe5c9d49b22e541263581c52c0dbae19a67e8d2ea841a4fe1`) governs where a ratified
+choice differs from a proposal. Nothing in this appendix approves a number, a profile digest, a
+schema version, an implementation state or a capability promotion.
+
+### A.1 Ratified architecture and interface contracts A-01..A-12
+
+The following twelve items were **ratified at contract level** by `WS-STREAM-001` §1; the cited
+design sections remain the governing proposal material, and the decision record carries the exact
+selected alternatives, rationales, invariants and tests.
+
+| Ratified item | Contract subject | Governing proposal material |
+|---|---|---|
+| A-01 | Bounded record-source interfaces: one canonical record at a time, explicit end-of-stream, bounded framer, no whole-artifact slice or caller order key | §2.1–§2.3 |
+| A-02 | Streaming producer pipeline with per-record consumption and fixed-size accumulator state | §3 |
+| A-03 | `PreparationIntent` written and synced before consumption; `SealedPublicationIntent` as the publication seal; no earlier receipt, marker or rename | §4.1–§4.4 |
+| A-04 | Canonical byte-derived ordering recomputed from received bytes and strictly compared with one predecessor | §2.4 |
+| A-05 | NDC v2 Profile 1 dataset digest over concatenated uncompressed canonical record streams | §5 |
+| A-06 | Deterministic streaming compression with registered method and settings, byte-identical for accepted input | §3.2 |
+| A-07 | Incremental stored and expanded digests plus dataset accumulator over exact emitted bytes | §3.1 |
+| A-08 | Bounded decompression and parsing: emission caps before buffer growth, one reusable line buffer, strict one-line parse, profile depth/string/token bounds | §3.1, §5 (B16) |
+| A-09 | Cancellation, backpressure and typed first-refusal semantics with stable codes | §7 |
+| A-10 | Descriptor-relative private snapshot writing and cleanup; complete `CleanupReport` or typed `CleanupPending` | §4 (B16) |
+| A-11 | Independent producer and verifier implementations; only schema and vectors shared | §9.4 |
+| A-12 | Separate Fieldbook publication receipt and Nirnay admission receipt; neither created from the other | §4.2 |
+
+All numeric maxima in §6.2 remain **DEFERRED** under `WS-STREAM-001` DEF-01; resource profiles are
+role-specific and **not approved**; `STREAM_RESOURCE_PROFILE_RATIFIED` is PENDING;
+`PERF_001_QUALIFIED` and `OPERATIONALLY_QUALIFIED` are BLOCKED. `NDC-RECEIPT-001` remains
+**PROPOSED** and is not ratified by A-12 or by this appendix.
+
+### A.2 Phase 3A corrective work packages — pointers only
+
+| Package | Corrective scope | Ratified anchor |
+|---|---|---|
+| `FB-STREAM-001` | Plan/source pairing: the fixed `ArtifactPlan` and the opened `ArtifactRecordSource` must agree on snapshot identity, revision and replayability before consumption | §2.1–§2.2; A-01, OD-02, OD-03 |
+| `FB-STREAM-002` | Preparation quarantine: no availability, receipt, marker or final rename before the sealed intent; refusal and restart leave quarantined, sealed evidence | §4.1–§4.4; A-03, OD-08 |
+| `FB-SPOOL-001` | Multi-source spool for non-replayable sources: operation-scoped bounded spool, exact digests/counts and `SPOOL_SEALED` evidence before adoption | §4.6; OD-04, OD-05 |
+| `FB-LIMIT-001` | Expansion ratio: per-artifact expanded-to-stored bound with emission caps checked before buffer growth; no inferred numeric value | §3.1; A-07, A-08, DEF-01; `WS-STREAM-001` §3.2 `max_expansion_ratio` |
+| `FB-SOURCE-001` | Core-owned bounded record port: one canonical record at a time from a core-owned source, no caller-supplied order key and no whole-artifact slice | §2.2; A-01 |
+
+These identifiers are **pointers to Phase 3A corrective work**. This documentation work records no
+merge, commit, exact head, CI run, gate result, test count or capability claim for any of them; the
+parent's dated implementation/evidence records govern if and when a package is recorded. Phase 3
+evidence already recorded is `engineering/conformance/phase-3-acceptance-2026-11-25.md`; it does
+not by itself record any Phase 3A corrective package above.
+
+### A.3 Unchanged non-claims
+
+No source, schema, right, data, provider, India or experiment artefact is changed. Rights stay
+`UNKNOWN`, dataset acceptance `BLOCKED`, budget INR 0, collection `DISABLED`, experiments
+`BLOCKED`, live execution `DISABLED`, D11 strict, `PUBLICATION_DURABILITY_VERIFIED` `false`, and
+Workspace hosted CI `NOT_RUN`. Publication and admission receipts stay separate. No approved
+digest, historical record or capability state was rewritten to make this appendix consistent.

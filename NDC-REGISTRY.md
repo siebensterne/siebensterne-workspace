@@ -185,6 +185,36 @@ FB `8216197` / NZ `c1c2f0d` under finite `TEST_ONLY` profiles; this is an `Imple
 Numeric maxima, the codec identifier, `STREAM_RESOURCE_PROFILE_RATIFIED` and PERF-001 remain
 deferred or blocked. See `engineering/conformance/phase-3-acceptance-2026-11-25.md`.
 
+### WS-DOC-001 design-document synchronization (2026-11-25)
+
+- Docs-only synchronization of the two streaming design packages with the ratified decisions.
+  `engineering/design/b15-streaming-producer-design.md` gained a dated current-status notice and
+  Appendix A; `engineering/design/b16-streaming-verifier-design.md` gained a dated current-status
+  notice and Appendix B. Original §§1–10 and §§1–12 respectively are retained unchanged as PROPOSED
+  proposal history; no approved byte, historical record or capability state was rewritten.
+- Both appendices point to `WS-STREAM-001` (2026-11-25, decision digest
+  `f74153024c1d526fe5c9d49b22e541263581c52c0dbae19a67e8d2ea841a4fe1`) for the twelve ratified
+  architecture and interface contracts A-01..A-12 and for the individually resolved OD-01..OD-10
+  and D1..D10. All numeric maxima remain DEFERRED, role-specific `ResourceProfile` values and
+  digests are not approved, `STREAM_RESOURCE_PROFILE_RATIFIED` is PENDING, and `PERF_001_QUALIFIED`
+  and `OPERATIONALLY_QUALIFIED` are BLOCKED.
+- B16 Appendix B visibly identifies the superseded proposal assumptions: **D2** selects a dedicated
+  `parser.max_string_bytes` profile field, not a cap derived from `max_record_bytes`; **D3** selects
+  refusal at stage five at the point of detection, not deferral to stage nine. The ratified
+  choices govern; D1, D6 and the Phase 3A pointers are also recorded there.
+- Phase 3A corrective work packages are recorded as **pointers only**: B15 Appendix A lists
+  `FB-STREAM-001` (plan/source pairing), `FB-STREAM-002` (preparation quarantine),
+  `FB-SPOOL-001` (multi-source spool), `FB-LIMIT-001` (expansion ratio) and `FB-SOURCE-001`
+  (core-owned bounded record port). B16 Appendix B lists `NZ-REG-001` (payload registry),
+  `NZ-RES-001` (profile resolver), `NZ-LIMIT-001` (exact parser bounds) and `NZ-LIMIT-002`
+  (artifact/concurrency separation). No merge, commit, gate result, test count or capability
+  outcome is claimed for any package not recorded by the parent.
+- `NDC-RECEIPT-001` remains **PROPOSED / AWAITING OWNER RATIFICATION**, not ratified; the Fieldbook
+  publication receipt and the Nirnay admission receipt remain separate objects (A-12). Workspace
+  hosted CI remains `NOT_RUN`. The freeze is unchanged and no Phase 3 or Phase 3A capability state
+  was promoted by this synchronization. Gate outcomes are recorded in the `REVIEW-LOG.md` entry
+  dated 2026-11-25.
+
 ## Phase 3 evidence acceptance (2026-11-25)
 
 | Item | Record |
