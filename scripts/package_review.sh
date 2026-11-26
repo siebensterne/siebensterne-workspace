@@ -38,7 +38,7 @@ package_repo() {
   # Review scope is Indian and global securities. Venue-specific live captures,
   # venue latency measurements and prediction-market fixtures are excluded from
   # the review package. Source code and documentation remain fully included.
-  local -a excluded_patterns=()
+  local -a excluded_patterns=('target/doc/*.md')
   case "$name" in
     fieldbook)
       excluded_patterns=(
