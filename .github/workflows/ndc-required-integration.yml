@@ -1,0 +1,90 @@
+name: NDC required cross-repository integration
+
+# REQUIRED gate. Nirnay's nz_api001_cross_execution test may SKIP and still
+# return success when the Fieldbook producer is absent; that is acceptable for
+# optional local testing but not here. This workflow builds the real Fieldbook
+# producer and the real Nirnay verifier from the exact commits recorded in
+# CURRENT-STATE.json, refuses to run if either is missing or if the heads
+# disagree, and asserts the typed rights refusal plus the one-byte mutation
+# cases. No provider contact, collection, experiment, holdout, admission or
+# rights grant is performed. Rights remain UNKNOWN.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  ndc-required-integration:
+    name: Required producer and verifier integration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      NIRNAY_B15_PRODUCER_REQUIRED: "1"
+    steps:
+      - name: Check out workspace authority and gate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Resolve exact repository commits from CURRENT-STATE.json
+        id: heads
+        run: |
+          set -euo pipefail
+          fieldbook_sha="$(jq -er '.source_heads_at_record_time.fieldbook' CURRENT-STATE.json)"
+          nirnay_sha="$(jq -er '.source_heads_at_record_time.nirnay' CURRENT-STATE.json)"
+          [[ "$fieldbook_sha" =~ ^[0-9a-f]{40}$ ]] || { echo "invalid Fieldbook SHA" >&2; exit 1; }
+          [[ "$nirnay_sha" =~ ^[0-9a-f]{40}$ ]] || { echo "invalid Nirnay SHA" >&2; exit 1; }
+          echo "fieldbook=$fieldbook_sha" >> "$GITHUB_OUTPUT"
+          echo "nirnay=$nirnay_sha" >> "$GITHUB_OUTPUT"
+          echo "Fieldbook $fieldbook_sha / Nirnay $nirnay_sha"
+
+      - name: Check out Fieldbook at the recorded commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: siebensterne/fieldbook
+          ref: ${{ steps.heads.outputs.fieldbook }}
+          path: fieldbook
+          persist-credentials: false
+
+      - name: Check out Nirnay at the recorded commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: siebensterne/nirnay
+          ref: ${{ steps.heads.outputs.nirnay }}
+          path: nirnay
+          persist-credentials: false
+
+      - name: Install pinned Rust toolchain
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: 1.99.1
+
+      - name: Run required NDC cross-execution gate
+        env:
+          FIELDBOOK_SHA: ${{ steps.heads.outputs.fieldbook }}
+          NIRNAY_SHA: ${{ steps.heads.outputs.nirnay }}
+          NDC_WORK_DIR: ${{ runner.temp }}/ndc-cross-execution
+        run: |
+          set -euo pipefail
+          bash scripts/ndc_cross_execution.sh --out "$NDC_WORK_DIR/ndc-cross-execution.json" --work "$NDC_WORK_DIR"
+
+      - name: Upload NDC integration evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ndc-required-integration-evidence
+          path: |
+            ${{ runner.temp }}/ndc-cross-execution/ndc-cross-execution.json
+            ${{ runner.temp }}/ndc-cross-execution/diagnostics/*.json
+            ${{ runner.temp }}/ndc-cross-execution/logs/*.log
+          if-no-files-found: warn
