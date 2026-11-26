@@ -58,7 +58,7 @@ for repo in "$FB" "$NR"; do
 done
 
 printf '\n[byte-identical shared files]\n'
-for file in LICENSE NOTICE quality-contract.json q-style.json scripts/check_q_style.py; do
+for file in LICENSE NOTICE quality-contract.json q.toml scripts/check_q_style.py; do
   if [[ -s "$FB/$file" && -s "$NR/$file" ]] && cmp -s "$FB/$file" "$NR/$file"; then
     printf 'PASS %-34s identical\n' "$file"
   else
