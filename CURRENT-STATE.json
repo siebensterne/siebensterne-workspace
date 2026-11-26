@@ -3,29 +3,30 @@
   "generated_utc_date": "2026-11-26",
   "purpose": "Single machine-readable authority for current cross-repository state. It records only current heads with their tested CI runs, capability states, freezes, open decisions and residual items. Historical values remain in Git history and in the owning repositories executable tests.",
   "source_heads_at_record_time": {
-    "fieldbook": "a96a5f08e8180cd6a92a67da9340c1004793e36b",
-    "nirnay": "463dabc60c93a308d48d27646716ac6523ca7c96",
+    "fieldbook": "093c0ad14057187b7a67afc436cd2226bdb438a4",
+    "nirnay": "2ab7d706b10cf55025b3580da298cec801d4ae29",
     "workspace": "omitted by design; the record cannot contain its own commit"
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45876064968",
-      "head_sha": "a96a5f08e8180cd6a92a67da9340c1004793e36b",
+      "run_id": "45891408509",
+      "head_sha": "093c0ad14057187b7a67afc436cd2226bdb438a4",
       "conclusion": "success"
     },
     "nirnay": {
-      "run_id": "45881383802",
-      "head_sha": "463dabc60c93a308d48d27646716ac6523ca7c96",
+      "run_id": "45899319225",
+      "head_sha": "2ab7d706b10cf55025b3580da298cec801d4ae29",
       "conclusion": "success"
     },
     "workspace": {
-      "hosted_ci": "NOT_RUN",
+      "hosted_ci": "45891432485",
+      "head_sha_at_run": "2bb2afca7cae5fc7653a408895ca26773abe9b60",
+      "conclusion": "success",
       "static_gates": [
         "make consistency",
         "make audit",
         "make package-review"
-      ],
-      "result": "PASS"
+      ]
     },
     "principle": "A CI identifier is evidence only when paired with the exact head SHA it tested. Static gates, tests and deployment qualification are separate claims."
   },
