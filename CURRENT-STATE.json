@@ -3,19 +3,19 @@
   "generated_utc_date": "2026-11-26",
   "purpose": "Single machine-readable authority for current cross-repository state. It records only current heads with their tested CI runs, capability states, freezes, open decisions and residual items. Historical values remain in Git history and in the owning repositories executable tests.",
   "source_heads_at_record_time": {
-    "fieldbook": "4db5e3b2af312830b62e1c215cb18ad49e85a410",
-    "nirnay": "e164116b0584297b49a38db3714f23a01e58a50d",
+    "fieldbook": "a96a5f08e8180cd6a92a67da9340c1004793e36b",
+    "nirnay": "463dabc60c93a308d48d27646716ac6523ca7c96",
     "workspace": "omitted by design; the record cannot contain its own commit"
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45849676405",
-      "head_sha": "4db5e3b2af312830b62e1c215cb18ad49e85a410",
+      "run_id": "45876064968",
+      "head_sha": "a96a5f08e8180cd6a92a67da9340c1004793e36b",
       "conclusion": "success"
     },
     "nirnay": {
-      "run_id": "45849689449",
-      "head_sha": "e164116b0584297b49a38db3714f23a01e58a50d",
+      "run_id": "45881383802",
+      "head_sha": "463dabc60c93a308d48d27646716ac6523ca7c96",
       "conclusion": "success"
     },
     "workspace": {
