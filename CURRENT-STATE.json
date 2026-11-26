@@ -73,9 +73,9 @@
       "id": "RRP-RESIDUAL-001",
       "repository": "nirnay",
       "path": "configs/research/jobs.v1.json",
-      "field": "code_digest",
-      "status": "OPEN",
-      "effect": "No gate consumes the value; no experiment may be admitted until corrected."
+      "field": "environment.code_digest",
+      "status": "CLOSED",
+      "effect": "A required gate now recomputes and binds the declared digest over the declared research source set; drift fails closed. Experiments remain BLOCKED by the standing freeze; this gate proves source identity only."
     }
   ]
 }
