@@ -1,0 +1,12 @@
+schema_version = 1
+language_scope = ["shellguide", "jsoncguide"]
+
+[[reference]]
+file = "shellguide.html"
+source = "https://google.github.io/styleguide/shellguide.html"
+sha256 = "7a5fe550de49a336fd7a4f8a5fbd78614054925443aa1c3df2bff1a98e593e30"
+
+[[reference]]
+file = "jsoncguide.html"
+source = "https://google.github.io/styleguide/jsoncguide.html"
+sha256 = "be7fdbbf2cca0d00e947ba6efbaef977a84c6b7d1cd371d5e2fceb2abcb23386"

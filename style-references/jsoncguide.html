@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Google JSON Style Guide | Google Style Guides</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Google JSON Style Guide" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Style guides for Google-originated open-source projects" />
+<meta property="og:description" content="Style guides for Google-originated open-source projects" />
+<link rel="canonical" href="https://google.github.io/styleguide/jsoncguide.html" />
+<meta property="og:url" content="https://google.github.io/styleguide/jsoncguide.html" />
+<meta property="og:site_name" content="Google Style Guides" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Google JSON Style Guide" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Style guides for Google-originated open-source projects","headline":"Google JSON Style Guide","url":"https://google.github.io/styleguide/jsoncguide.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/styleguide/assets/css/style.css?v=20727ab927b3d28013e1c7b67f9a4689bf33d222">
+    <link rel="shortcut icon" type="image/x-icon" href="/styleguide/favicon.ico">
+<link rel="stylesheet" href="/styleguide/include/mdguide.css">
+<script type="module" src="/styleguide/include/mdguide_main.js"></script>
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://google.github.io/styleguide/">Google Style Guides</a></h1>
+      
+
+      <h1 id="google-json-style-guide">Google JSON Style Guide</h1>
+
+<p>Revision 0.9</p>
+
+<!-- mdformat off -->
+<ul id="markdown-toc">
+  <li><a href="#google-json-style-guide" id="markdown-toc-google-json-style-guide">Google JSON Style Guide</a>    <ul>
+      <li><a href="#introduction" id="markdown-toc-introduction">Introduction</a></li>
+      <li><a href="#definitions" id="markdown-toc-definitions">Definitions</a></li>
+      <li><a href="#general-guidelines" id="markdown-toc-general-guidelines">General Guidelines</a>        <ul>
+          <li><a href="#comments" id="markdown-toc-comments">Comments</a></li>
+          <li><a href="#double-quotes" id="markdown-toc-double-quotes">Double Quotes</a></li>
+          <li><a href="#flattened-data-vs-structured-hierarchy" id="markdown-toc-flattened-data-vs-structured-hierarchy">Flattened data vs Structured Hierarchy</a></li>
+        </ul>
+      </li>
+      <li><a href="#property-name-guidelines" id="markdown-toc-property-name-guidelines">Property Name Guidelines</a>        <ul>
+          <li><a href="#property-name-format" id="markdown-toc-property-name-format">Property Name Format</a></li>
+          <li><a href="#key-names-in-json-maps" id="markdown-toc-key-names-in-json-maps">Key Names in JSON Maps</a></li>
+          <li><a href="#reserved-property-names" id="markdown-toc-reserved-property-names">Reserved Property Names</a></li>
+          <li><a href="#singular-vs-plural-property-names" id="markdown-toc-singular-vs-plural-property-names">Singular vs Plural Property Names</a></li>
+          <li><a href="#naming-conflicts" id="markdown-toc-naming-conflicts">Naming Conflicts</a></li>
+        </ul>
+      </li>
+      <li><a href="#property-value-guidelines" id="markdown-toc-property-value-guidelines">Property Value Guidelines</a>        <ul>
+          <li><a href="#property-value-format" id="markdown-toc-property-value-format">Property Value Format</a></li>
+          <li><a href="#emptynull-property-values" id="markdown-toc-emptynull-property-values">Empty/Null Property Values</a></li>
+          <li><a href="#enum-values" id="markdown-toc-enum-values">Enum Values</a></li>
+        </ul>
+      </li>
+      <li><a href="#property-value-data-types" id="markdown-toc-property-value-data-types">Property Value Data Types</a>        <ul>
+          <li><a href="#date-property-values" id="markdown-toc-date-property-values">Date Property Values</a></li>
+          <li><a href="#time-duration-property-values" id="markdown-toc-time-duration-property-values">Time Duration Property Values</a></li>
+          <li><a href="#latitudelongitude-property-values" id="markdown-toc-latitudelongitude-property-values">Latitude/Longitude Property Values</a></li>
+        </ul>
+      </li>
+      <li><a href="#json-structure--reserved-property-names" id="markdown-toc-json-structure--reserved-property-names">JSON Structure &amp; Reserved Property Names</a></li>
+      <li><a href="#top-level-reserved-property-names" id="markdown-toc-top-level-reserved-property-names">Top-Level Reserved Property Names</a>        <ul>
+          <li><a href="#apiversion" id="markdown-toc-apiversion">apiVersion</a></li>
+          <li><a href="#context" id="markdown-toc-context">context</a></li>
+          <li><a href="#id" id="markdown-toc-id">id</a></li>
+          <li><a href="#method" id="markdown-toc-method">method</a></li>
+          <li><a href="#params" id="markdown-toc-params">params</a></li>
+          <li><a href="#data" id="markdown-toc-data">data</a></li>
+          <li><a href="#error" id="markdown-toc-error">error</a></li>
+        </ul>
+      </li>
+      <li><a href="#reserved-property-names-in-the-data-object" id="markdown-toc-reserved-property-names-in-the-data-object">Reserved Property Names in the data object</a>        <ul>
+          <li><a href="#datakind" id="markdown-toc-datakind">data.kind</a></li>
+          <li><a href="#datafields" id="markdown-toc-datafields">data.fields</a></li>
+          <li><a href="#dataetag" id="markdown-toc-dataetag">data.etag</a></li>
+          <li><a href="#dataid" id="markdown-toc-dataid">data.id</a></li>
+          <li><a href="#datalang" id="markdown-toc-datalang">data.lang</a></li>
+          <li><a href="#dataupdated" id="markdown-toc-dataupdated">data.updated</a></li>
+          <li><a href="#datadeleted" id="markdown-toc-datadeleted">data.deleted</a></li>
+          <li><a href="#dataitems" id="markdown-toc-dataitems">data.items</a></li>
+        </ul>
+      </li>
+      <li><a href="#reserved-property-names-for-paging" id="markdown-toc-reserved-property-names-for-paging">Reserved Property Names for Paging</a>        <ul>
+          <li><a href="#datacurrentitemcount" id="markdown-toc-datacurrentitemcount">data.currentItemCount</a></li>
+          <li><a href="#dataitemsperpage" id="markdown-toc-dataitemsperpage">data.itemsPerPage</a></li>
+          <li><a href="#datastartindex" id="markdown-toc-datastartindex">data.startIndex</a></li>
+          <li><a href="#datatotalitems" id="markdown-toc-datatotalitems">data.totalItems</a></li>
+          <li><a href="#datapaginglinktemplate" id="markdown-toc-datapaginglinktemplate">data.pagingLinkTemplate</a></li>
+          <li><a href="#datapageindex" id="markdown-toc-datapageindex">data.pageIndex</a></li>
+          <li><a href="#datatotalpages" id="markdown-toc-datatotalpages">data.totalPages</a></li>
+        </ul>
+      </li>
+      <li><a href="#reserved-property-names-for-links" id="markdown-toc-reserved-property-names-for-links">Reserved Property Names for Links</a>        <ul>
+          <li><a href="#dataself--dataselflink" id="markdown-toc-dataself--dataselflink">data.self / data.selfLink</a></li>
+          <li><a href="#dataedit--dataeditlink" id="markdown-toc-dataedit--dataeditlink">data.edit / data.editLink</a></li>
+          <li><a href="#datanext--datanextlink" id="markdown-toc-datanext--datanextlink">data.next / data.nextLink</a></li>
+          <li><a href="#dataprevious--datapreviouslink" id="markdown-toc-dataprevious--datapreviouslink">data.previous / data.previousLink</a></li>
+        </ul>
+      </li>
+      <li><a href="#reserved-property-names-in-the-error-object" id="markdown-toc-reserved-property-names-in-the-error-object">Reserved Property Names in the error object</a>        <ul>
+          <li><a href="#errorcode" id="markdown-toc-errorcode">error.code</a></li>
+          <li><a href="#errormessage" id="markdown-toc-errormessage">error.message</a></li>
+          <li><a href="#errorerrors" id="markdown-toc-errorerrors">error.errors</a></li>
+          <li><a href="#errorerrorsdomain" id="markdown-toc-errorerrorsdomain">error.errors[].domain</a></li>
+          <li><a href="#errorerrorsreason" id="markdown-toc-errorerrorsreason">error.errors[].reason</a></li>
+          <li><a href="#errorerrorsmessage" id="markdown-toc-errorerrorsmessage">error.errors[].message</a></li>
+          <li><a href="#errorerrorslocation" id="markdown-toc-errorerrorslocation">error.errors[].location</a></li>
+          <li><a href="#errorerrorslocationtype" id="markdown-toc-errorerrorslocationtype">error.errors[].locationType</a></li>
+          <li><a href="#errorerrorsextendedhelp" id="markdown-toc-errorerrorsextendedhelp">error.errors[].extendedHelp</a></li>
+          <li><a href="#errorerrorssendreport" id="markdown-toc-errorerrorssendreport">error.errors[].sendReport</a></li>
+        </ul>
+      </li>
+      <li><a href="#property-ordering" id="markdown-toc-property-ordering">Property Ordering</a>        <ul>
+          <li><a href="#kind-property" id="markdown-toc-kind-property">Kind Property</a></li>
+          <li><a href="#items-property" id="markdown-toc-items-property">Items Property</a></li>
+          <li><a href="#property-ordering-example" id="markdown-toc-property-ordering-example">Property Ordering Example</a></li>
+        </ul>
+      </li>
+      <li><a href="#examples" id="markdown-toc-examples">Examples</a>        <ul>
+          <li><a href="#youtube-json-api" id="markdown-toc-youtube-json-api">YouTube JSON API</a></li>
+          <li><a href="#paging-example" id="markdown-toc-paging-example">Paging Example</a></li>
+        </ul>
+      </li>
+      <li><a href="#appendix" id="markdown-toc-appendix">Appendix</a>        <ul>
+          <li><a href="#appendix-a-reserved-javascript-words" id="markdown-toc-appendix-a-reserved-javascript-words">Appendix A: Reserved JavaScript Words</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<!-- mdformat on -->
+
+<p><a id="Introduction"></a></p>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>This style guide documents guidelines and recommendations for building JSON APIs
+at Google. In general, JSON APIs should follow the spec found at
+<a href="https://www.json.org">JSON.org</a>. This style guide clarifies and standardizes
+specific cases so that JSON APIs from Google have a standard look and feel.
+These guidelines are applicable to JSON requests and responses in both RPC-based
+and REST-based APIs.</p>
+
+<p><a id="Definitions"></a></p>
+
+<h2 id="definitions">Definitions</h2>
+
+<p>For the purposes of this style guide, we define the following terms:</p>
+
+<ul>
+  <li><strong>property</strong> - a name/value pair inside a JSON object.</li>
+  <li><strong>property name</strong> - the name (or key) portion of the property.</li>
+  <li><strong>property value</strong> - the value portion of the property.</li>
+</ul>
+
+<!-- end list -->
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="err">name/value</span><span class="w"> </span><span class="err">pair</span><span class="w"> </span><span class="err">together</span><span class="w"> </span><span class="err">is</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="s2">"property"</span><span class="err">.</span><span class="w">
+  </span><span class="nl">"propertyName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"propertyValue"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>JavaScript’s <code class="language-plaintext highlighter-rouge">number</code> type encompasses all floating-point numbers, which is a
+broad designation. In this guide, <code class="language-plaintext highlighter-rouge">number</code> will refer to JavaScript’s <code class="language-plaintext highlighter-rouge">number</code>
+type, while <code class="language-plaintext highlighter-rouge">integer</code> will refer to integers.</p>
+
+<p><a id="General_Guidelines"></a></p>
+
+<h2 id="general-guidelines">General Guidelines</h2>
+
+<p><a id="Comments"></a></p>
+
+<h3 id="comments">Comments</h3>
+
+<p>No comments in JSON objects.</p>
+
+<p>Comments should not be included in JSON objects. Some of the examples in this
+style guide include comments. However this is only to clarify the examples.</p>
+
+<div class="badcode"></div>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">You</span><span class="w"> </span><span class="err">may</span><span class="w"> </span><span class="err">see</span><span class="w"> </span><span class="err">comments</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">examples</span><span class="w"> </span><span class="err">below</span><span class="p">,</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">But</span><span class="w"> </span><span class="err">don't</span><span class="w"> </span><span class="err">include</span><span class="w"> </span><span class="err">comments</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">your</span><span class="w"> </span><span class="err">JSON.</span><span class="w">
+  </span><span class="nl">"propertyName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"propertyValue"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Double_Quotes"></a></p>
+
+<h3 id="double-quotes">Double Quotes</h3>
+
+<p>Use double quotes.</p>
+
+<p>If a property requires quotes, double quotes must be used. All property names
+must be surrounded by double quotes. Property values of type string must be
+surrounded by double quotes. Other value types (like boolean or number) should
+not be surrounded by double quotes.</p>
+
+<p><a id="Flattened_data_vs_Structured_Hierarchy"></a></p>
+
+<h3 id="flattened-data-vs-structured-hierarchy">Flattened data vs Structured Hierarchy</h3>
+
+<p>Data should not be arbitrarily grouped for convenience.</p>
+
+<p>Data elements should be “flattened” in the JSON representation. Data should not
+be arbitrarily grouped for convenience.</p>
+
+<p>In some cases, such as a collection of properties that represents a single
+structure, it may make sense to keep the structured hierarchy. These cases
+should be carefully considered, and only used if it makes semantic sense. For
+example, an address could be represented two ways, but the structured way
+probably makes more sense for developers:</p>
+
+<p>Flattened Address:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"company"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Google"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.google.com/"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"addressLine1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"111 8th Ave"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"addressLine2"</span><span class="p">:</span><span class="w"> </span><span class="s2">"4th Floor"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NY"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"New York"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10011"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Structured Address:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"company"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Google"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"website"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.google.com/"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"line1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"111 8th Ave"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"line2"</span><span class="p">:</span><span class="w"> </span><span class="s2">"4th Floor"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NY"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"New York"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10011"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Property_Name_Guidelines"></a></p>
+
+<h2 id="property-name-guidelines">Property Name Guidelines</h2>
+
+<p><a id="Property_Name_Format"></a></p>
+
+<h3 id="property-name-format">Property Name Format</h3>
+
+<p>Choose meaningful property names.</p>
+
+<p>Property names must conform to the following guidelines:</p>
+
+<ul>
+  <li>Property names should be meaningful names with defined semantics.</li>
+  <li>Property names must be
+<a href="https://en.wikipedia.org/wiki/Camel_case">lower camel-cased</a>, ASCII
+strings.</li>
+  <li>The first character must be a letter, an underscore (<code class="language-plaintext highlighter-rouge">_</code>) or a dollar sign
+(<code class="language-plaintext highlighter-rouge">$</code>).</li>
+  <li>Subsequent characters can be a letter, a digit, an underscore, or a dollar
+sign.</li>
+  <li>Reserved JavaScript keywords should be avoided (A list of reserved
+JavaScript keywords can be found below).</li>
+</ul>
+
+<p>These guidelines mirror the guidelines for naming JavaScript identifiers. This
+allows JavaScript clients to access properties using dot notation (for example,
+<code class="language-plaintext highlighter-rouge">result.thisIsAnInstanceVariable</code>). Here’s an example of an object with one
+property:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"thisPropertyIsAnIdentifier"</span><span class="p">:</span><span class="w"> </span><span class="s2">"identifier value"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Key_Names_in_JSON_Maps"></a></p>
+
+<h3 id="key-names-in-json-maps">Key Names in JSON Maps</h3>
+
+<p>JSON maps can use any Unicode character in key names.</p>
+
+<p>The property name naming rules do not apply when a JSON object is used as a map.
+A map (also referred to as an associative array) is a data type with arbitrary
+key/value pairs that use the keys to access the corresponding values. JSON
+objects and JSON maps look the same at runtime; this distinction is relevant to
+the design of the API. The API documentation should indicate when JSON objects
+are used as maps.</p>
+
+<p>The keys of a map do not have to obey the naming guidelines for property names.
+Map keys may contain any Unicode characters. Clients can access these properties
+using the square bracket notation familiar for maps (for example,
+<code class="language-plaintext highlighter-rouge">result.thumbnails["72"]</code>).</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="s2">"address"</span><span class="w"> </span><span class="err">property</span><span class="w"> </span><span class="err">is</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">sub-object</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">holding</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">parts</span><span class="w"> </span><span class="err">of</span><span class="w"> </span><span class="err">an</span><span class="w"> </span><span class="err">address.</span><span class="w">
+  </span><span class="nl">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"addressLine1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123 Anystreet"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Anytown"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"XX"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"00000"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="s2">"thumbnails"</span><span class="w"> </span><span class="err">property</span><span class="w"> </span><span class="err">is</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">map</span><span class="w"> </span><span class="err">that</span><span class="w"> </span><span class="err">maps</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">pixel</span><span class="w"> </span><span class="err">size</span><span class="w"> </span><span class="err">to</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">thumbnail</span><span class="w"> </span><span class="err">url</span><span class="w"> </span><span class="err">of</span><span class="w"> </span><span class="err">that</span><span class="w"> </span><span class="err">size.</span><span class="w">
+  </span><span class="nl">"thumbnails"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"72"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://url.to.72px.thumbnail"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"144"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://url.to.144px.thumbnail"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Reserved_Property_Names"></a></p>
+
+<h3 id="reserved-property-names">Reserved Property Names</h3>
+
+<p>Certain property names are reserved for consistent use across services.</p>
+
+<p>Details about reserved property names, along with the full list, can be found
+later on in this guide. Services should avoid using these property names for
+anything other than their defined semantics.</p>
+
+<p><a id="Singular_vs_Plural_Property_Names"></a></p>
+
+<h3 id="singular-vs-plural-property-names">Singular vs Plural Property Names</h3>
+
+<p>Array types should have plural property names. All other property names should
+be singular.</p>
+
+<p>Arrays usually contain multiple items, and a plural property name reflects this.
+An example of this can be seen in the reserved names below. The <code class="language-plaintext highlighter-rouge">items</code> property
+name is plural because it represents an array of item objects. Most of the other
+fields are singular.</p>
+
+<p>There may be exceptions to this, especially when referring to numeric property
+values. For example, in the reserved names, <code class="language-plaintext highlighter-rouge">totalItems</code> makes more sense than
+<code class="language-plaintext highlighter-rouge">totalItem</code>. However, technically, this is not violating the style guide, since
+<code class="language-plaintext highlighter-rouge">totalItems</code> can be viewed as <code class="language-plaintext highlighter-rouge">totalOfItems</code>, where <code class="language-plaintext highlighter-rouge">total</code> is singular (as per
+the style guide), and <code class="language-plaintext highlighter-rouge">OfItems</code> serves to qualify the total. The field name
+could also be changed to <code class="language-plaintext highlighter-rouge">itemCount</code> to look singular.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">Singular</span><span class="w">
+  </span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lisa"</span><span class="p">,</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">An</span><span class="w"> </span><span class="err">array</span><span class="w"> </span><span class="err">of</span><span class="w"> </span><span class="err">siblings</span><span class="p">,</span><span class="w"> </span><span class="err">plural</span><span class="w">
+  </span><span class="nl">"siblings"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"bart"</span><span class="p">,</span><span class="w"> </span><span class="s2">"maggie"</span><span class="p">],</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="s2">"totalItem"</span><span class="w"> </span><span class="err">doesn't</span><span class="w"> </span><span class="err">sound</span><span class="w"> </span><span class="err">right</span><span class="w">
+  </span><span class="nl">"totalItems"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">But</span><span class="w"> </span><span class="err">maybe</span><span class="w"> </span><span class="s2">"itemCount"</span><span class="w"> </span><span class="err">is</span><span class="w"> </span><span class="err">better</span><span class="w">
+  </span><span class="nl">"itemCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Naming_Conflicts"></a></p>
+
+<h3 id="naming-conflicts">Naming Conflicts</h3>
+
+<p>Avoid naming conflicts by choosing a new property name or versioning the API.</p>
+
+<p>New properties may be added to the reserved list in the future. There is no
+concept of JSON namespacing. If there is a naming conflict, these can usually be
+resolved by choosing a new property name or by versioning. For example, suppose
+we start with the following JSON object:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"apiVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"recipeName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pizza"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"ingredients"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"tomatoes"</span><span class="p">,</span><span class="w"> </span><span class="s2">"cheese"</span><span class="p">,</span><span class="w"> </span><span class="s2">"sausage"</span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>If in the future we wish to make <code class="language-plaintext highlighter-rouge">ingredients</code> a reserved word, we can do one of
+two things:</p>
+
+<p>1) Choose a different name:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"apiVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"recipeName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pizza"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"ingredientsData"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some new property"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"ingredients"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"tomatoes"</span><span class="p">,</span><span class="w"> </span><span class="s2">"cheese"</span><span class="p">,</span><span class="w"> </span><span class="s2">"sausage"</span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>2) Rename the property on a major version boundary:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"apiVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"recipeName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pizza"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"ingredients"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some new property"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"recipeIngredients"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"tomatoes"</span><span class="p">,</span><span class="w"> </span><span class="s2">"cheese"</span><span class="p">,</span><span class="w"> </span><span class="s2">"sausage"</span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Property_Value_Guidelines"></a></p>
+
+<h2 id="property-value-guidelines">Property Value Guidelines</h2>
+
+<p><a id="Property_Value_Format"></a></p>
+
+<h3 id="property-value-format">Property Value Format</h3>
+
+<p>Property values must be booleans, numbers, Unicode strings, objects, arrays, or
+<code class="language-plaintext highlighter-rouge">null</code>.</p>
+
+<p>The spec at <a href="https://www.json.org">JSON.org</a> specifies exactly what type of data
+is allowed in a property value. This includes booleans, numbers, Unicode
+strings, objects, arrays, and <code class="language-plaintext highlighter-rouge">null</code>. JavaScript expressions are not allowed.
+APIs should support that spec for all values, and should choose the data type
+most appropriate for a particular property (numbers to represent numbers, etc.).</p>
+
+<p>Good:</p>
+
+<div class="goodcode"></div>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"canPigsFly"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">     </span><span class="err">//</span><span class="w"> </span><span class="kc">null</span><span class="w">
+  </span><span class="nl">"areWeThereYet"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">boolean</span><span class="w">
+  </span><span class="nl">"answerToLife"</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span><span class="w">     </span><span class="err">//</span><span class="w"> </span><span class="err">number</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bart"</span><span class="p">,</span><span class="w">         </span><span class="err">//</span><span class="w"> </span><span class="err">string</span><span class="w">
+  </span><span class="nl">"moreData"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">         </span><span class="err">//</span><span class="w"> </span><span class="err">object</span><span class="w">
+  </span><span class="nl">"things"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">            </span><span class="err">//</span><span class="w"> </span><span class="err">array</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Bad:</p>
+
+<div class="badcode"></div>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"aVariableName"</span><span class="p">:</span><span class="w"> </span><span class="err">aVariableName</span><span class="p">,</span><span class="w">         </span><span class="err">//</span><span class="w"> </span><span class="err">Bad</span><span class="w"> </span><span class="err">-</span><span class="w"> </span><span class="err">JavaScript</span><span class="w"> </span><span class="err">identifier</span><span class="w">
+  </span><span class="nl">"functionFoo"</span><span class="p">:</span><span class="w"> </span><span class="err">function()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">return</span><span class="w"> </span><span class="mi">1</span><span class="err">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">Bad</span><span class="w"> </span><span class="err">-</span><span class="w"> </span><span class="err">JavaScript</span><span class="w"> </span><span class="err">function</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Empty_Null_Property_Values"></a></p>
+
+<h3 id="emptynull-property-values">Empty/Null Property Values</h3>
+
+<p>Consider removing empty or <code class="language-plaintext highlighter-rouge">null</code> values.</p>
+
+<p>If a property is optional or has an empty or <code class="language-plaintext highlighter-rouge">null</code> value, consider dropping the
+property from the JSON, unless there’s a strong semantic reason for its
+existence.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"volume"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+
+  </span><span class="err">//</span><span class="w"> </span><span class="err">Even</span><span class="w"> </span><span class="err">though</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="s2">"balance"</span><span class="w"> </span><span class="err">property's</span><span class="w"> </span><span class="err">value</span><span class="w"> </span><span class="err">is</span><span class="w"> </span><span class="err">zero</span><span class="p">,</span><span class="w"> </span><span class="err">it</span><span class="w"> </span><span class="err">should</span><span class="w"> </span><span class="err">be</span><span class="w"> </span><span class="err">left</span><span class="w"> </span><span class="err">in</span><span class="p">,</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">since</span><span class="w"> </span><span class="s2">"0"</span><span class="w"> </span><span class="err">signifies</span><span class="w"> </span><span class="s2">"even balance"</span><span class="w"> </span><span class="err">(the</span><span class="w"> </span><span class="err">value</span><span class="w"> </span><span class="err">could</span><span class="w"> </span><span class="err">be</span><span class="w"> </span><span class="s2">"-1"</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">left</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">balance</span><span class="w"> </span><span class="err">and</span><span class="w"> </span><span class="s2">"+1"</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">right</span><span class="w"> </span><span class="err">balance.</span><span class="w">
+  </span><span class="nl">"balance"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+
+  </span><span class="err">//</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="s2">"currentlyPlaying"</span><span class="w"> </span><span class="err">property</span><span class="w"> </span><span class="err">can</span><span class="w"> </span><span class="err">be</span><span class="w"> </span><span class="err">left</span><span class="w"> </span><span class="err">out</span><span class="w"> </span><span class="err">since</span><span class="w"> </span><span class="err">it</span><span class="w"> </span><span class="err">is</span><span class="w"> </span><span class="kc">null</span><span class="err">.</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="nl">"currentlyPlaying"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Enum_Values"></a></p>
+
+<h3 id="enum-values">Enum Values</h3>
+
+<p>Enum values should be represented as strings.</p>
+
+<p>As APIs grow, enum values may be added, removed or changed. Using strings as
+enum values ensures that downstream clients can gracefully handle changes to
+enum values.</p>
+
+<p>Java code:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="nc">Color</span> <span class="o">{</span>
+  <span class="no">WHITE</span><span class="o">,</span>
+  <span class="no">BLACK</span><span class="o">,</span>
+  <span class="no">RED</span><span class="o">,</span>
+  <span class="no">YELLOW</span><span class="o">,</span>
+  <span class="no">BLUE</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>JSON object:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"color"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WHITE"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Property_Value_Data_Types"></a></p>
+
+<h2 id="property-value-data-types">Property Value Data Types</h2>
+
+<p>As mentioned above, property value types must be booleans, numbers, strings,
+objects, arrays, or <code class="language-plaintext highlighter-rouge">null</code>. However, it is useful to define a set of standard
+data types when dealing with certain values. These data types will always be
+strings, but they will be formatted in a specific manner so that they can be
+easily parsed.</p>
+
+<p><a id="Date_Property_Values"></a></p>
+
+<h3 id="date-property-values">Date Property Values</h3>
+
+<p>Dates should be formatted as recommended by RFC 3339.</p>
+
+<p>Dates should be strings formatted as recommended by
+<a href="https://www.ietf.org/rfc/rfc3339.txt">RFC 3339</a>.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"lastUpdate"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2007-11-06T16:34:41.000Z"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Time_Duration_Property_Values"></a></p>
+
+<h3 id="time-duration-property-values">Time Duration Property Values</h3>
+
+<p>Time durations should be formatted as recommended by ISO 8601.</p>
+
+<p>Time duration values should be strings formatted as recommended by
+<a href="https://en.wikipedia.org/wiki/ISO_8601#Durations">ISO 8601</a>.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">three</span><span class="w"> </span><span class="err">years</span><span class="p">,</span><span class="w"> </span><span class="err">six</span><span class="w"> </span><span class="err">months</span><span class="p">,</span><span class="w"> </span><span class="err">four</span><span class="w"> </span><span class="err">days</span><span class="p">,</span><span class="w"> </span><span class="err">twelve</span><span class="w"> </span><span class="err">hours</span><span class="p">,</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">thirty</span><span class="w"> </span><span class="err">minutes</span><span class="p">,</span><span class="w"> </span><span class="err">and</span><span class="w"> </span><span class="err">five</span><span class="w"> </span><span class="err">seconds</span><span class="w">
+  </span><span class="nl">"duration"</span><span class="p">:</span><span class="w"> </span><span class="s2">"P3Y6M4DT12H30M5S"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Latitude_Longitude_Property_Values"></a></p>
+
+<h3 id="latitudelongitude-property-values">Latitude/Longitude Property Values</h3>
+
+<p>Latitudes/Longitudes should be formatted as recommended by ISO 6709.</p>
+
+<p>Latitude/Longitude should be strings formatted as recommended by
+<a href="https://en.wikipedia.org/wiki/ISO_6709">ISO 6709</a>. Furthermore, they should
+favor the ±DD.DDDD±DDD.DDDD degrees format.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="err">latitude/longitude</span><span class="w"> </span><span class="err">location</span><span class="w"> </span><span class="err">of</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">statue</span><span class="w"> </span><span class="err">of</span><span class="w"> </span><span class="err">liberty.</span><span class="w">
+  </span><span class="nl">"statueOfLiberty"</span><span class="p">:</span><span class="w"> </span><span class="s2">"+40.6894-074.0447"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="JSON_Structure_and_Reserved_Property_Names"></a></p>
+
+<h2 id="json-structure--reserved-property-names">JSON Structure &amp; Reserved Property Names</h2>
+
+<p>In order to maintain a consistent interface across APIs, JSON objects should
+follow the structure outlined below. This structure applies to both requests and
+responses made with JSON. Within this structure, there are certain property
+names that are reserved for specific uses. These properties are NOT required; in
+other words, each reserved property may appear zero or one times. But if a
+service needs these properties, this naming convention is recommended. Here is a
+schema of the JSON structure, represented in <a href="http://orderly-json.org/">Orderly</a>
+format (which in turn can be compiled into a
+<a href="https://json-schema.org/">JSONSchema</a>). You can view a few examples of the JSON
+structure at the end of this guide.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>object {
+  string apiVersion?;
+  string context?;
+  string id?;
+  string method?;
+  object {
+    string id?
+  }* params?;
+  object {
+    string kind?;
+    string fields?;
+    string etag?;
+    string id?;
+    string lang?;
+    string updated?; # date formatted RFC 3339
+    boolean deleted?;
+    integer currentItemCount?;
+    integer itemsPerPage?;
+    integer startIndex?;
+    integer totalItems?;
+    integer pageIndex?;
+    integer totalPages?;
+    string pageLinkTemplate /^https?:/ ?;
+    object {}* next?;
+    string nextLink?;
+    object {}* previous?;
+    string previousLink?;
+    object {}* self?;
+    string selfLink?;
+    object {}* edit?;
+    string editLink?;
+    array [
+      object {}*;
+    ] items?;
+  }* data?;
+  object {
+    integer code?;
+    string message?;
+    array [
+      object {
+        string domain?;
+        string reason?;
+        string message?;
+        string location?;
+        string locationType?;
+        string extendedHelp?;
+        string sendReport?;
+      }*;
+    ] errors?;
+  }* error?;
+}*;
+</code></pre></div></div>
+
+<p>The JSON object has a few top-level properties, followed by either a <code class="language-plaintext highlighter-rouge">data</code>
+object or an <code class="language-plaintext highlighter-rouge">error</code> object, but not both. An explanation of each of these
+properties can be found below.</p>
+
+<p><a id="Top-Level_Reserved_Property_Names"></a></p>
+
+<h2 id="top-level-reserved-property-names">Top-Level Reserved Property Names</h2>
+
+<p>The top-level of the JSON object may contain the following properties.</p>
+
+<p><a id="apiVersion"></a></p>
+
+<h3 id="apiversion">apiVersion</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: -</p>
+
+<p>Represents the desired version of the service API in a request, and the version
+of the service API that’s served in the response. <code class="language-plaintext highlighter-rouge">apiVersion</code> should always be
+present. This is not related to the version of the data. Versioning of data
+should be handled through some other mechanism such as etags.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w"> </span><span class="nl">"apiVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.1"</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="context"></a></p>
+
+<h3 id="context">context</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: -</p>
+
+<p>Client sets this value and server echoes data in the response. This is useful in
+JSON-P and batch situations, where the user can use the <code class="language-plaintext highlighter-rouge">context</code> to correlate
+responses with requests. This property is a top-level property because the
+<code class="language-plaintext highlighter-rouge">context</code> should be present regardless of whether the response was successful or
+an error. <code class="language-plaintext highlighter-rouge">context</code> differs from <code class="language-plaintext highlighter-rouge">id</code> in that <code class="language-plaintext highlighter-rouge">context</code> is specified by the user
+while <code class="language-plaintext highlighter-rouge">id</code> is assigned by the service.</p>
+
+<p>Example:</p>
+
+<p>Request #1:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://www.google.com/myapi?context=bart
+</code></pre></div></div>
+
+<p>Request #2:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://www.google.com/myapi?context=lisa
+</code></pre></div></div>
+
+<p>Response #1:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bart"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Response #2:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lisa"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Common JavaScript handler code to process both responses:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">handleResponse</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="dl">"</span><span class="s2">bart</span><span class="dl">"</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Update the "Bart" section of the page.</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">result</span><span class="p">.</span><span class="nx">context</span> <span class="o">==</span> <span class="dl">"</span><span class="s2">lisa</span><span class="dl">"</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Update the "Lisa" section of the page.</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><a id="id"></a></p>
+
+<h3 id="id">id</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: -</p>
+
+<p>A server supplied identifier for the response (regardless of whether the
+response is a success or an error). This is useful for correlating server logs
+with individual responses received at a client.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w"> </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="method"></a></p>
+
+<h3 id="method">method</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: -</p>
+
+<p>Represents the operation to perform, or that was performed, on the data. In the
+case of a JSON request, the <code class="language-plaintext highlighter-rouge">method</code> property can be used to indicate which
+operation to perform on the data. In the case of a JSON response, the <code class="language-plaintext highlighter-rouge">method</code>
+property can indicate the operation performed on the data.</p>
+
+<p>One example of this is in JSON-RPC requests, where <code class="language-plaintext highlighter-rouge">method</code> indicates the
+operation to perform on the <code class="language-plaintext highlighter-rouge">params</code> property:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"people.get"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"params"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"userId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@me"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"groupId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@self"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="params"></a></p>
+
+<h3 id="params">params</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">object</code> <br />
+Parent: -</p>
+
+<p>This object serves as a map of input parameters to send to an RPC request. It
+can be used in conjunction with the <code class="language-plaintext highlighter-rouge">method</code> property to execute an RPC
+function. If an RPC function does not need parameters, this property can be
+omitted.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"people.get"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"params"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"userId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@me"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"groupId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@self"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data"></a></p>
+
+<h3 id="data">data</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">object</code> <br />
+Parent: -</p>
+
+<p>Container for all the data from a response. This property itself has many
+reserved property names, which are described below. Services are free to add
+their own data to this object. A JSON response should contain either a <code class="language-plaintext highlighter-rouge">data</code>
+object or an <code class="language-plaintext highlighter-rouge">error</code> object, but not both. If both <code class="language-plaintext highlighter-rouge">data</code> and <code class="language-plaintext highlighter-rouge">error</code> are
+present, the <code class="language-plaintext highlighter-rouge">error</code> object takes precedence.</p>
+
+<p><a id="error"></a></p>
+
+<h3 id="error">error</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">object</code> <br />
+Parent: -</p>
+
+<p>Indicates that an error has occurred, with details about the error. The error
+format supports either one or more errors returned from the service. A JSON
+response should contain either a <code class="language-plaintext highlighter-rouge">data</code> object or an <code class="language-plaintext highlighter-rouge">error</code> object, but not
+both. If both <code class="language-plaintext highlighter-rouge">data</code> and <code class="language-plaintext highlighter-rouge">error</code> are present, the <code class="language-plaintext highlighter-rouge">error</code> object takes
+precedence.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"apiVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="mi">404</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"File Not Found"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w">
+      </span><span class="nl">"domain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Calendar"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"reason"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ResourceNotFoundException"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"File Not Found"</span><span class="w">
+    </span><span class="p">}]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Reserved_Property_Names_in_the_data_object"></a></p>
+
+<h2 id="reserved-property-names-in-the-data-object">Reserved Property Names in the data object</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">data</code> property of the JSON object may contain the following properties.</p>
+
+<p><a id="data.kind"></a></p>
+
+<h3 id="datakind">data.kind</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The <code class="language-plaintext highlighter-rouge">kind</code> property serves as a guide to what type of information this
+particular object stores. It can be present at the <code class="language-plaintext highlighter-rouge">data</code> level, or at the
+<code class="language-plaintext highlighter-rouge">items</code> level, or in any object where it’s helpful to distinguish between
+various types of objects. If the <code class="language-plaintext highlighter-rouge">kind</code> object is present, it should be the
+first property in the object (See the <a href="#Property_Ordering">Property Ordering</a>
+section below for more details).</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">//</span><span class="w"> </span><span class="s2">"Kind"</span><span class="w"> </span><span class="err">indicates</span><span class="w"> </span><span class="err">an</span><span class="w"> </span><span class="s2">"album"</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">Picasa</span><span class="w"> </span><span class="err">API.</span><span class="w">
+</span><span class="p">{</span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"album"</span><span class="p">}}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.fields"></a></p>
+
+<h3 id="datafields">data.fields</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>Represents the fields present in the response when doing a partial GET, or the
+fields present in a request when doing a partial PATCH. This property should
+only exist during a partial GET/PATCH, and should not be empty.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"fields"</span><span class="p">:</span><span class="w"> </span><span class="s2">"author,id"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bart"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bart"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.etag"></a></p>
+
+<h3 id="dataetag">data.etag</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>Represents the etag for the response. Details about ETags in the GData APIs can
+be found here:
+<a href="https://code.google.com/apis/gdata/docs/2.0/reference.html#ResourceVersioning">https://code.google.com/apis/gdata/docs/2.0/reference.html#ResourceVersioning</a></p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"etag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"W/</span><span class="se">\"</span><span class="s2">C0QBRXcycSp7ImA9WxRVFUk.</span><span class="se">\"</span><span class="s2">"</span><span class="p">}}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.id"></a></p>
+
+<h3 id="dataid">data.id</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>A globally unique string used to reference the object. The specific details of
+the <code class="language-plaintext highlighter-rouge">id</code> property are left up to the service.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"12345"</span><span class="p">}}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.lang"></a></p>
+
+<h3 id="datalang">data.lang</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> (formatted as specified in BCP 47) <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code> (or any child element)</p>
+
+<p>Indicates the language of the rest of the properties in this object. This
+property mimics HTML’s <code class="language-plaintext highlighter-rouge">lang</code> property and XML’s <code class="language-plaintext highlighter-rouge">xml:lang</code> properties. The
+value should be a language value as defined in
+<a href="https://www.rfc-editor.org/rfc/bcp/bcp47.txt">BCP 47</a>. If a single JSON object
+contains data in multiple languages, the service is responsible for developing
+and documenting an appropriate location for the <code class="language-plaintext highlighter-rouge">lang</code> property.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="nl">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"lang"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello world!"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"lang"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fr"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bonjour monde!"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">]}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.updated"></a></p>
+
+<h3 id="dataupdated">data.updated</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> (formatted as specified in RFC 3339) <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>Indicates the last date/time (<a href="https://www.ietf.org/rfc/rfc3339.txt">RFC 3339</a>)
+the item was updated, as defined by the service.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"updated"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2007-11-06T16:34:41.000Z"</span><span class="p">}}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.deleted"></a></p>
+
+<h3 id="datadeleted">data.deleted</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">boolean</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code> (or any child element)</p>
+
+<p>A marker element, that, when present, indicates the containing entry is deleted.
+If <code class="language-plaintext highlighter-rouge">deleted</code> is present, its value must be <code class="language-plaintext highlighter-rouge">true</code>; a value of <code class="language-plaintext highlighter-rouge">false</code> can cause
+confusion and should be avoided.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="nl">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A deleted entry"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"deleted"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.items"></a></p>
+
+<h3 id="dataitems">data.items</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">array</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The property name <code class="language-plaintext highlighter-rouge">items</code> is reserved to represent an array of items (for
+example, photos in Picasa, videos in YouTube). This construct is intended to
+provide a standard location for collections related to the current result. For
+example, the JSON output could be plugged into a generic pagination system that
+knows to page on the <code class="language-plaintext highlighter-rouge">items</code> array. If <code class="language-plaintext highlighter-rouge">items</code> exists, it should be the last
+property in the <code class="language-plaintext highlighter-rouge">data</code> object (See the <a href="#Property_Ordering">Property Ordering</a>
+section below for more details).</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w"> </span><span class="err">/*</span><span class="w"> </span><span class="err">Object</span><span class="w"> </span><span class="err">#</span><span class="mi">1</span><span class="w"> </span><span class="err">*/</span><span class="w"> </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w"> </span><span class="err">/*</span><span class="w"> </span><span class="err">Object</span><span class="w"> </span><span class="err">#</span><span class="mi">2</span><span class="w"> </span><span class="err">*/</span><span class="w"> </span><span class="p">},</span><span class="w">
+      </span><span class="err">...</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Reserved_Property_Names_for_Paging"></a></p>
+
+<h2 id="reserved-property-names-for-paging">Reserved Property Names for Paging</h2>
+
+<p>The following properties are located in the <code class="language-plaintext highlighter-rouge">data</code> object, and help page through
+a list of items. Some of the language and concepts are borrowed from the
+<a href="https://www.opensearch.org/">OpenSearch specification</a>.</p>
+
+<p>The paging properties below allow for various styles of paging, including:</p>
+
+<ul>
+  <li>Previous/Next paging - Allows users to move forward and backward through a
+list, one page at a time. The <code class="language-plaintext highlighter-rouge">nextLink</code> and <code class="language-plaintext highlighter-rouge">previousLink</code> properties
+(described in the
+<a href="#Reserved_Property_Names_for_Links">Reserved Property Names for Links</a>
+section below) are used for this style of paging.</li>
+  <li>Index-based paging - Allows users to jump directly to a specific item
+position within a list of items. For example, to load 10 items starting at
+item 200, the developer may point the user to a URL with the query string
+<code class="language-plaintext highlighter-rouge">?startIndex=200</code>.</li>
+  <li>Page-based paging - Allows users to jump directly to a specific page within
+the items. This is similar to index-based paging, but saves the developer
+the extra step of having to calculate the item index for a new page of
+items. For example, rather than jump to item number 200, the developer could
+jump to page 20. The URLs during page-based paging could use the query
+string <code class="language-plaintext highlighter-rouge">?page=1</code> or <code class="language-plaintext highlighter-rouge">?page=20</code>. The <code class="language-plaintext highlighter-rouge">pageIndex</code> and <code class="language-plaintext highlighter-rouge">totalPages</code> properties
+are used for this style of paging.</li>
+</ul>
+
+<p>An example of how to use these properties to implement paging can be found at
+the end of this guide.</p>
+
+<p><a id="data.currentItemCount"></a></p>
+
+<h3 id="datacurrentitemcount">data.currentItemCount</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">integer</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The number of items in this result set. Should be equivalent to <code class="language-plaintext highlighter-rouge">items.length</code>,
+and is provided as a convenience property. For example, suppose a developer
+requests a set of search items, and asks for 10 items per page. The total set of
+that search has 14 total items. The first page of items will have 10 items in
+it, so both <code class="language-plaintext highlighter-rouge">itemsPerPage</code> and <code class="language-plaintext highlighter-rouge">currentItemCount</code> will equal <code class="language-plaintext highlighter-rouge">10</code>. The next page
+of items will have the remaining 4 items; <code class="language-plaintext highlighter-rouge">itemsPerPage</code> will still be <code class="language-plaintext highlighter-rouge">10</code>, but
+<code class="language-plaintext highlighter-rouge">currentItemCount</code> will be <code class="language-plaintext highlighter-rouge">4</code>.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">//</span><span class="w"> </span><span class="s2">"itemsPerPage"</span><span class="w"> </span><span class="err">does</span><span class="w"> </span><span class="err">not</span><span class="w"> </span><span class="err">necessarily</span><span class="w"> </span><span class="err">match</span><span class="w"> </span><span class="s2">"currentItemCount"</span><span class="w">
+    </span><span class="nl">"itemsPerPage"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"currentItemCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.itemsPerPage"></a></p>
+
+<h3 id="dataitemsperpage">data.itemsPerPage</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">integer</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The number of items in the result. This is not necessarily the size of the
+<code class="language-plaintext highlighter-rouge">data.items</code> array; if we are viewing the last page of items, the size of
+<code class="language-plaintext highlighter-rouge">data.items</code> may be less than <code class="language-plaintext highlighter-rouge">itemsPerPage</code>. However the size of <code class="language-plaintext highlighter-rouge">data.items</code>
+should not exceed <code class="language-plaintext highlighter-rouge">itemsPerPage</code>.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"itemsPerPage"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.startIndex"></a></p>
+
+<h3 id="datastartindex">data.startIndex</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">integer</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The index of the first item in <code class="language-plaintext highlighter-rouge">data.items</code>. For consistency, <code class="language-plaintext highlighter-rouge">startIndex</code>
+should be 1-based. For example, the first item in the first set of items should
+have a <code class="language-plaintext highlighter-rouge">startIndex</code> of 1. If the user requests the next set of data, the
+<code class="language-plaintext highlighter-rouge">startIndex</code> may be 10.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"startIndex"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.totalItems"></a></p>
+
+<h3 id="datatotalitems">data.totalItems</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">integer</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The total number of items available in this set. For example, if a user has 100
+blog posts, the response may only contain 10 items, but the <code class="language-plaintext highlighter-rouge">totalItems</code> would
+be 100.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"totalItems"</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.pagingLinkTemplate"></a></p>
+
+<h3 id="datapaginglinktemplate">data.pagingLinkTemplate</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>A URI template indicating how users can calculate subsequent paging links. The
+URI template also has some reserved variable names: <code class="language-plaintext highlighter-rouge">{index}</code> representing the
+item number to load, and <code class="language-plaintext highlighter-rouge">{pageIndex}</code>, representing the page number to load.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"pagingLinkTemplate"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.pageIndex"></a></p>
+
+<h3 id="datapageindex">data.pageIndex</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">integer</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The index of the current page of items. For consistency, <code class="language-plaintext highlighter-rouge">pageIndex</code> should be
+1-based. For example, the first page of items has a <code class="language-plaintext highlighter-rouge">pageIndex</code> of 1.
+<code class="language-plaintext highlighter-rouge">pageIndex</code> can also be calculated from the item-based paging properties:
+<code class="language-plaintext highlighter-rouge">pageIndex = floor(startIndex / itemsPerPage) + 1</code>.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"pageIndex"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.totalPages"></a></p>
+
+<h3 id="datatotalpages">data.totalPages</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">integer</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The total number of pages in the result set. <code class="language-plaintext highlighter-rouge">totalPages</code> can also be calculated
+from the item-based paging properties above:
+<code class="language-plaintext highlighter-rouge">totalPages = ceiling(totalItems / itemsPerPage)</code>.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"totalPages"</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Reserved_Property_Names_for_Links"></a></p>
+
+<h2 id="reserved-property-names-for-links">Reserved Property Names for Links</h2>
+
+<p>The following properties are located in the <code class="language-plaintext highlighter-rouge">data</code> object, and represent
+references to other resources. There are two forms of link properties:</p>
+
+<ol>
+  <li>objects, which can contain any sort of reference (such as a JSON-RPC
+object), and</li>
+  <li>URI strings, which represent URIs to resources (and will always be suffixed
+with <code class="language-plaintext highlighter-rouge">Link</code>).</li>
+</ol>
+
+<p><a id="data.self"></a></p>
+
+<h3 id="dataself--dataselflink">data.self / data.selfLink</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">object</code> / <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The self link can be used to retrieve the item’s data. For example, in a list of
+a user’s Picasa album, each album object in the <code class="language-plaintext highlighter-rouge">items</code> array could contain a
+<code class="language-plaintext highlighter-rouge">selfLink</code> that can be used to retrieve data related to that particular album.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+    </span><span class="nl">"selfLink"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.google.com/feeds/album/1234"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.edit"></a></p>
+
+<h3 id="dataedit--dataeditlink">data.edit / data.editLink</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">object</code> / <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The edit link indicates where a user can send update or delete requests. This is
+useful for REST-based APIs. This link need only be present if the user can
+update/delete this item.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"edit"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+    </span><span class="nl">"editLink"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.google.com/feeds/album/1234/edit"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.next"></a></p>
+
+<h3 id="datanext--datanextlink">data.next / data.nextLink</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">object</code> / <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The next link indicates how more data can be retrieved. It points to the
+location to load the next set of data. It can be used in conjunction with the
+<code class="language-plaintext highlighter-rouge">itemsPerPage</code>, <code class="language-plaintext highlighter-rouge">startIndex</code> and <code class="language-plaintext highlighter-rouge">totalItems</code> properties in order to page
+through data.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"next"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+    </span><span class="nl">"nextLink"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.google.com/feeds/album/1234/next"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="data.previous"></a></p>
+
+<h3 id="dataprevious--datapreviouslink">data.previous / data.previousLink</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">object</code> / <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">data</code></p>
+
+<p>The previous link indicates how more data can be retrieved. It points to the
+location to load the previous set of data. It can be used in conjunction with
+the <code class="language-plaintext highlighter-rouge">itemsPerPage</code>, <code class="language-plaintext highlighter-rouge">startIndex</code> and <code class="language-plaintext highlighter-rouge">totalItems</code> properties in order to page
+through data.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"previous"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+    </span><span class="nl">"previousLink"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.google.com/feeds/album/1234/next"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Reserved_Property_Names_in_the_error_object"></a></p>
+
+<h2 id="reserved-property-names-in-the-error-object">Reserved Property Names in the error object</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">error</code> property of the JSON object may contain the following properties.</p>
+
+<p><a id="error.code"></a></p>
+
+<h3 id="errorcode">error.code</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">integer</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">error</code></p>
+
+<p>Represents the code for this error. This property value will usually represent
+the HTTP response code. If there are multiple errors, <code class="language-plaintext highlighter-rouge">code</code> will be the error
+code for the first error.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="mi">404</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="error.message"></a></p>
+
+<h3 id="errormessage">error.message</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">error</code></p>
+
+<p>A human readable message providing more details about the error. If there are
+multiple errors, <code class="language-plaintext highlighter-rouge">message</code> will be the message for the first error.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"File Not Found"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="error.errors"></a></p>
+
+<h3 id="errorerrors">error.errors</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">array</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">error</code></p>
+
+<p>Container for any additional information regarding the error. If the service
+returns multiple errors, each element in the <code class="language-plaintext highlighter-rouge">errors</code> array represents a
+different error.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w"> </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="error.errors.domain"></a></p>
+
+<h3 id="errorerrorsdomain">error.errors[].domain</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">error.errors</code></p>
+
+<p>Unique identifier for the service raising this error. This helps distinguish
+service-specific errors (i.e. error inserting an event in a calendar) from
+general protocol errors (i.e. file not found).</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nl">"domain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Calendar"</span><span class="p">}]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="error.errors.reason"></a></p>
+
+<h3 id="errorerrorsreason">error.errors[].reason</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">error.errors</code></p>
+
+<p>Unique identifier for this error. Different from the <code class="language-plaintext highlighter-rouge">error.code</code> property in
+that this is not an HTTP response code.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nl">"reason"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ResourceNotFoundException"</span><span class="p">}]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="error.errors.message"></a></p>
+
+<h3 id="errorerrorsmessage">error.errors[].message</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">error.errors</code></p>
+
+<p>A human readable message providing more details about the error. If there is
+only one error, this field will match <code class="language-plaintext highlighter-rouge">error.message</code>.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="mi">404</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"File Not Found"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"File Not Found"</span><span class="p">}]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="error.errors.location"></a></p>
+
+<h3 id="errorerrorslocation">error.errors[].location</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">error.errors</code></p>
+
+<p>The location of the error (the interpretation of its value depends on
+<code class="language-plaintext highlighter-rouge">locationType</code>).</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nl">"location"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">}]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="error.errors.locationType"></a></p>
+
+<h3 id="errorerrorslocationtype">error.errors[].locationType</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">error.errors</code></p>
+
+<p>Indicates how the <code class="language-plaintext highlighter-rouge">location</code> property should be interpreted.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nl">"locationType"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">}]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="error.errors.extendedHelp"></a></p>
+
+<h3 id="errorerrorsextendedhelp">error.errors[].extendedHelp</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">error.errors</code></p>
+
+<p>A URI for a help text that might shed some more light on the error.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nl">"extendedHelper"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://url.to.more.details.example.com/"</span><span class="p">}]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="error.errors.sendReport"></a></p>
+
+<h3 id="errorerrorssendreport">error.errors[].sendReport</h3>
+
+<p>Property Value Type: <code class="language-plaintext highlighter-rouge">string</code> <br />
+Parent: <code class="language-plaintext highlighter-rouge">error.errors</code></p>
+
+<p>A URI for a report form used by the service to collect data about the error
+condition. This URI should be preloaded with parameters describing the request.</p>
+
+<p>Example:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nl">"sendReport"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://report.example.com/"</span><span class="p">}]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Property_Ordering"></a></p>
+
+<h2 id="property-ordering">Property Ordering</h2>
+
+<p>Properties can be in any order within the JSON object. However, in some cases
+the ordering of properties can help parsers quickly interpret data and lead to
+better performance. One example is a pull parser in a mobile environment, where
+performance and memory are critical, and unnecessary parsing should be avoided.</p>
+
+<p><a id="Kind_Property"></a></p>
+
+<h3 id="kind-property">Kind Property</h3>
+
+<p><code class="language-plaintext highlighter-rouge">kind</code> should be the first property.</p>
+
+<p>Suppose a parser is responsible for parsing a raw JSON stream into a specific
+object. The <code class="language-plaintext highlighter-rouge">kind</code> property guides the parser to instantiate the appropriate
+object. Therefore it should be the first property in the JSON object. This only
+applies when objects have a <code class="language-plaintext highlighter-rouge">kind</code> property (usually found in the <code class="language-plaintext highlighter-rouge">data</code> and
+<code class="language-plaintext highlighter-rouge">items</code> properties).</p>
+
+<p><a id="Items_Property"></a></p>
+
+<h3 id="items-property">Items Property</h3>
+
+<p><code class="language-plaintext highlighter-rouge">items</code> should be the last property in the <code class="language-plaintext highlighter-rouge">data</code> object.</p>
+
+<p>This allows all of the collection’s properties to be read before reading each
+individual item. In cases where there are a lot of items, this avoids
+unnecessarily parsing those items when the developer only needs fields from the
+data.</p>
+
+<p><a id="Property_Ordering_Example"></a></p>
+
+<h3 id="property-ordering-example">Property Ordering Example</h3>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">//</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="s2">"kind"</span><span class="w"> </span><span class="err">property</span><span class="w"> </span><span class="err">distinguishes</span><span class="w"> </span><span class="err">between</span><span class="w"> </span><span class="err">an</span><span class="w"> </span><span class="s2">"album"</span><span class="w"> </span><span class="err">and</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="s2">"photo"</span><span class="err">.</span><span class="w">
+</span><span class="err">//</span><span class="w"> </span><span class="s2">"Kind"</span><span class="w"> </span><span class="err">is</span><span class="w"> </span><span class="err">always</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">first</span><span class="w"> </span><span class="err">property</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">its</span><span class="w"> </span><span class="err">parent</span><span class="w"> </span><span class="err">object.</span><span class="w">
+</span><span class="err">//</span><span class="w"> </span><span class="err">The</span><span class="w"> </span><span class="s2">"items"</span><span class="w"> </span><span class="err">property</span><span class="w"> </span><span class="err">is</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">last</span><span class="w"> </span><span class="err">property</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="s2">"data"</span><span class="w"> </span><span class="err">object.</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"album"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Photo Album"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"An album in the user's account"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"photo"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My First Photo"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Examples"></a></p>
+
+<h2 id="examples">Examples</h2>
+
+<p><a id="YouTube_JSON_API"></a></p>
+
+<h3 id="youtube-json-api">YouTube JSON API</h3>
+
+<p>Here’s an example of the YouTube JSON API’s response object. You can learn more
+about YouTube’s JSON API here:
+<a href="https://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html">https://code.google.com/apis/youtube/2.0/developers_guide_jsonc.html</a>.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"apiVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"updated"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2010-02-04T19:29:54.001Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"totalItems"</span><span class="p">:</span><span class="w"> </span><span class="mi">6741</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"startIndex"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"itemsPerPage"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BGODurRfVv4"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"uploaded"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2009-11-17T20:10:06.000Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"updated"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2010-02-04T06:25:57.000Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"uploader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"docchat"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"category"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Animals"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"From service dog to SURFice dog"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Surf dog Ricochets inspirational video ..."</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+          </span><span class="s2">"Surf dog"</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"dog surfing"</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"dog"</span><span class="p">,</span><span class="w">
+          </span><span class="s2">"golden retriever"</span><span class="w">
+        </span><span class="p">],</span><span class="w">
+        </span><span class="nl">"thumbnail"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://i.ytimg.com/vi/BGODurRfVv4/default.jpg"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"hqDefault"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://i.ytimg.com/vi/BGODurRfVv4/hqdefault.jpg"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"player"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.youtube.com/watch?v=BGODurRfVv4&amp;feature=youtube_gdata"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"mobile"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://m.youtube.com/details?v=BGODurRfVv4"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"content"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rtsp://v5.cache6.c.youtube.com/CiILENy73wIaGQn-Vl-0uoNjBBMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"5"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.youtube.com/v/BGODurRfVv4?f=videos&amp;app=youtube_gdata"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"6"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rtsp://v7.cache7.c.youtube.com/CiILENy73wIaGQn-Vl-0uoNjBBMYESARFEgGUgZ2aWRlb3MM/0/0/0/video.3gp"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"duration"</span><span class="p">:</span><span class="w"> </span><span class="mi">315</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"rating"</span><span class="p">:</span><span class="w"> </span><span class="mf">4.96</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"ratingCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">2043</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"viewCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">1781691</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"favoriteCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">3363</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"commentCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">1007</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"commentsAllowed"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><a id="Paging_Example"></a></p>
+
+<h3 id="paging-example">Paging Example</h3>
+
+<p>This example demonstrates how the Google search items could be represented as a
+JSON object, with special attention to the paging variables.</p>
+
+<p>This sample is for illustrative purposes only. The API below does not actually
+exist.</p>
+
+<p>Here’s a sample Google search results page:</p>
+
+<p><img src="/styleguide/jsoncguide_example_01.png" alt="Sample Google search results page top" /></p>
+
+<p><img src="/styleguide/jsoncguide_example_02.png" alt="Sample Google search results page bottom" /></p>
+
+<p>Here’s a sample JSON representation of this page:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"apiVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.1"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"query"</span><span class="p">:</span><span class="w"> </span><span class="s2">"chicago style pizza"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.1"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"currentItemCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"itemsPerPage"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"startIndex"</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"totalItems"</span><span class="p">:</span><span class="w"> </span><span class="mi">2700000</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"nextLink"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=20&amp;sa=N"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"previousLink"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.google.com/search?hl=en&amp;q=chicago+style+pizza&amp;start=0&amp;sa=N"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"pagingLinkTemplate"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.google.com/search/hl=en&amp;q=chicago+style+pizza&amp;start={index}&amp;sa=N"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Pizz'a Chicago Home Page"</span><span class="w">
+        </span><span class="err">//</span><span class="w"> </span><span class="err">More</span><span class="w"> </span><span class="err">fields</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">search</span><span class="w"> </span><span class="err">results</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+      </span><span class="err">//</span><span class="w"> </span><span class="err">More</span><span class="w"> </span><span class="err">search</span><span class="w"> </span><span class="err">results</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Here’s how each of the colored boxes from the screenshot would be represented
+(the background colors correspond to the colors in the images above):</p>
+
+<ul>
+  <li>Results <span style="background-color:rgb(180, 167, 214)">11</span> - 20 of
+about 2,700,000 = <code class="language-plaintext highlighter-rouge">startIndex</code></li>
+  <li>Results 11 - <span style="background-color:rgb(255, 217, 102)">20</span> of
+about 2,700,000 = <code class="language-plaintext highlighter-rouge">startIndex + currentItemCount - 1</code></li>
+  <li>Results 11 - 20 of about
+<span style="background-color:rgb(246, 178, 107)">2,700,000</span> =
+<code class="language-plaintext highlighter-rouge">totalItems</code></li>
+  <li><span style="background-color:rgb(234, 153, 153)">Search results</span> =
+<code class="language-plaintext highlighter-rouge">items</code> (formatted appropriately)</li>
+  <li><span style="background-color:rgb(182, 215, 168)">Previous/Next</span> =
+<code class="language-plaintext highlighter-rouge">previousLink</code> / <code class="language-plaintext highlighter-rouge">nextLink</code></li>
+  <li><span style="background-color:rgb(159, 197, 232)">Numbered links in
+“Gooooooooooogle”</span> = Derived from <code class="language-plaintext highlighter-rouge">pageLinkTemplate</code>. The developer is
+responsible for calculating the values for <code class="language-plaintext highlighter-rouge">{index}</code> and substituting those
+values into the <code class="language-plaintext highlighter-rouge">pageLinkTemplate</code>. The <code class="language-plaintext highlighter-rouge">pageLinkTemplate</code>’s <code class="language-plaintext highlighter-rouge">{index}</code>
+variable is calculated as follows:
+    <ul>
+      <li>Index #1 = <code class="language-plaintext highlighter-rouge">0 * itemsPerPage = 0</code></li>
+      <li>Index #2 = <code class="language-plaintext highlighter-rouge">2 * itemsPerPage = 10</code></li>
+      <li>Index #3 = <code class="language-plaintext highlighter-rouge">3 * itemsPerPage = 20</code></li>
+      <li>Index #N = <code class="language-plaintext highlighter-rouge">N * itemsPerPage</code></li>
+    </ul>
+  </li>
+</ul>
+
+<p><a id="Appendix"></a></p>
+
+<h2 id="appendix">Appendix</h2>
+
+<p><a id="Appendix_A"></a></p>
+
+<h3 id="appendix-a-reserved-javascript-words">Appendix A: Reserved JavaScript Words</h3>
+
+<p>A list of reserved JavaScript words that should be avoided in property names.</p>
+
+<p>The words below are reserved by the JavaScript language and cannot be referred
+to using dot notation. The list represents best knowledge of keywords at this
+time; the list may change or vary based on your specific execution environment.</p>
+
+<p>From the
+<a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-262/">ECMAScript Language Specification 5th Edition</a>:</p>
+
+<div class="badcode"></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>abstract
+boolean break byte
+case catch char class const continue
+debugger default delete do double
+else enum export extends
+false final finally float for function
+goto
+if implements import in instanceof int interface
+let long
+native new null
+package private protected public
+return
+short static super switch synchronized
+this throw throws transient true try typeof
+var volatile void
+while with
+yield
+</code></pre></div></div>
+
+
+      
+      <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+        This site is open source. <a href="https://github.com/google/styleguide/edit/gh-pages/jsoncguide.md">Improve this page</a>.
+      </div>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

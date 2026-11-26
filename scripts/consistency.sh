@@ -86,6 +86,43 @@ for repo in data["repositories"]:
         raise SystemExit(1)
 PY
 
+printf '\n[style references]\n'
+python3 - "$ROOT" "$FB" "$NR" <<'PYEOF'
+import hashlib
+import sys
+
+try:
+    import tomllib
+except ImportError:
+    print("FAIL style references: tomllib unavailable")
+    raise SystemExit(1)
+
+from pathlib import Path
+
+failed = False
+for root in sys.argv[1:]:
+    name = root.rsplit("/", 1)[-1] or "workspace"
+    manifest = Path(root) / "style-references" / "style-references.toml"
+    if not manifest.is_file():
+        print(f"FAIL {name:<28} missing style-references manifest")
+        failed = True
+        continue
+    data = tomllib.loads(manifest.read_text(encoding="utf-8"))
+    refs = data.get("reference", [])
+    bad = []
+    for ref in refs:
+        path = Path(root) / "style-references" / ref["file"]
+        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != ref["sha256"]:
+            bad.append(ref["file"])
+    if bad:
+        print(f"FAIL {name:<28} digest mismatch: {bad}")
+        failed = True
+    else:
+        print(f"PASS {name:<28} {len(refs)} style references verified")
+if failed:
+    raise SystemExit(1)
+PYEOF
+
 printf '\n[no-Markdown rule]\n'
 python3 - "$ROOT" "$FB" "$NR" <<'PY'
 import re
