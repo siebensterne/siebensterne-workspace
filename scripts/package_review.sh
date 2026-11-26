@@ -41,7 +41,7 @@ package_repo() {
   local -a excluded_patterns=('target/doc/*.md')
   case "$name" in
     fieldbook)
-      excluded_patterns=(
+      excluded_patterns+=(
         'measurements/live/*'
         'measurements/polymarket-*'
         'measurements/remediation/*polymarket*'
