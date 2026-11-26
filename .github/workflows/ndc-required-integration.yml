@@ -6,8 +6,11 @@ name: NDC required cross-repository integration
 # producer and the real Nirnay verifier from the exact commits recorded in
 # CURRENT-STATE.json, refuses to run if either is missing or if the heads
 # disagree, and asserts the typed rights refusal plus the one-byte mutation
-# cases. No provider contact, collection, experiment, holdout, admission or
-# rights grant is performed. Rights remain UNKNOWN.
+# cases. The result JSON is required evidence: it must exist, parse and match
+# this run before the required gate can pass, and the upload step errors when
+# no evidence is found. Builds use the exact-source path with clean checkouts;
+# no prebuilt binary overrides are used here. No provider contact, collection,
+# experiment, holdout, admission or rights grant is performed. Rights remain UNKNOWN.
 
 on:
   push:
@@ -30,6 +33,7 @@ jobs:
     timeout-minutes: 45
     env:
       NIRNAY_B15_PRODUCER_REQUIRED: "1"
+      NDC_WORK_DIR: ${{ runner.temp }}/ndc-cross-execution
     steps:
       - name: Check out workspace authority and gate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -70,13 +74,36 @@ jobs:
           toolchain: 1.99.1
 
       - name: Run required NDC cross-execution gate
+        id: gate
         env:
           FIELDBOOK_SHA: ${{ steps.heads.outputs.fieldbook }}
           NIRNAY_SHA: ${{ steps.heads.outputs.nirnay }}
-          NDC_WORK_DIR: ${{ runner.temp }}/ndc-cross-execution
         run: |
           set -euo pipefail
           bash scripts/ndc_cross_execution.sh --out "$NDC_WORK_DIR/ndc-cross-execution.json" --work "$NDC_WORK_DIR"
+
+      - name: Verify required NDC result evidence
+        env:
+          FIELDBOOK_SHA: ${{ steps.heads.outputs.fieldbook }}
+          NIRNAY_SHA: ${{ steps.heads.outputs.nirnay }}
+        run: |
+          set -euo pipefail
+          result="$NDC_WORK_DIR/ndc-cross-execution.json"
+          [[ -s "$result" ]] || { printf 'required result evidence is missing: %s\n' "$result" >&2; exit 1; }
+          jq -e '
+            .schema_version == 1 and
+            .gate == "ndc-required-cross-repository-integration" and
+            .result == "PASS" and
+            .failure_reason == null and
+            .source_heads.fieldbook == env.FIELDBOOK_SHA and
+            .source_heads.nirnay == env.NIRNAY_SHA and
+            (.run_id | type == "string" and length > 0) and
+            (.binaries.producer.sha256 | type == "string" and length == 64) and
+            (.binaries.verifier.sha256 | type == "string" and length == 64) and
+            (.producer_output.spec_sha256 | type == "string" and length == 64) and
+            (.cases | length == 4) and
+            ([.cases[].status] | all(. == "PASS"))
+          ' "$result" >/dev/null
 
       - name: Upload NDC integration evidence
         if: always()
@@ -87,4 +114,4 @@ jobs:
             ${{ runner.temp }}/ndc-cross-execution/ndc-cross-execution.json
             ${{ runner.temp }}/ndc-cross-execution/diagnostics/*.json
             ${{ runner.temp }}/ndc-cross-execution/logs/*.log
-          if-no-files-found: warn
+          if-no-files-found: error

@@ -24,6 +24,12 @@
 #     snapshot. No admission and no rights grant are simulated.
 #   * One-byte mutations of the real producer output must produce typed
 #     refusals at the expected earlier stages.
+#   * The result JSON is part of success: it must be written, exist, parse,
+#     describe this exact run id and match the recorded heads and digests.
+#     A successful build with unwritable or unverifiable evidence is a FAIL.
+#   * Exact-source builds require clean checkouts. A supplied prebuilt binary
+#     is a local diagnostic override and needs a verified source-provenance
+#     sidecar; its provenance is recorded explicitly in the result JSON.
 #
 # No provider contact, data collection, experiment, holdout, market-shaped
 # data, live execution or freeze change occurs. Only GITHUB_TOKEN-equivalent
@@ -32,19 +38,31 @@
 # shellcheck shell=bash
 set -euo pipefail
 
+die() {
+  REASON="$1"
+  printf 'FAIL %s\n' "$1" >&2
+  exit 1
+}
+
 usage() {
   cat <<'USAGE'
 Usage: scripts/ndc_cross_execution.sh [--out RESULT_JSON] [--work WORK_DIR]
+       scripts/ndc_cross_execution.sh --self-test
 
 Optional environment:
   NDC_WORKSPACE_ROOT   workspace root (default: parent of this script)
   NDC_CURRENT_STATE    authority JSON (default: <root>/CURRENT-STATE.json)
   NDC_FIELDBOOK_DIR    Fieldbook checkout (default: <root>/fieldbook)
   NDC_NIRNAY_DIR       Nirnay checkout (default: <root>/nirnay)
-  NDC_PRODUCER_BIN     prebuilt producer executable; skips the build
-  NDC_VERIFIER_BIN     prebuilt verifier executable; skips the build
+  NDC_PRODUCER_BIN     local diagnostic override; needs <path>.ndc-provenance.json
+  NDC_VERIFIER_BIN     local diagnostic override; needs <path>.ndc-provenance.json
+  NDC_RUN_ID           explicit run id for the result document (diagnostic use)
   FIELDBOOK_SHA        expected head; must equal CURRENT-STATE.json
   NIRNAY_SHA           expected head; must equal CURRENT-STATE.json
+
+A provenance sidecar is JSON with schema_version=1, source_repository,
+source_head and binary_sha256; the gate checks all four against the exact
+recorded checkout and the bytes it runs. Overrides never relax the gate.
 
 All diagnostics go to stderr. The only stdout output is one JSON document.
 USAGE
@@ -71,6 +89,337 @@ while [[ $# -gt 0 ]]; do
       usage
       exit 0
       ;;
+    --self-test)
+      shift
+      exec python3 - "$0" "$@" <<'PY'
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+# Deterministic fail-closed probes for this gate. Every probe builds its own
+# throwaway checkouts, binaries and result paths under a temporary root; it
+# never touches CURRENT-STATE.json, WORKSPACE.lock.json or a real checkout.
+if len(sys.argv) > 2:
+    print("usage: ndc_cross_execution.sh --self-test", file=sys.stderr)
+    raise SystemExit(2)
+
+script = Path(sys.argv[1]).resolve()
+root = Path(tempfile.mkdtemp(prefix="ndc-evidence-probes-"))
+print(f"probe root: {root}")
+
+failures = []
+
+def check(label, condition, detail=""):
+    print(f"{'PASS' if condition else 'FAIL'} {label}" + ("" if condition else f" :: {detail}"))
+    if not condition:
+        failures.append(label)
+
+def run(command, env=None, check_setup=True):
+    result = subprocess.run(command, env=env, text=True, capture_output=True)
+    if check_setup and result.returncode != 0:
+        raise SystemExit(f"setup failed: {command}\n{result.stdout}\n{result.stderr}")
+    return result
+
+def git(directory, *args):
+    return run(["git", "-C", str(directory), *args])
+
+def sha256(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+def init_repo(directory, fixture):
+    directory.mkdir(parents=True, exist_ok=True)
+    git(directory, "init", "-q")
+    git(directory, "config", "user.email", "probe@example.invalid")
+    git(directory, "config", "user.name", "probe")
+    path = directory / fixture
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text('{"schema_version":1,"artifacts":[],"evidence":{}}\n', encoding="utf-8")
+    (directory / "README.src").write_text("probe source file\n", encoding="utf-8")
+    (directory / ".gitignore").write_text("target/\n", encoding="utf-8")
+    git(directory, "add", ".")
+    git(directory, "commit", "-q", "-m", "probe fixture")
+    return git(directory, "rev-parse", "HEAD").stdout.strip()
+
+fieldbook = root / "fieldbook"
+nirnay = root / "nirnay"
+fb_sha = init_repo(fieldbook, "tests/fixtures/ndc/producer-spec-example.json")
+nr_sha = init_repo(nirnay, "README.src")
+dirty_path = fieldbook / "README.src"
+dirty_bytes = dirty_path.read_bytes()
+(root / "CURRENT-STATE.json").write_text(json.dumps({
+    "schema_version": 3,
+    "source_heads_at_record_time": {"fieldbook": fb_sha, "nirnay": nr_sha},
+}, indent=2) + "\n", encoding="utf-8")
+
+producer_stub = r'''#!/usr/bin/env bash
+set -euo pipefail
+spec="" out=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --spec) spec="${2:?}"; shift 2 ;;
+    --out) out="${2:?}"; shift 2 ;;
+    *) printf 'stub producer: unexpected argument %s\n' "$1" >&2; exit 2 ;;
+  esac
+done
+[[ -n "$spec" && -f "$spec" && -n "$out" ]] || { printf 'stub producer: bad arguments\n' >&2; exit 2; }
+tag="${NDC_TEST_TAG:-probe}"
+dest="$out/publisher-example/dataset-example/release-$tag"
+mkdir -p "$dest/artifacts"
+printf '{"schema_version":1,"publication_identity":{"publisher_identity":"publisher-example"},"source_scope":{"dataset_id":"dataset-example"},"release_identity":{"release_id":"release-%s"}}\n' "$tag" > "$dest/manifest.json"
+printf '{"signature":"test-only"}\n' > "$dest/signature.json"
+printf 'artifact-bytes\n' > "$dest/artifacts/artifact.bin"
+'''
+
+verifier_stub = r'''#!/usr/bin/env python3
+import json
+import os
+import sys
+from pathlib import Path
+
+args = sys.argv[1:]
+release = out = None
+while args:
+    flag = args.pop(0)
+    if flag == "--release":
+        release = args.pop(0)
+    elif flag == "--out":
+        out = args.pop(0)
+    else:
+        raise SystemExit(f"stub verifier: unexpected argument {flag}")
+if not release or not out:
+    raise SystemExit("stub verifier: bad arguments")
+if "/mutations/one-byte-manifest/" in release:
+    outcome, stage, code, rc = "PREFLIGHT_REFUSED", 1, "REJECT_SCHEMA_ENVELOPE", 1
+elif "/mutations/one-byte-sidecar/" in release:
+    outcome, stage, code, rc = "RIGHTS_ADMISSION_REFUSED", 3, "REJECT_SIGNATURE_INTEGRITY", 1
+elif "/mutations/one-byte-stored-artifact/" in release:
+    outcome, stage, code, rc = "RIGHTS_ADMISSION_REFUSED", 5, "REJECT_ARTIFACT_DIGESTS", 1
+else:
+    outcome, stage, code, rc = "RIGHTS_ADMISSION_REFUSED", 6, "REJECT_RIGHTS_EVIDENCE", 0
+label = Path(out).name
+if os.environ.get("NDC_TEST_MISSING_CASE") == label:
+    raise SystemExit(rc)
+Path(out).parent.mkdir(parents=True, exist_ok=True)
+if os.environ.get("NDC_TEST_MALFORMED_CASE") == label:
+    Path(out).write_text("{not-json", encoding="utf-8")
+    raise SystemExit(rc)
+report = {
+    "outcome": outcome,
+    "refusal": {"stage": stage, "code": code},
+    "admission_receipt": None,
+    "receipt_written": False,
+    "private_snapshot_survives": False,
+    "rights_state": "UNKNOWN",
+    "dataset_accepted": False,
+    "collection_enabled": False,
+    "live_execution_enabled": False,
+    "stages": [{"status": "PASS"} for _ in range(5)] + [{"status": "NOT_RUN"}] * 2,
+    "cleanup": {"cleanup_succeeded": True, "cleanup_pending": False},
+}
+Path(out).write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+raise SystemExit(rc)
+'''
+
+producer = root / "stubs" / "producer"
+verifier = root / "stubs" / "verifier"
+producer.parent.mkdir(parents=True)
+for path, body in ((producer, producer_stub), (verifier, verifier_stub)):
+    path.write_text(body, encoding="utf-8")
+    path.chmod(0o755)
+
+def write_sidecar(binary, repository, head, digest=None):
+    sidecar = Path(str(binary) + ".ndc-provenance.json")
+    sidecar.write_text(json.dumps({
+        "schema_version": 1,
+        "source_repository": repository,
+        "source_head": head,
+        "binary_sha256": digest or sha256(binary),
+    }, indent=2) + "\n", encoding="utf-8")
+    return sidecar
+
+producer_sidecar = write_sidecar(producer, "fieldbook", fb_sha)
+verifier_sidecar = write_sidecar(verifier, "nirnay", nr_sha)
+
+fakebin = root / "fakebin"
+fakebin.mkdir()
+cargo_stub = fakebin / "cargo"
+cargo_stub.write_text(r'''#!/usr/bin/env bash
+set -euo pipefail
+name=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --bin) name="${2:?}"; shift 2 ;;
+    *) shift ;;
+  esac
+done
+case "$name" in
+  ndc-conformance-producer) source="${NDC_TEST_STUB_PRODUCER:?}" ;;
+  ndc-conformance-verifier) source="${NDC_TEST_STUB_VERIFIER:?}" ;;
+  *) printf 'fake cargo: unexpected bin %s\n' "$name" >&2; exit 2 ;;
+esac
+mkdir -p target/release
+cp "$source" "target/release/$name"
+chmod +x "target/release/$name"
+''', encoding="utf-8")
+cargo_stub.chmod(0o755)
+
+def load_json(path):
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+def probe(name, env_extra=None, setup=None, expect_zero=True, omit_overrides=False):
+    case_root = root / "cases" / name
+    work = case_root / "work"
+    out = case_root / "result.json"
+    work.mkdir(parents=True, exist_ok=True)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    if setup is not None:
+        setup(out)
+    env = os.environ.copy()
+    for key in list(env):
+        if key.startswith("NDC_TEST_") or key in {
+            "NDC_WORKSPACE_ROOT", "NDC_CURRENT_STATE", "NDC_FIELDBOOK_DIR",
+            "NDC_NIRNAY_DIR", "NDC_PRODUCER_BIN", "NDC_VERIFIER_BIN",
+            "NDC_RUN_ID", "NIRNAY_B15_PRODUCER_REQUIRED",
+        }:
+            env.pop(key, None)
+    env.update({
+        "NDC_WORKSPACE_ROOT": str(root),
+        "NDC_CURRENT_STATE": str(root / "CURRENT-STATE.json"),
+        "NDC_FIELDBOOK_DIR": str(fieldbook),
+        "NDC_NIRNAY_DIR": str(nirnay),
+        "NDC_PRODUCER_BIN": str(producer),
+        "NDC_VERIFIER_BIN": str(verifier),
+        "NDC_RUN_ID": f"probe-{name}",
+        "NIRNAY_B15_PRODUCER_REQUIRED": "1",
+    })
+    env.update(env_extra or {})
+    if omit_overrides:
+        for key in ("NDC_CURRENT_STATE", "NDC_FIELDBOOK_DIR", "NDC_NIRNAY_DIR",
+                    "NDC_PRODUCER_BIN", "NDC_VERIFIER_BIN"):
+            env.pop(key, None)
+    result = run(["bash", str(script), "--out", str(out), "--work", str(work)], env=env,
+                 check_setup=False)
+    check(f"{name}: exit status", (result.returncode == 0) == expect_zero,
+          f"rc={result.returncode} stderr={result.stderr.strip()[-300:]}")
+    return result, out
+
+def stale_setup(out):
+    out.write_text(json.dumps({"result": "PASS", "run_id": "stale-run",
+                               "source_heads": {}}, indent=2) + "\n", encoding="utf-8")
+
+def blocked_setup(out):
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.parent.chmod(0o500)
+
+result, out = probe("valid")
+data = load_json(out)
+check("valid: result JSON emitted", data is not None)
+if data:
+    check("valid: result PASS", data.get("result") == "PASS", str(data.get("result")))
+    check("valid: run id is current", data.get("run_id") == "probe-valid", str(data.get("run_id")))
+    heads = data.get("source_heads") or {}
+    check("valid: source heads match", heads.get("fieldbook") == fb_sha
+          and heads.get("nirnay") == nr_sha, str(heads))
+    binaries = data.get("binaries") or {}
+    check("valid: binary digests match",
+          (binaries.get("producer") or {}).get("sha256") == sha256(producer)
+          and (binaries.get("verifier") or {}).get("sha256") == sha256(verifier), str(binaries))
+    cases = data.get("cases") or {}
+    check("valid: all diagnostics PASS",
+          len(cases) == 4 and all(c.get("status") == "PASS" for c in cases.values()), str(cases))
+    overrides = data.get("diagnostic_overrides") or []
+    check("valid: provenance labels overrides",
+          "NDC_PRODUCER_BIN" in overrides and "NDC_VERIFIER_BIN" in overrides
+          and (data.get("source_provenance") or {}).get("mode") == "local-diagnostic-overrides",
+          str({"overrides": overrides, "provenance": data.get("source_provenance")}))
+
+result, out = probe("emit_failure", setup=blocked_setup, expect_zero=False)
+out.parent.chmod(0o700)
+check("emit_failure: no PASS document on stdout", '"result": "PASS"' not in result.stdout)
+check("emit_failure: result failure reported",
+      "result" in result.stderr.lower() and "verif" in result.stderr.lower(),
+      result.stderr.strip()[-300:])
+
+result, out = probe("stale_result", env_extra={"NDC_TEST_MISSING_CASE": "rights.json"},
+                    setup=stale_setup, expect_zero=False)
+data = load_json(out)
+check("stale_result: stale run id replaced", data is not None
+      and data.get("run_id") == "probe-stale_result", str(data and data.get("run_id")))
+check("stale_result: not a PASS result", data is not None and data.get("result") == "FAIL",
+      str(data and data.get("result")))
+result, out = probe("stale_result_valid", setup=stale_setup)
+data = load_json(out)
+check("stale_result_valid: fresh run id", data is not None
+      and data.get("run_id") == "probe-stale_result_valid", str(data and data.get("run_id")))
+
+probe("missing_diagnostic", env_extra={"NDC_TEST_MISSING_CASE": "rights.json"}, expect_zero=False)
+probe("malformed_diagnostic", env_extra={"NDC_TEST_MALFORMED_CASE": "rights.json"}, expect_zero=False)
+
+def dirty_setup(_out):
+    dirty_path.write_bytes(dirty_bytes + b"local edit\n")
+
+try:
+    result, _ = probe("dirty_checkout", setup=dirty_setup, expect_zero=False)
+    check("dirty_checkout: clean-tree refusal reported",
+          "clean" in result.stderr.lower() or "modif" in result.stderr.lower(),
+          result.stderr.strip()[-300:])
+finally:
+    dirty_path.write_bytes(dirty_bytes)
+
+sidecar_body = producer_sidecar.read_bytes()
+producer_sidecar.unlink()
+try:
+    result, _ = probe("prebuilt_no_provenance", expect_zero=False)
+    check("prebuilt_no_provenance: provenance refusal reported",
+          "provenance" in result.stderr.lower(), result.stderr.strip()[-300:])
+finally:
+    producer_sidecar.write_bytes(sidecar_body)
+
+verifier_body = verifier_sidecar.read_bytes()
+verifier_sidecar.unlink()
+try:
+    probe("verifier_no_provenance", expect_zero=False)
+finally:
+    verifier_sidecar.write_bytes(verifier_body)
+
+producer_sidecar.write_text(json.dumps({
+    "schema_version": 1,
+    "source_repository": "fieldbook",
+    "source_head": fb_sha,
+    "binary_sha256": "00" * 32,
+}, indent=2) + "\n", encoding="utf-8")
+try:
+    probe("provenance_digest_mismatch", expect_zero=False)
+finally:
+    producer_sidecar.write_bytes(sidecar_body)
+
+result, out = probe("exact_source_build", env_extra={
+    "PATH": f"{fakebin}:{os.environ.get('PATH', '')}",
+    "NDC_TEST_STUB_PRODUCER": str(producer),
+    "NDC_TEST_STUB_VERIFIER": str(verifier),
+}, omit_overrides=True)
+data = load_json(out)
+check("exact_source_build: exact-source mode", data is not None
+      and (data.get("source_provenance") or {}).get("mode") == "exact-source-build",
+      str(data and data.get("source_provenance")))
+check("exact_source_build: binaries built from recorded commit", data is not None
+      and (data.get("result") == "PASS")
+      and (data.get("binaries") or {}).get("producer", {}).get("source") == "built-from-recorded-commit"
+      and (data.get("binaries") or {}).get("verifier", {}).get("source") == "built-from-recorded-commit",
+      str(data and data.get("binaries")))
+
+print(f"\n{'SELF-TEST FAILED' if failures else 'SELF-TEST OK'}: "
+      f"{len(failures)} failing check(s): {failures}")
+raise SystemExit(1 if failures else 0)
+PY
+      ;;
     *)
       printf 'unknown argument: %s\n' "$1" >&2
       usage >&2
@@ -88,6 +437,35 @@ if [[ -z "$RESULT_JSON" ]]; then
 fi
 mkdir -p "$(dirname "$RESULT_JSON")" "$WORK/diagnostics" "$WORK/logs"
 
+# A result from an earlier invocation is never evidence for this invocation.
+if [[ -e "$RESULT_JSON" || -L "$RESULT_JSON" ]]; then
+  rm -f -- "$RESULT_JSON" || die "cannot remove stale result JSON: $RESULT_JSON"
+fi
+[[ ! -e "$RESULT_JSON" && ! -L "$RESULT_JSON" ]] \
+  || die "stale result JSON could not be removed: $RESULT_JSON"
+
+RUN_ID="${NDC_RUN_ID:-}"
+if [[ -z "$RUN_ID" ]]; then
+  RUN_ID="$(python3 -c 'import uuid; print(uuid.uuid4().hex)')" \
+    || die "cannot generate a run id for the result document"
+fi
+[[ "$RUN_ID" =~ ^[A-Za-z0-9._-]{1,128}$ ]] || die "invalid run id: $RUN_ID"
+
+DIAGNOSTIC_OVERRIDES=()
+for name in NDC_WORKSPACE_ROOT NDC_CURRENT_STATE NDC_FIELDBOOK_DIR \
+            NDC_NIRNAY_DIR NDC_PRODUCER_BIN NDC_VERIFIER_BIN NDC_RUN_ID; do
+  if [[ -n "${!name:-}" ]]; then
+    DIAGNOSTIC_OVERRIDES+=("$name")
+  fi
+done
+OVERRIDES_CSV="$(IFS=,; printf '%s' "${DIAGNOSTIC_OVERRIDES[*]:-}")"
+SOURCE_PROVENANCE_MODE="exact-source-build"
+if [[ -n "${NDC_CURRENT_STATE:-}" || -n "${NDC_FIELDBOOK_DIR:-}" \
+      || -n "${NDC_NIRNAY_DIR:-}" || -n "${NDC_PRODUCER_BIN:-}" \
+      || -n "${NDC_VERIFIER_BIN:-}" ]]; then
+  SOURCE_PROVENANCE_MODE="local-diagnostic-overrides"
+fi
+
 STATUS="FAIL"
 REASON="gate did not complete"
 FB_SHA=""
@@ -97,13 +475,16 @@ NR_HEAD=""
 PRODUCER_BIN=""
 PRODUCER_SHA=""
 PRODUCER_SOURCE=""
+PRODUCER_PROVENANCE=""
 VERIFIER_BIN=""
 VERIFIER_SHA=""
 VERIFIER_SOURCE=""
+VERIFIER_PROVENANCE=""
 SPEC_SHA=""
 BASE_SPEC_SHA=""
 RELEASE_DIR=""
 EXPECTED_MUTATIONS=""
+CLEAN_TREE_CHECKED="no"
 
 sha256_file() {
   local path="$1"
@@ -123,7 +504,9 @@ emit_json() {
     "$FB_SHA" "$NR_SHA" "$FB_HEAD" "$NR_HEAD" \
     "$PRODUCER_BIN" "$PRODUCER_SHA" "$PRODUCER_SOURCE" \
     "$VERIFIER_BIN" "$VERIFIER_SHA" "$VERIFIER_SOURCE" \
-    "$SPEC_SHA" "$BASE_SPEC_SHA" "$RELEASE_DIR" "$EXPECTED_MUTATIONS" <<'PY'
+    "$SPEC_SHA" "$BASE_SPEC_SHA" "$RELEASE_DIR" "$EXPECTED_MUTATIONS" \
+    "$RUN_ID" "$OVERRIDES_CSV" "$SOURCE_PROVENANCE_MODE" \
+    "$PRODUCER_PROVENANCE" "$VERIFIER_PROVENANCE" "$CLEAN_TREE_CHECKED" <<'PY'
 import json
 import os
 import sys
@@ -131,7 +514,9 @@ from pathlib import Path
 
 (out, status, reason, work, fb_sha, nr_sha, fb_head, nr_head,
  producer, producer_sha, producer_source, verifier, verifier_sha,
- verifier_source, spec_sha, base_spec_sha, release_dir, expected) = sys.argv[1:19]
+ verifier_source, spec_sha, base_spec_sha, release_dir, expected,
+ run_id, overrides_csv, mode, producer_provenance, verifier_provenance,
+ clean_checked) = sys.argv[1:25]
 
 def relative(path):
     if not path:
@@ -173,6 +558,7 @@ def case(name, path, expected_outcome=None, expected_stage=None, expected_code=N
 record = {
     "schema_version": 1,
     "gate": "ndc-required-cross-repository-integration",
+    "run_id": run_id,
     "result": status.upper(),
     "failure_reason": None if status == "PASS" else reason,
     "producer_required": True,
@@ -181,9 +567,24 @@ record = {
     "checked_out_heads": {"fieldbook": fb_head or None, "nirnay": nr_head or None},
     "binaries": {
         "producer": {"path": producer or None, "sha256": producer_sha or None,
-                     "source": producer_source or None},
+                     "source": producer_source or None,
+                     "provenance": relative(producer_provenance)},
         "verifier": {"path": verifier or None, "sha256": verifier_sha or None,
-                     "source": verifier_source or None},
+                     "source": verifier_source or None,
+                     "provenance": relative(verifier_provenance)},
+    },
+    "diagnostic_overrides": overrides_csv.split(",") if overrides_csv else [],
+    "source_provenance": {
+        "mode": mode,
+        "clean_tree_checked": clean_checked == "yes",
+        "note": (
+            "Local diagnostic overrides are recorded here and require a verified "
+            "source-provenance sidecar; they do not replace the hosted exact-source build."
+        ),
+        "fieldbook": {"head": fb_head or None, "clean": clean_checked == "yes",
+                      "binary_provenance": relative(producer_provenance)},
+        "nirnay": {"head": nr_head or None, "clean": clean_checked == "yes",
+                   "binary_provenance": relative(verifier_provenance)},
     },
     "producer_output": {
         "base_spec_sha256": base_spec_sha or None,
@@ -235,6 +636,104 @@ Path(out).write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encodi
 PY
 }
 
+verify_result_json() {
+  python3 - \
+    "$RESULT_JSON" "$RUN_ID" "$STATUS" "$REASON" "$WORK" \
+    "$FB_SHA" "$NR_SHA" "$FB_HEAD" "$NR_HEAD" \
+    "$PRODUCER_SHA" "$VERIFIER_SHA" "$SPEC_SHA" "$BASE_SPEC_SHA" \
+    "$EXPECTED_MUTATIONS" "$OVERRIDES_CSV" "$SOURCE_PROVENANCE_MODE" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+(out, run_id, status, reason, work, fb_sha, nr_sha, fb_head, nr_head,
+ producer_sha, verifier_sha, spec_sha, base_spec_sha, expected,
+ overrides_csv, mode) = sys.argv[1:17]
+
+def fail(message):
+    raise SystemExit(f"result verification failed: {message}")
+
+def equal(label, actual, wanted):
+    if actual != wanted:
+        fail(f"{label}: got {actual!r}, expected {wanted!r}")
+
+def no_duplicate_keys(pairs):
+    record = {}
+    for key, value in pairs:
+        if key in record:
+            raise ValueError(f"duplicate key {key!r}")
+        record[key] = value
+    return record
+
+path = Path(out)
+if not path.is_file() or path.stat().st_size == 0:
+    fail(f"result file is missing or empty: {out}")
+try:
+    data = json.loads(path.read_text(encoding="utf-8"),
+                      object_pairs_hook=no_duplicate_keys)
+except Exception as error:
+    fail(f"result file is not valid JSON: {error}")
+if not isinstance(data, dict):
+    fail("result document is not a JSON object")
+
+equal("run_id", data.get("run_id"), run_id)
+equal("schema_version", data.get("schema_version"), 1)
+equal("gate", data.get("gate"), "ndc-required-cross-repository-integration")
+equal("result", data.get("result"), status.upper())
+equal("failure_reason", data.get("failure_reason"), None if status == "PASS" else reason)
+equal("producer_required", data.get("producer_required"), True)
+equal("nirnay_b15_producer_required", data.get("nirnay_b15_producer_required"), "1")
+
+heads = data.get("source_heads") or {}
+equal("source_heads.fieldbook", heads.get("fieldbook"), fb_sha or None)
+equal("source_heads.nirnay", heads.get("nirnay"), nr_sha or None)
+checked = data.get("checked_out_heads") or {}
+equal("checked_out_heads.fieldbook", checked.get("fieldbook"), fb_head or None)
+equal("checked_out_heads.nirnay", checked.get("nirnay"), nr_head or None)
+
+binaries = data.get("binaries") or {}
+for label, digest in (("producer", producer_sha), ("verifier", verifier_sha)):
+    entry = binaries.get(label) or {}
+    equal(f"binaries.{label}.sha256", entry.get("sha256"), digest or None)
+
+producer_output = data.get("producer_output") or {}
+equal("producer_output.base_spec_sha256",
+      producer_output.get("base_spec_sha256"), base_spec_sha or None)
+equal("producer_output.spec_sha256",
+      producer_output.get("spec_sha256"), spec_sha or None)
+
+evidence = data.get("evidence") or {}
+equal("evidence.work_dir", evidence.get("work_dir"), work)
+equal("evidence.expected_mutations", evidence.get("expected_mutations"),
+      expected.split(",") if expected else [])
+
+equal("diagnostic_overrides", data.get("diagnostic_overrides"),
+      overrides_csv.split(",") if overrides_csv else [])
+provenance = data.get("source_provenance") or {}
+equal("source_provenance.mode", provenance.get("mode"), mode)
+equal("rights.state", (data.get("rights") or {}).get("state"), "UNKNOWN")
+
+cases = data.get("cases") or {}
+expected_cases = {"rights_typed_refusal", "one_byte_manifest",
+                  "one_byte_sidecar", "one_byte_stored_artifact"}
+if status == "PASS":
+    equal("source_provenance.clean_tree_checked",
+          provenance.get("clean_tree_checked"), True)
+    equal("cases", set(cases), expected_cases)
+    for name, entry in cases.items():
+        if not isinstance(entry, dict) or entry.get("status") != "PASS":
+            fail(f"case {name} is not PASS")
+        diagnostic = entry.get("diagnostic")
+        if not diagnostic:
+            fail(f"case {name} has no diagnostic path")
+        target = Path(diagnostic)
+        if not target.is_absolute():
+            target = Path(work) / target
+        if not target.is_file():
+            fail(f"case {name} diagnostic is missing: {target}")
+PY
+}
+
 on_exit() {
   local code=$?
   trap - EXIT
@@ -244,19 +743,22 @@ on_exit() {
       REASON="script exited with status $code before completion"
     fi
   fi
-  emit_json >/dev/null 2>&1 || printf 'could not write result JSON\n' >&2
+  if ! emit_json >"$WORK/logs/emit.log" 2>&1; then
+    printf 'could not write result JSON: %s\n' "$WORK/logs/emit.log" >&2
+  fi
+  if ! verify_result_json >&2; then
+    printf 'result JSON does not describe this run; refusing to report success\n' >&2
+    rm -f -- "$RESULT_JSON" || true
+    if [[ "$code" -eq 0 ]]; then
+      code=1
+    fi
+  fi
   if [[ -f "$RESULT_JSON" ]]; then
     cat "$RESULT_JSON"
   fi
   exit "$code"
 }
 trap on_exit EXIT
-
-die() {
-  REASON="$1"
-  printf 'FAIL %s\n' "$1" >&2
-  exit 1
-}
 
 # Required-mode semantics: the upstream Nirnay harness still supports an
 # optional SKIP, but this gate never does. Any value other than 1 is refused.
@@ -285,6 +787,44 @@ require_exact_head() {
   actual="$(git_head "$dir")" || die "$label has no resolvable HEAD"
   [[ "$actual" == "$expected" ]] || die "$label head disagreement: actual=$actual expected=$expected"
   printf '%s\n' "$actual"
+}
+
+require_clean_tree() {
+  local dir="$1" label="$2"
+  local changes
+  changes="$(git -C "$dir" status --porcelain 2>/dev/null)" \
+    || die "$label working-tree status could not be read: $dir"
+  [[ -z "$changes" ]] \
+    || die "$label checkout is not clean; exact-source builds require no local changes: $dir"
+}
+
+require_binary_provenance() {
+  local binary="$1" repository="$2" head="$3" label="$4"
+  local sidecar="${binary}.ndc-provenance.json"
+  [[ -f "$sidecar" && -s "$sidecar" ]] \
+    || die "$label prebuilt binary has no verified source provenance: $sidecar"
+  python3 - "$sidecar" "$repository" "$head" "$binary" <<'PY' \
+    || die "$label binary source provenance did not verify"
+import hashlib
+import json
+import sys
+
+sidecar, repository, head, binary = sys.argv[1:5]
+try:
+    data = json.load(open(sidecar, encoding="utf-8"))
+except Exception as error:
+    raise SystemExit(f"unreadable provenance: {error}")
+def equal(name, actual, wanted):
+    if actual != wanted:
+        raise SystemExit(f"provenance {name} is {actual!r}, expected {wanted!r}")
+equal("schema_version", data.get("schema_version"), 1)
+equal("source_repository", data.get("source_repository"), repository)
+equal("source_head", data.get("source_head"), head)
+with open(binary, "rb") as stream:
+    digest = hashlib.sha256(stream.read()).hexdigest()
+equal("binary_sha256", data.get("binary_sha256"), digest)
+PY
+  printf '%s\n' "$sidecar"
 }
 
 assert_diagnostic() {
@@ -410,12 +950,19 @@ FB_HEAD="$(require_exact_head "$FIELDBOOK_DIR" "$FB_SHA" "Fieldbook")" \
   || die "Fieldbook checkout failed the exact-head check"
 NR_HEAD="$(require_exact_head "$NIRNAY_DIR" "$NR_SHA" "Nirnay")" \
   || die "Nirnay checkout failed the exact-head check"
+require_clean_tree "$FIELDBOOK_DIR" "Fieldbook" \
+  || die "Fieldbook checkout failed the clean-tree check"
+require_clean_tree "$NIRNAY_DIR" "Nirnay" \
+  || die "Nirnay checkout failed the clean-tree check"
+CLEAN_TREE_CHECKED="yes"
 
-# 3. Producer is required. A supplied path is used only if it is a real
-#    executable; otherwise the committed source is built from the exact head.
+# 3. Producer is required. A supplied path is a local diagnostic override:
+#    it is accepted only with a provenance sidecar that binds the exact source
+#    head to the bytes actually executed; otherwise the committed source is
+#    built from the exact clean head.
 if [[ -n "${NDC_PRODUCER_BIN:-}" ]]; then
   PRODUCER_BIN="$NDC_PRODUCER_BIN"
-  PRODUCER_SOURCE="supplied-executable"
+  PRODUCER_SOURCE="supplied-executable-with-verified-source-provenance"
 else
   run_logged "$WORK/logs/producer-build.log" \
     bash -c 'cd "$1" && cargo build --release --locked --bin ndc-conformance-producer' \
@@ -426,6 +973,10 @@ fi
 [[ -f "$PRODUCER_BIN" && -s "$PRODUCER_BIN" && -x "$PRODUCER_BIN" ]] \
   || die "required producer binary missing, empty or not executable: $PRODUCER_BIN"
 PRODUCER_SHA="$(sha256_file "$PRODUCER_BIN")" || die "cannot hash producer binary"
+if [[ -n "${NDC_PRODUCER_BIN:-}" ]]; then
+  PRODUCER_PROVENANCE="$(require_binary_provenance "$PRODUCER_BIN" fieldbook "$FB_SHA" producer)" \
+    || die "producer provenance check failed"
+fi
 
 # Export the Nirnay harness contract. The binary has been proven to exist, so
 # the optional SKIP path can never be reached from this gate.
@@ -435,7 +986,7 @@ export NIRNAY_B15_PRODUCER_COMMIT="$FB_SHA"
 # 4. Verifier is built from the recorded Nirnay head.
 if [[ -n "${NDC_VERIFIER_BIN:-}" ]]; then
   VERIFIER_BIN="$NDC_VERIFIER_BIN"
-  VERIFIER_SOURCE="supplied-executable"
+  VERIFIER_SOURCE="supplied-executable-with-verified-source-provenance"
 else
   run_logged "$WORK/logs/verifier-build.log" \
     bash -c 'cd "$1" && cargo build --release --locked --bin ndc-conformance-verifier' \
@@ -446,6 +997,10 @@ fi
 [[ -f "$VERIFIER_BIN" && -s "$VERIFIER_BIN" && -x "$VERIFIER_BIN" ]] \
   || die "required verifier binary missing, empty or not executable: $VERIFIER_BIN"
 VERIFIER_SHA="$(sha256_file "$VERIFIER_BIN")" || die "cannot hash verifier binary"
+if [[ -n "${NDC_VERIFIER_BIN:-}" ]]; then
+  VERIFIER_PROVENANCE="$(require_binary_provenance "$VERIFIER_BIN" nirnay "$NR_SHA" verifier)" \
+    || die "verifier provenance check failed"
+fi
 
 # 5. Run the real producer on an abstract, non-market spec. The committed
 # Fieldbook fixture is the base. The standalone Nirnay verifier binary is bound
