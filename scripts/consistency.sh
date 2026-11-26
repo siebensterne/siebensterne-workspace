@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Read-only cross-repository consistency audit.
-# Verifies version pins, canonical file presence and lock-head skew.
+# Verifies tool pins, legal files, lock-head skew and the one-Markdown rule.
 set -euo pipefail
 ROOT="${1:-$(cd "$(dirname "$0")/.." && pwd)}"
 FB="$ROOT/fieldbook"
@@ -31,28 +31,39 @@ for repo in "$FB" "$NR"; do
     '21.1.8'
 done
 
-printf '\n[canonical root files]\n'
-for repo in "$FB" "$NR"; do
+printf '\n[legal and control files]\n'
+for repo in "$ROOT" "$FB" "$NR"; do
   name="$(basename "$repo")"
-  for file in README.md STYLES.md AGENTS.md CONTRIBUTING.md SECURITY.md \
-              NOTICE ORIGIN.md LICENSE quality-contract.json rust-toolchain.toml \
-              clippy.toml; do
-    if [[ -f "$repo/$file" ]]; then
+  files=(TODO.md)
+  if [[ "$repo" != "$ROOT" ]]; then files+=(LICENSE NOTICE); fi
+  for file in "${files[@]}"; do
+    if [[ -s "$repo/$file" ]]; then
       printf 'PASS %-34s %s\n' "$name/$file" present
     else
-      printf 'FAIL %-34s missing\n' "$name/$file"
+      printf 'FAIL %-34s missing or empty\n' "$name/$file"
+      fail=1
+    fi
+  done
+done
+for repo in "$FB" "$NR"; do
+  name="$(basename "$repo")"
+  for file in quality-contract.json rust-toolchain.toml clippy.toml git-policy.json; do
+    if [[ -s "$repo/$file" ]]; then
+      printf 'PASS %-34s %s\n' "$name/$file" present
+    else
+      printf 'FAIL %-34s missing or empty\n' "$name/$file"
       fail=1
     fi
   done
 done
 
 printf '\n[byte-identical shared files]\n'
-for file in LICENSE NOTICE ORIGIN.md quality-contract.json \
-            scripts/check_prose_unified.py requirements-dev.txt; do
-  if [[ -f "$FB/$file" && -f "$NR/$file" ]] && cmp -s "$FB/$file" "$NR/$file"; then
+for file in LICENSE NOTICE quality-contract.json q-style.json scripts/check_q_style.py; do
+  if [[ -s "$FB/$file" && -s "$NR/$file" ]] && cmp -s "$FB/$file" "$NR/$file"; then
     printf 'PASS %-34s identical\n' "$file"
   else
-    printf 'INFO %-34s repo-local or missing\n' "$file"
+    printf 'FAIL %-34s diverged\n' "$file"
+    fail=1
   fi
 done
 
@@ -75,37 +86,41 @@ for repo in data["repositories"]:
         raise SystemExit(1)
 PY
 
-printf '\n[ADR ids]\n'
-if [[ -f "$ROOT/ADR-REGISTRY.md" && -f "$ROOT/NDC-REGISTRY.md" ]]; then
-  printf 'PASS %-34s present\n' 'workspace registries'
-else
-  printf 'FAIL %-34s missing\n' 'workspace registries'
-  fail=1
-fi
+printf '\n[no-Markdown rule]\n'
+python3 - "$ROOT" "$FB" "$NR" <<'PY'
+import re
+import subprocess
+import sys
 
-printf '\n[documentation budgets]\n'
-for repo in "$ROOT" "$FB" "$NR"; do
-  name="$(basename "$repo")"
-  if [[ ! -f "$repo/README.md" || ! -f "$repo/AGENTS.md" ]]; then
-    printf 'FAIL %-34s missing README or AGENTS\n' "$name"
-    fail=1
-    continue
-  fi
-  readme_lines="$(wc -l < "$repo/README.md" | tr -d ' ')"
-  agents_bytes="$(wc -c < "$repo/AGENTS.md" | tr -d ' ')"
-  if [[ "$readme_lines" -gt 100 ]]; then
-    printf 'FAIL %-34s README lines=%s\n' "$name" "$readme_lines"
-    fail=1
-  else
-    printf 'PASS %-34s README lines=%s\n' "$name" "$readme_lines"
-  fi
-  if [[ "$agents_bytes" -gt 2048 ]]; then
-    printf 'FAIL %-34s AGENTS bytes=%s\n' "$name" "$agents_bytes"
-    fail=1
-  else
-    printf 'PASS %-34s AGENTS bytes=%s\n' "$name" "$agents_bytes"
-  fi
-done
+markdown = re.compile(r"\.(?:md|markdown|mdown|mkd|mdx)$", re.IGNORECASE)
+generated = "target/doc/"
+allowed = "TODO.md"
+failed = False
+for root in sys.argv[1:]:
+    tracked = subprocess.check_output(
+        ["git", "-C", root, "ls-files", "-z"], text=True
+    ).split("\0")
+    extra_args = []
+    if root == sys.argv[1]:
+        extra_args = [":(exclude)fieldbook/**", ":(exclude)nirnay/**"]
+    others = subprocess.check_output(
+        ["git", "-C", root, "ls-files", "--others", "-z", "--", *extra_args],
+        text=True,
+    ).split("\0")
+    bad = sorted(
+        p
+        for p in set(tracked + others)
+        if p and p != allowed and not p.startswith(generated) and markdown.search(p)
+    )
+    name = root.rsplit("/", 1)[-1] or "workspace"
+    if bad:
+        failed = True
+        print(f"FAIL {name:<28} {len(bad)} Markdown file(s): {bad[:5]}")
+    else:
+        print(f"PASS {name:<28} only {allowed}")
+if failed:
+    raise SystemExit(1)
+PY
 
 state_bytes="$(wc -c < "$ROOT/CURRENT-STATE.json" | tr -d ' ')"
 if [[ "$state_bytes" -gt 16384 ]]; then
@@ -113,13 +128,6 @@ if [[ "$state_bytes" -gt 16384 ]]; then
   fail=1
 else
   printf 'PASS %-34s bytes=%s\n' 'CURRENT-STATE.json' "$state_bytes"
-fi
-
-if grep -Eq '<!--[[:space:]]*CURRENT-STATE' "$NR/README.md"; then
-  printf 'FAIL %-34s local status snapshot found\n' 'nirnay status authority'
-  fail=1
-else
-  printf 'PASS %-34s no local snapshot\n' 'nirnay status authority'
 fi
 
 if [[ "$fail" -ne 0 ]]; then
