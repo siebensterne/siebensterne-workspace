@@ -32,8 +32,19 @@ package_repo() {
         --json databaseId,headSha,conclusion \
         --jq '.[] | "\(.databaseId) \(.headSha) \(.conclusion)"' 2>/dev/null || printf 'unavailable')"
 
-  git -C "$dir" -c pack.threads=1 bundle create "$stage/$name/git/$name-refs.bundle" --all >/dev/null 2>&1
-  git bundle verify "$stage/$name/git/$name-refs.bundle" >/dev/null 2>&1
+  # Bundle only the intended main ref. Serialising --all captures stale local
+  # branches and remote-tracking refs from the packaging checkout.
+  git -C "$dir" fetch origin --prune >/dev/null 2>&1
+  if [[ "$branch" != "main" ]]; then
+    printf 'ERROR: %s must be on main before packaging.\n' "$name" >&2
+    return 1
+  fi
+  if [[ "$(git -C "$dir" rev-parse HEAD)" != "$(git -C "$dir" rev-parse origin/main)" ]]; then
+    printf 'ERROR: %s main is not fast-forwarded to origin/main.\n' "$name" >&2
+    return 1
+  fi
+  git -C "$dir" -c pack.threads=1 bundle create "$stage/$name/git/$name-refs.bundle" main >/dev/null 2>&1
+  git -C "$dir" bundle verify "$stage/$name/git/$name-refs.bundle" >/dev/null 2>&1
 
   # Review scope is Indian and global securities. Venue-specific live captures,
   # venue latency measurements and prediction-market fixtures are excluded from
