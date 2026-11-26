@@ -1,29 +1,30 @@
 {
   "schema_version": 3,
   "generated_utc_date": "2026-11-26",
-  "purpose": "Single machine-readable authority for current cross-repository state. Historical values stay in immutable dated evidence and Git history. This record never contains its own commit hash.",
+  "purpose": "Single machine-readable authority for current cross-repository state. It records only current heads with their tested CI runs, capability states, freezes, open decisions and residual items. Historical values remain in Git history and in the owning repositories executable tests.",
   "source_heads_at_record_time": {
-    "fieldbook": "9249f262412d011beee3b84d7eab0f42bfec15e8",
-    "nirnay": "5e3030d35afcc156f2cb1379478672b98c06ee0c",
+    "fieldbook": "65b07bdd5ffbb53f2fe912eb392f0b384ec1379f",
+    "nirnay": "f1f0fd746a1041c95a46699dec8d59814a7856b0",
     "workspace": "omitted by design; the record cannot contain its own commit"
   },
   "ci": {
     "fieldbook": {
-      "run_id": "45704899828",
-      "head_sha": "9249f262412d011beee3b84d7eab0f42bfec15e8",
-      "conclusion": "success",
-      "jobs": "2/2",
-      "note": "Rerun after the merged documentation branch was deleted; the first run failed only on the stale remote-tracking branch."
+      "run_id": "45781893151",
+      "head_sha": "65b07bdd5ffbb53f2fe912eb392f0b384ec1379f",
+      "conclusion": "success"
     },
     "nirnay": {
-      "run_id": "45704888405",
-      "head_sha": "5e3030d35afcc156f2cb1379478672b98c06ee0c",
-      "conclusion": "success",
-      "jobs": "12/12"
+      "run_id": "45780185489",
+      "head_sha": "f1f0fd746a1041c95a46699dec8d59814a7856b0",
+      "conclusion": "success"
     },
     "workspace": {
       "hosted_ci": "NOT_RUN",
-      "static_gates": ["make consistency", "make audit"],
+      "static_gates": [
+        "make consistency",
+        "make audit",
+        "make package-review"
+      ],
       "result": "PASS"
     },
     "principle": "A CI identifier is evidence only when paired with the exact head SHA it tested. Static gates, tests and deployment qualification are separate claims."
@@ -41,7 +42,7 @@
   },
   "capabilities": {
     "ownership_adr": "ACCEPTED 2026-11-23 NR-ARCH-ADR-0001",
-    "ndc_version": "v2 APPROVED 2026-11-23; canonical wire schema ratified under WS-NDC-003",
+    "ndc_version": "v2 APPROVED 2026-11-23; enforced in Fieldbook producer and Nirnay consumer source, serializers, validators and tests; no standalone schema package is retained",
     "streaming_implementation": "ACHIEVED",
     "stream_resource_profile": "PENDING_OWNER_RATIFICATION",
     "numeric_resource_maxima": "DEFERRED",
@@ -75,34 +76,5 @@
       "status": "OPEN",
       "effect": "No gate consumes the value; no experiment may be admitted until corrected."
     }
-  ],
-  "evidence": {
-    "status_map": "engineering/STATUS.md",
-    "adr_registry": "ADR-REGISTRY.md",
-    "ndc_registry": "NDC-REGISTRY.md",
-    "phase3a_acceptance": "engineering/conformance/phase-3a-acceptance-2026-11-25.md",
-    "d0_full_matrix": "engineering/conformance/d0-full-matrix-evidence-2026-11-24.md",
-    "digest_reconciliation": "engineering/DIGEST-RECONCILIATION-2026-11-26.json",
-    "owner_ratification": "engineering/decisions/OWNER-RATIFICATION-2026-11-23.md",
-    "scope_decision": "engineering/decisions/WS-SCOPE-2026-11-24-001-global-reference-core-india-first.md",
-    "review_log": "engineering/evidence/REVIEW-LOG.md",
-    "w1_record": "engineering/evidence/W1.1-COMPLETION-RECORD.md",
-    "w2_record": "engineering/evidence/W2.1-READINESS-REPORT.md",
-    "review_package": "../siebensterne-review-packages/REVIEW-PACKAGE-QA.md"
-  },
-  "retired_from_this_record": {
-    "reason": "Historical heads, phase acceptance bodies, programme status and repeated digests were removed from the current-state authority. Their bytes remain in Git history and in the named dated records.",
-    "keys": [
-      "phase3_acceptance",
-      "historical_source_head_evidence",
-      "reviewed_source_heads",
-      "tested_source_heads",
-      "bootstrap_baselines",
-      "w21_status",
-      "fb_ref_programme",
-      "batch_b_status",
-      "release_correctness",
-      "publication_integrity_sprint"
-    ]
-  }
+  ]
 }

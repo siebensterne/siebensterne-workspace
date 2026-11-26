@@ -37,11 +37,11 @@ package_repo() {
 
   # Review scope is Indian and global securities. Venue-specific live captures,
   # venue latency measurements and prediction-market fixtures are excluded from
-  # the review package. Source code and documentation remain fully included.
-  local -a excluded_patterns=()
+  # the review package. Source code remains fully included.
+  local -a excluded_patterns=('target/doc/*.md')
   case "$name" in
     fieldbook)
-      excluded_patterns=(
+      excluded_patterns+=(
         'measurements/live/*'
         'measurements/polymarket-*'
         'measurements/remediation/*polymarket*'
@@ -65,49 +65,6 @@ package_repo() {
     mkdir -p "$stage/$name/source/$(dirname "$file")"
     cp -p "$dir/$file" "$stage/$name/source/$file"
   done < <(git -C "$dir" ls-files -z)
-
-  cat > "$stage/$name/REVIEW.md" <<EOF
-# Review package — $name
-
-Generated: $LABEL (UTC)
-Repository: https://github.com/siebensterne/$name
-Branch: $branch
-HEAD: $head
-Origin: $origin
-Latest CI: $ci
-
-## Contents
-
-- \`source/\` — every Git-tracked file at HEAD, paths unchanged.
-- \`git/$name-refs.bundle\` — all refs for source recovery and history inspection.
-- \`MANIFEST.json\` — per-file SHA-256 and size, plus package totals.
-
-## Boundaries
-
-This package contains source and documentation only. It excludes Git-ignored raw
-market-data captures, credentials, build output, virtual environments and operator-local
-evidence. It contains no provider contact, collection command output, experiment result,
-live order, synthetic market observation or strategy claim.
-
-Review scope is Indian and global securities. Exchange-specific live captures, venue
-latency measurements and prediction-market fixtures are excluded; \`MANIFEST.json\`
-records the exact exclusion patterns and paths. Source code and documentation remain
-complete, so the package is still a faithful source snapshot at the recorded HEAD.
-
-Rights remain UNKNOWN, dataset acceptance remains BLOCKED, live execution is disabled.
-The M4 holdout and all dated evidence are preserved, not re-run.
-
-## Verification
-
-Recover the exact source commit from the bundle:
-
-    git clone git/$name-refs.bundle restored-$name
-    git -C restored-$name cat-file -e $head^{commit}
-
-Check the manifest with:
-
-    python3 -c 'import json,hashlib,pathlib,sys; m=json.load(open("MANIFEST.json")); root=pathlib.Path("."); bad=[f["path"] for f in m["files"] if hashlib.sha256((root/f["path"]).read_bytes()).hexdigest()!=f["sha256"]]; print("OK" if not bad else bad)'
-EOF
 
   python3 - "$stage/$name" "$excluded_list" "${excluded_patterns[*]-}" \
           "$name" "$head" "$branch" "$origin" "$ci" "$LABEL" <<'PY'
@@ -170,28 +127,6 @@ STAGE="$OUT/.stage-combined"
 rm -rf "$STAGE"; mkdir -p "$STAGE"
 cp "$OUT"/siebensterne-*-review-"$LABEL".zip "$STAGE/"
 cp "$OUT"/siebensterne-*-review-"$LABEL".zip.sha256 "$STAGE/"
-cat > "$STAGE/README.md" <<EOF
-# siebensterne review bundle — $LABEL
-
-Three independent repositories reviewed as source packages. No monorepo, no source
-copies inside the workspace package, no raw market data, no credentials.
-
-| Package | Repository |
-|---|---|
-| siebensterne-fieldbook-review-$LABEL.zip | data platform |
-| siebensterne-nirnay-review-$LABEL.zip | quantitative platform |
-| siebensterne-workspace-review-$LABEL.zip | orchestration only |
-
-Each package has its own SHA-256 sidecar and MANIFEST.json. Venue-specific live captures,
-venue latency measurements and prediction-market fixtures are excluded from the Fieldbook
-package; the manifest records the exact patterns and paths. Source code is complete.
-
-Verify with:
-
-    shasum -a 256 -c siebensterne-*-review-$LABEL.zip.sha256
-
-Rights remain UNKNOWN; dataset acceptance BLOCKED; live execution disabled.
-EOF
 python3 - "$STAGE" "$OUT/siebensterne-review-bundle-$LABEL.zip" <<'PY'
 import hashlib, json, pathlib, sys, zipfile
 root = pathlib.Path(sys.argv[1]); out = pathlib.Path(sys.argv[2])

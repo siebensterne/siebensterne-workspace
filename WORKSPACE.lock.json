@@ -26,7 +26,7 @@
   },
   "no_provider_contact": true,
   "data_budget_inr": 0,
-  "ndc_state": "semantic requirements proposed; no accepted release implementation",
+  "ndc_state": "NDC v2 enforced by Fieldbook producer and Nirnay consumer source and tests; no standalone schema package",
   "rights_state": "unknown",
   "live_order_submission": "disabled",
   "tool_pins": {
@@ -52,44 +52,5 @@
     "fmt",
     "format-fix"
   ],
-  "registries": [
-    "ADR-REGISTRY.md",
-    "NDC-REGISTRY.md",
-    "engineering/evidence/REVIEW-LOG.md",
-    "docs/process/TOOL-MATRIX.md",
-    "docs/process/SHARED-FILES.md"
-  ],
-  "workspace_repository": "https://github.com/siebensterne/siebensterne-workspace.git",
-  "source_head_reconciliation_2026_11_24": {
-    "date": "2026-11-24",
-    "verification_timestamp": "2026-11-24T15:06:04Z",
-    "authority": "PR 0 evidence baseline reconciliation; see CURRENT-STATE.json source-head evidence fields and engineering/conformance/ndc-v2-production-builder-cross-execution-2026-11-24.md",
-    "note": "The baseline_commit pins above remain HISTORICAL bootstrap pins and are unchanged. The heads below are the separately evidenced current heads observed at this reconciliation. No CI run is recorded for the workspace orchestration repository.",
-    "heads": {
-      "fieldbook": {
-        "repository": "fieldbook",
-        "commit_sha": "475dc34c8cc510ac8dfba158dfdedbd91950f219",
-        "clean_worktree": true,
-        "verification_method": "local read-only git observation",
-        "workflow_or_command": "git -C /Users/tourist/Documents/siebensterne-workspace/fieldbook rev-parse HEAD && git -C /Users/tourist/Documents/siebensterne-workspace/fieldbook status --short",
-        "result": "HEAD_CONFIRMED; clean worktree; branch main"
-      },
-      "nirnay": {
-        "repository": "nirnay",
-        "commit_sha": "70716ebf66289a86335641847724fd92bf6bcce7",
-        "clean_worktree": true,
-        "verification_method": "local read-only git observation",
-        "workflow_or_command": "git -C /Users/tourist/Documents/siebensterne-workspace/nirnay rev-parse HEAD && git -C /Users/tourist/Documents/siebensterne-workspace/nirnay status --short",
-        "result": "HEAD_CONFIRMED; clean worktree; branch main"
-      },
-      "workspace": {
-        "repository": "workspace",
-        "commit_sha": "62b617c380ea97cd2a68f67c880a1f652ef14961",
-        "clean_worktree": true,
-        "verification_method": "local read-only git observation",
-        "workflow_or_command": "git -C /Users/tourist/Documents/siebensterne-workspace rev-parse HEAD && git -C /Users/tourist/Documents/siebensterne-workspace status --short",
-        "result": "HEAD_CONFIRMED; clean worktree; branch main; local commits beyond the bundled origin were pushed before this reconciliation"
-      }
-    }
-  }
+  "workspace_repository": "https://github.com/siebensterne/siebensterne-workspace.git"
 }
