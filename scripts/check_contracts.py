@@ -580,6 +580,7 @@ def self_test() -> dict:
         write_state(broken)
         cases.append({"id": "SELF-004", "expect": "FAIL:HEAD", "result": verify(root)})
 
+        write_state(base_state)
         broken_spec = json.loads(json.dumps(specs["source-event-envelope-v1"]))
         broken_spec["schema_version"] = 2
         (root / "contracts" / "source-event-envelope-v1.json").write_text(
