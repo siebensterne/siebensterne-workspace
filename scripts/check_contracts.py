@@ -73,6 +73,8 @@ RG_IDS = tuple(f"RG-{i:03d}" for i in range(1, 7))
 FIXTURE_REQUIRED_IDS = ("VAL-001", "VAL-002") + tuple(f"NEG-{i:03d}" for i in range(1, 13))
 FIXTURE_COPY_DIR = Path("tests") / "contract_fixtures"
 FIXTURE_STATUS_PENDING = "FIXTURES_DEFINED_BEHAVIOURAL_RESULTS_PENDING"
+FIXTURE_STATUS_VERIFIED = "BEHAVIOUR_VERIFIED"
+FIXTURE_STATUSES = (FIXTURE_STATUS_PENDING, FIXTURE_STATUS_VERIFIED)
 BEHAVIOUR_COMMAND = ("cargo", "test", "--test", "contract_conformance")
 
 EXPECTED_FREEZE = {
@@ -475,6 +477,17 @@ def expectation_code(expect: list, index: int) -> str | None:
     return code if isinstance(code, str) else None
 
 
+def find_fixture_copy_dirs(repo: Path) -> list[Path]:
+    """Accept tests/contract_fixtures at repo root or inside a crate."""
+    found: list[Path] = []
+    for current, dirs, _ in os.walk(repo):
+        dirs[:] = sorted(d for d in dirs if d not in (".git", "target"))
+        path = Path(current)
+        if path.name == FIXTURE_COPY_DIR.name and path.parent.name == FIXTURE_COPY_DIR.parent.name:
+            found.append(path)
+    return sorted(found)
+
+
 def fixture_ledger_consistency(items: list, expect: list) -> bool:
     """Accepted events must be strictly increasing per (source_id, session_ref)."""
     ledgers: dict[tuple, tuple[int, int]] = {}
@@ -581,7 +594,7 @@ def verify_fixtures(results: list[dict], root: Path) -> str:
         isinstance(entry, dict)
         and entry.get("path") == "contracts/fixtures/manifest.json"
         and entry.get("schema_version") == 1
-        and entry.get("conformance_status") == FIXTURE_STATUS_PENDING
+        and entry.get("conformance_status") in FIXTURE_STATUSES
         and "conformance evidence only" in note.lower()
         and "not data admission" in note.lower()
     )
@@ -589,6 +602,24 @@ def verify_fixtures(results: list[dict], root: Path) -> str:
     if not entry_ok:
         check(results, False, "fixture/manifest/parse", "SKIPPED: invalid index fixture entry")
         return ""
+    if entry["conformance_status"] == FIXTURE_STATUS_VERIFIED:
+        state, state_err = load_json(root / "CURRENT-STATE.json")
+        recorded_heads = state.get("source_heads_at_record_time", {}) if isinstance(state, dict) else {}
+        observed = entry.get("observed_heads")
+        counts = entry.get("test_counts")
+        evidence_ok = (
+            state_err is None
+            and isinstance(observed, dict)
+            and all(observed.get(repo) == recorded_heads.get(repo) for repo in ("fieldbook", "nirnay"))
+            and isinstance(counts, dict)
+            and all(isinstance(counts.get(repo), int) and counts[repo] > 0 for repo in ("fieldbook", "nirnay"))
+        )
+        check(
+            results,
+            evidence_ok,
+            "fixture/index/behaviour_evidence",
+            f"heads={observed} test_counts={counts}",
+        )
 
     manifest_path = root / entry["path"]
     manifest_digest = sha256_file(manifest_path) if manifest_path.is_file() else ""
@@ -648,35 +679,41 @@ def verify_fixtures(results: list[dict], root: Path) -> str:
     verify_fixture_semantics(results, root, files, codes)
 
     for repo in ("fieldbook", "nirnay"):
-        copy_dir = root / repo / FIXTURE_COPY_DIR
+        copy_dirs = find_fixture_copy_dirs((root / repo).resolve())
         check(
             results,
-            copy_dir.is_dir(),
+            bool(copy_dirs),
             f"fixture/copies/{repo}/directory",
-            f"expected={copy_dir}",
+            f"found={[str(p) for p in copy_dirs]}",
         )
-        copy_manifest = copy_dir / "manifest.json"
-        copy_ok = copy_manifest.is_file() and sha256_file(copy_manifest) == manifest_digest
+        copy_dir = next(
+            (
+                path for path in copy_dirs
+                if (path / "manifest.json").is_file()
+                and sha256_file(path / "manifest.json") == manifest_digest
+            ),
+            None,
+        )
         check(
             results,
-            copy_ok,
+            copy_dir is not None,
             f"fixture/copies/{repo}/manifest",
-            f"actual={sha256_file(copy_manifest)[:12] if copy_manifest.is_file() else 'missing'} expected={manifest_digest[:12]}",
+            f"matched={str(copy_dir) if copy_dir else 'none'} expected={manifest_digest[:12]}",
         )
         missing: list[str] = []
         mismatched: list[str] = []
         for meta in files:
             name = Path(meta["path"]).name
-            target = copy_dir / name
-            if not target.is_file():
+            target = (copy_dir / name) if copy_dir else None
+            if target is None or not target.is_file():
                 missing.append(name)
             elif sha256_file(target) != meta["sha256"]:
                 mismatched.append(name)
         check(
             results,
-            not missing and not mismatched,
+            copy_dir is not None and not missing and not mismatched,
             f"fixture/copies/{repo}/files",
-            f"missing={missing} mismatched={mismatched}",
+            f"dir={str(copy_dir) if copy_dir else 'none'} missing={missing} mismatched={mismatched}",
         )
     return manifest_digest
 
@@ -746,13 +783,24 @@ def verify_behaviour(
             exit_code = None
             stdout = ""
             stderr = "SKIPPED: head mismatch, dirty checkout or unsafe CARGO_TARGET_DIR"
-        passed = exit_code == 0
+        tests_passed = sum(
+            int(count)
+            for count in re.findall(r"test result: ok\. (\d+) passed;", stdout + "\n" + stderr)
+        )
+        tests_ok = exit_code == 0 and tests_passed > 0
         check(
             results,
-            passed,
+            exit_code == 0,
             f"behaviour/{repo}/cargo_test",
             f"command={' '.join(BEHAVIOUR_COMMAND)} exit_code={exit_code}",
         )
+        check(
+            results,
+            tests_ok,
+            f"behaviour/{repo}/tests_run",
+            f"passed={tests_passed} exit_code={exit_code}",
+        )
+        passed = tests_ok
         reports[repo] = {
             "head": head if code == 0 else None,
             "recorded_head": recorded,
@@ -761,6 +809,7 @@ def verify_behaviour(
             "command": " ".join(BEHAVIOUR_COMMAND),
             "exit_code": exit_code,
             "status": "PASS" if passed else "FAIL",
+            "tests_passed": tests_passed,
             "stdout_sha256": hashlib.sha256(stdout.encode("utf-8")).hexdigest(),
             "stderr_sha256": hashlib.sha256(stderr.encode("utf-8")).hexdigest(),
             "stderr_tail": stderr[-1000:],
@@ -1115,7 +1164,11 @@ def self_test() -> dict:
 
         def stub_runner(command: tuple[str, ...], cwd: Path, env: dict) -> dict:
             exit_code = 1 if Path(cwd).name == "nirnay" else 0
-            return {"exit_code": exit_code, "stdout": "", "stderr": "determin-stub"}
+            return {
+                "exit_code": exit_code,
+                "stdout": "test result: ok. 14 passed; 0 failed; 0 ignored\n",
+                "stderr": "determin-stub",
+            }
 
         cases.append({
             "id": "SELF-010",
@@ -1159,6 +1212,18 @@ def self_test() -> dict:
         write_index(fresh_index())
         restore_fixtures()
 
+        verified_index = fresh_index()
+        verified_index["fixtures"]["conformance_status"] = FIXTURE_STATUS_VERIFIED
+        verified_index["fixtures"]["observed_heads"] = dict(heads)
+        verified_index["fixtures"]["test_counts"] = {"fieldbook": 14, "nirnay": 14}
+        write_index(verified_index)
+        cases.append({"id": "SELF-013", "expect": "PASS", "result": verify(root)})
+        wrong_heads = json.loads(json.dumps(verified_index))
+        wrong_heads["fixtures"]["observed_heads"]["nirnay"] = "0" * 40
+        write_index(wrong_heads)
+        cases.append({"id": "SELF-014", "expect": "FAIL:OBSERVED_HEAD", "result": verify(root)})
+        write_index(fresh_index())
+
     def classify(case: dict) -> bool:
         expect = case["expect"]
         result = case["result"]
@@ -1192,6 +1257,8 @@ def self_test() -> dict:
             return not result["ok"] and "behaviour/target_dir_outside_repos" in codes
         if expect == "FAIL:FIXTURE_SEMANTICS":
             return not result["ok"] and "fixture/file/VAL-001/expectations" in codes
+        if expect == "FAIL:OBSERVED_HEAD":
+            return not result["ok"] and "fixture/index/behaviour_evidence" in codes
         return False
 
     passed = sum(classify(c) for c in cases)
