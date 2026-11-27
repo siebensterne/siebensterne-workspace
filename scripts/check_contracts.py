@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
 """Deterministic, stdlib-only checker for the v1 workspace contracts.
 
-Normal mode emits exactly one JSON object and exits 0 only when every check
-passes. --self-test builds temporary fixtures (including two tiny Git
-repositories) and exercises positive and negative cases.
+Normal mode emits exactly one JSON object. --self-test builds temporary
+fixtures (including two tiny Git repositories) and exercises positive and
+negative cases. --behaviour additionally runs the golden fixtures as
+`cargo test --test contract_conformance` in both local source checkouts,
+with CARGO_TARGET_DIR outside both repositories, and only succeeds when both
+runs exit 0. All modes print exactly one JSON object to stdout.
+
+Conformance fixtures are evidence about the wire/identity envelope only. No
+fixture, digest or test result admits data, grants rights, authorizes
+collection, permits market data or enables live execution.
 """
 
 from __future__ import annotations
@@ -63,6 +70,10 @@ LIFECYCLE_ORDER = (
 )
 FC_IDS = tuple(f"FC-{i:03d}" for i in range(1, 10))
 RG_IDS = tuple(f"RG-{i:03d}" for i in range(1, 7))
+FIXTURE_REQUIRED_IDS = ("VAL-001", "VAL-002") + tuple(f"NEG-{i:03d}" for i in range(1, 13))
+FIXTURE_COPY_DIR = Path("tests") / "contract_fixtures"
+FIXTURE_STATUS_PENDING = "FIXTURES_DEFINED_BEHAVIOURAL_RESULTS_PENDING"
+BEHAVIOUR_COMMAND = ("cargo", "test", "--test", "contract_conformance")
 
 EXPECTED_FREEZE = {
     "incremental_data_budget_inr": 0,
@@ -430,16 +441,375 @@ def verify_sources(results: list[dict], root: Path) -> None:
         )
 
 
-def verify(root: Path) -> dict:
+class DuplicateMember(ValueError):
+    """Raised when strict JSON parsing sees a repeated object member."""
+
+    def __init__(self, member: str) -> None:
+        super().__init__(member)
+        self.member = member
+
+
+def canonical_envelope_digest(envelope: dict) -> str:
+    payload = {key: value for key, value in envelope.items() if key != "envelope_digest"}
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def strict_object_pairs(pairs: list[tuple[str, object]]) -> dict:
+    obj: dict = {}
+    for key, value in pairs:
+        if key in obj:
+            raise DuplicateMember(key)
+        obj[key] = value
+    return obj
+
+
+def parse_strict_json(text: str) -> dict:
+    return json.loads(text, object_pairs_hook=strict_object_pairs)
+
+
+def expectation_code(expect: list, index: int) -> str | None:
+    if not isinstance(expect, list) or index >= len(expect) or not isinstance(expect[index], dict):
+        return None
+    code = expect[index].get("rejected_code")
+    return code if isinstance(code, str) else None
+
+
+def fixture_ledger_consistency(items: list, expect: list) -> bool:
+    """Accepted events must be strictly increasing per (source_id, session_ref)."""
+    ledgers: dict[tuple, tuple[int, int]] = {}
+    for index, item in enumerate(items):
+        if not isinstance(item, dict):
+            return False
+        capture = item.get("capture_sequence")
+        canonical = item.get("canonical_sequence")
+        if not isinstance(capture, int) or not isinstance(canonical, int):
+            return False
+        if not isinstance(expect, list) or index >= len(expect) or not isinstance(expect[index], dict):
+            return False
+        if expect[index].get("accepted") is not True:
+            continue
+        key = (item.get("source_id"), item.get("session_ref"))
+        previous = ledgers.get(key)
+        if previous and (capture <= previous[0] or canonical <= previous[1]):
+            return False
+        ledgers[key] = (capture, canonical)
+    return True
+
+
+def verify_fixture_semantics(
+    results: list[dict], root: Path, files: list[dict], codes: set
+) -> None:
+    for meta in files:
+        fid = meta.get("id", "UNKNOWN")
+        path = root / str(meta.get("path", ""))
+        digest_ok = path.is_file() and sha256_file(path) == meta.get("sha256")
+        check(results, digest_ok, f"fixture/file/{fid}/sha256", f"path={meta.get('path')!r}")
+        fixture, err = load_json(path)
+        mode = fixture.get("mode") if isinstance(fixture, dict) else None
+        members = set(fixture) if isinstance(fixture, dict) else set()
+        expected_members = {"id", "mode", "events" if mode == "events" else "raw_events", "expect"}
+        shape_ok = (
+            err is None
+            and isinstance(fixture, dict)
+            and fixture.get("id") == fid
+            and mode in ("events", "raw")
+            and members == expected_members
+            and isinstance(fixture.get("expect"), list)
+            and isinstance(fixture.get("events" if mode == "events" else "raw_events"), list)
+        )
+        check(results, shape_ok, f"fixture/file/{fid}/shape", f"mode={mode!r} members={sorted(members)}")
+        if not shape_ok:
+            continue
+        assert isinstance(fixture, dict)
+        expect = fixture["expect"]
+        items = fixture["events" if mode == "events" else "raw_events"]
+        expect_ok = expect == meta.get("expectations") and len(expect) == len(items) and all(
+            isinstance(entry, dict)
+            and (
+                (set(entry) == {"accepted"} and entry["accepted"] is True)
+                or (
+                    set(entry) == {"rejected_code"}
+                    and isinstance(entry["rejected_code"], str)
+                    and entry["rejected_code"] in codes
+                )
+            )
+            for entry in expect
+        )
+        check(results, expect_ok, f"fixture/file/{fid}/expectations", f"entries={len(expect)}")
+        if mode == "events":
+            check(
+                results,
+                fixture_ledger_consistency(items, expect),
+                f"fixture/file/{fid}/ledger_consistency",
+                "accepted events strictly increasing per (source_id, session_ref)",
+            )
+        digests_ok = True
+        for index, item in enumerate(items):
+            code = expectation_code(expect, index)
+            expect_mismatch = code == "ENVELOPE_DIGEST_MISMATCH"
+            duplicate = None
+            obj = item
+            if mode == "raw":
+                if not isinstance(item, str):
+                    digests_ok = False
+                    continue
+                try:
+                    obj = parse_strict_json(item)
+                except DuplicateMember as exc:
+                    duplicate = exc.member
+                    obj = None
+                except ValueError:
+                    obj = None
+                if duplicate is not None:
+                    digests_ok = digests_ok and duplicate == "source_id" and code == "UNKNOWN_OR_MISSING_MEMBER"
+                    continue
+            if not isinstance(obj, dict) or tuple(sorted(obj)) != tuple(sorted(ENVELOPE_FIELDS)):
+                digests_ok = False
+                continue
+            matches = canonical_envelope_digest(obj) == obj.get("envelope_digest")
+            digests_ok = digests_ok and (matches != expect_mismatch)
+        check(results, digests_ok, f"fixture/file/{fid}/envelope_digests", "v1 canonical digest rule")
+
+
+def verify_fixtures(results: list[dict], root: Path) -> str:
+    """Verify the golden fixtures and owner copies; return the actual manifest digest."""
+    index, index_err = load_json(root / "contracts" / "contract-index.json")
+    entry = index.get("fixtures") if isinstance(index, dict) else None
+    note = str(entry.get("note", "")) if isinstance(entry, dict) else ""
+    entry_ok = (
+        isinstance(entry, dict)
+        and entry.get("path") == "contracts/fixtures/manifest.json"
+        and entry.get("schema_version") == 1
+        and entry.get("conformance_status") == FIXTURE_STATUS_PENDING
+        and "conformance evidence only" in note.lower()
+        and "not data admission" in note.lower()
+    )
+    check(results, entry_ok, "fixture/index/entry", f"status={(entry or {}).get('conformance_status')!r}")
+    if not entry_ok:
+        check(results, False, "fixture/manifest/parse", "SKIPPED: invalid index fixture entry")
+        return ""
+
+    manifest_path = root / entry["path"]
+    manifest_digest = sha256_file(manifest_path) if manifest_path.is_file() else ""
+    check(
+        results,
+        manifest_path.is_file() and manifest_digest == entry.get("sha256"),
+        "fixture/manifest/sha256",
+        f"recorded={str(entry.get('sha256'))[:12]} actual={manifest_digest[:12]}",
+    )
+    manifest, err = load_json(manifest_path)
+    check(results, err is None and isinstance(manifest, dict), "fixture/manifest/parse", err or "parsed")
+    if err is not None or not isinstance(manifest, dict):
+        return manifest_digest
+    assert isinstance(manifest, dict)
+
+    check(
+        results,
+        manifest.get("schema_version") == 1,
+        "fixture/manifest/schema_version",
+        f"schema_version={manifest.get('schema_version')!r}",
+    )
+    fmt = manifest.get("fixture_format")
+    format_keys = (
+        "top_level_members", "id", "mode", "events", "raw_events", "expect",
+        "rejection_code_authority", "envelope_digest_rule", "events_mode_ledgers",
+        "raw_mode_duplicate_rule", "neutral_scope",
+    )
+    format_ok = isinstance(fmt, dict) and all(k in fmt for k in format_keys)
+    check(results, format_ok, "fixture/manifest/format", f"documented_keys={len(format_keys)}")
+
+    files = manifest.get("files")
+    ids = [f.get("id") for f in files if isinstance(f, dict)] if isinstance(files, list) else []
+    files_ok = (
+        isinstance(files, list)
+        and len(files) == len(FIXTURE_REQUIRED_IDS)
+        and tuple(ids) == FIXTURE_REQUIRED_IDS
+        and all(
+            isinstance(f, dict)
+            and f.get("path") == f"contracts/fixtures/{f.get('id')}.json"
+            and isinstance(f.get("sha256"), str)
+            and re.fullmatch(r"[0-9a-f]{64}", f["sha256"])
+            and isinstance(f.get("expectations"), list)
+            for f in files
+        )
+    )
+    check(results, files_ok, "fixture/manifest/files", f"ids={ids}")
+
+    spec, spec_err = load_json(root / "contracts" / "source-event-envelope-v1.json")
+    codes = (
+        {c.get("code") for c in spec.get("rejection_reason_codes", []) if isinstance(c, dict)}
+        if spec_err is None and isinstance(spec, dict) else set()
+    )
+    check(results, bool(codes), "fixture/spec/rejection_codes", f"codes={len(codes)}")
+    if not files_ok or not codes:
+        return manifest_digest
+    assert isinstance(files, list)
+    verify_fixture_semantics(results, root, files, codes)
+
+    for repo in ("fieldbook", "nirnay"):
+        copy_dir = root / repo / FIXTURE_COPY_DIR
+        check(
+            results,
+            copy_dir.is_dir(),
+            f"fixture/copies/{repo}/directory",
+            f"expected={copy_dir}",
+        )
+        copy_manifest = copy_dir / "manifest.json"
+        copy_ok = copy_manifest.is_file() and sha256_file(copy_manifest) == manifest_digest
+        check(
+            results,
+            copy_ok,
+            f"fixture/copies/{repo}/manifest",
+            f"actual={sha256_file(copy_manifest)[:12] if copy_manifest.is_file() else 'missing'} expected={manifest_digest[:12]}",
+        )
+        missing: list[str] = []
+        mismatched: list[str] = []
+        for meta in files:
+            name = Path(meta["path"]).name
+            target = copy_dir / name
+            if not target.is_file():
+                missing.append(name)
+            elif sha256_file(target) != meta["sha256"]:
+                mismatched.append(name)
+        check(
+            results,
+            not missing and not mismatched,
+            f"fixture/copies/{repo}/files",
+            f"missing={missing} mismatched={mismatched}",
+        )
+    return manifest_digest
+
+
+def default_cargo_runner(command: tuple[str, ...], cwd: Path, env: dict) -> dict:
+    try:
+        proc = subprocess.run(
+            list(command), cwd=str(cwd), env=env, capture_output=True, text=True, timeout=1800, check=False
+        )
+    except subprocess.TimeoutExpired:
+        return {"exit_code": None, "stdout": "", "stderr": "TIMEOUT after 1800s"}
+    except OSError as exc:
+        return {"exit_code": None, "stdout": "", "stderr": f"cargo error: {exc.__class__.__name__}"}
+    return {"exit_code": proc.returncode, "stdout": proc.stdout, "stderr": proc.stderr}
+
+
+def verify_behaviour(
+    results: list[dict],
+    root: Path,
+    manifest_digest: str,
+    runner=None,
+    forced_target_dir: str | None = None,
+) -> dict:
+    """Run the same fixture test in both repos; exit 0 in both is mandatory."""
+    state, _ = load_json(root / "CURRENT-STATE.json")
+    heads = state.get("source_heads_at_record_time", {}) if isinstance(state, dict) else {}
+    target_raw = forced_target_dir if forced_target_dir is not None else os.environ.get("CONTRACT_CONFORMANCE_TARGET_DIR")
+    target = (
+        Path(target_raw).expanduser().resolve()
+        if target_raw
+        else Path(tempfile.mkdtemp(prefix="contract-conformance-target-")).resolve()
+    )
+    repo_paths = {repo: (root / repo).resolve() for repo in ("fieldbook", "nirnay")}
+    outside = all(
+        target != path and path not in target.parents for path in repo_paths.values()
+    )
+    check(results, outside, "behaviour/target_dir_outside_repos", f"target={target}")
+    if outside:
+        try:
+            target.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            check(results, False, "behaviour/target_dir_created", f"target={target}")
+            outside = False
+
+    reports: dict[str, dict] = {}
+    for repo, repo_path in repo_paths.items():
+        code, head = git(repo_path, "rev-parse", "HEAD")
+        _, dirty = git(repo_path, "status", "--porcelain")
+        recorded = heads.get(repo) if isinstance(heads, dict) else None
+        head_ok = code == 0 and re.fullmatch(r"[0-9a-f]{40}", head or "") and head == recorded
+        clean = dirty == ""
+        check(
+            results,
+            head_ok and clean,
+            f"behaviour/{repo}/exact_head",
+            f"head={head[:12]} recorded={str(recorded)[:12]} dirty={not clean}",
+        )
+        entry_ok = head_ok and clean and outside
+        if entry_ok:
+            env = dict(os.environ)
+            env["CARGO_TARGET_DIR"] = str(target)
+            run = (runner or default_cargo_runner)(BEHAVIOUR_COMMAND, repo_path, env)
+            exit_code = run.get("exit_code")
+            stdout = str(run.get("stdout", ""))
+            stderr = str(run.get("stderr", ""))
+        else:
+            exit_code = None
+            stdout = ""
+            stderr = "SKIPPED: head mismatch, dirty checkout or unsafe CARGO_TARGET_DIR"
+        passed = exit_code == 0
+        check(
+            results,
+            passed,
+            f"behaviour/{repo}/cargo_test",
+            f"command={' '.join(BEHAVIOUR_COMMAND)} exit_code={exit_code}",
+        )
+        reports[repo] = {
+            "head": head if code == 0 else None,
+            "recorded_head": recorded,
+            "head_matches_record": head_ok,
+            "clean_checkout": clean,
+            "command": " ".join(BEHAVIOUR_COMMAND),
+            "exit_code": exit_code,
+            "status": "PASS" if passed else "FAIL",
+            "stdout_sha256": hashlib.sha256(stdout.encode("utf-8")).hexdigest(),
+            "stderr_sha256": hashlib.sha256(stderr.encode("utf-8")).hexdigest(),
+            "stderr_tail": stderr[-1000:],
+            "cargo_target_dir": str(target),
+            "cargo_target_dir_outside_repos": outside,
+        }
+    behaviour_ok = all(r["status"] == "PASS" for r in reports.values()) and outside
+    return {
+        "status": "PASS" if behaviour_ok else "FAIL",
+        "required_exit_code": 0,
+        "command": " ".join(BEHAVIOUR_COMMAND),
+        "cargo_target_dir": str(target),
+        "cargo_target_dir_outside_repos": outside,
+        "fixture_manifest_digest": manifest_digest,
+        "repos": reports,
+    }
+
+
+def verify(
+    root: Path,
+    behaviour: bool = False,
+    runner=None,
+    forced_target_dir: str | None = None,
+) -> dict:
     results: list[dict] = []
     verify_contracts(results, root)
     verify_freeze(results, root)
     verify_sources(results, root)
+    structural = list(results)
+    manifest_digest = verify_fixtures(results, root)
+    behaviour_result = (
+        verify_behaviour(results, root, manifest_digest, runner=runner, forced_target_dir=forced_target_dir)
+        if behaviour else None
+    )
     failed = [r for r in results if r["status"] != "PASS"]
+    structural_failed = [r for r in structural if r["status"] != "PASS"]
     return {
         "tool": "check_contracts",
-        "mode": "verify",
+        "mode": "behaviour" if behaviour else "verify",
         "ok": not failed,
+        "structural": {
+            "ok": not structural_failed,
+            "total": len(structural),
+            "passed": len(structural) - len(structural_failed),
+            "failed": len(structural_failed),
+            "failure_codes": [r["code"] for r in structural_failed],
+        },
+        "fixture_manifest_digest": manifest_digest,
+        "behaviour": behaviour_result if behaviour_result is not None else {"status": "PENDING_NOT_RUN_IN_NORMAL_MODE"},
         "checks": results,
         "passed": len(results) - len(failed),
         "failed": len(failed),
@@ -554,7 +924,21 @@ def self_test() -> dict:
         (root / "contracts").mkdir()
         state_path = root / "CURRENT-STATE.json"
         index_path = root / "contracts" / "contract-index.json"
+        fixture_source_dir = Path(__file__).resolve().parent.parent / "contracts" / "fixtures"
+        fixture_bytes = {p.name: p.read_bytes() for p in sorted(fixture_source_dir.glob("*.json"))}
+        if not fixture_bytes or "manifest.json" not in fixture_bytes:
+            raise RuntimeError("golden fixture files are unavailable for --self-test")
+        real_spec, real_spec_err = load_json(fixture_source_dir.parent / "source-event-envelope-v1.json")
+        if real_spec_err is not None or not isinstance(real_spec, dict):
+            raise RuntimeError("v1 spec is unavailable for --self-test fixture codes")
+        fixture_digest = hashlib.sha256(fixture_bytes["manifest.json"]).hexdigest()
         specs = fixture_specs()
+        normative_codes = real_spec["rejection_reason_codes"]
+        specs["source-event-envelope-v1"]["rejection_reason_codes"] = normative_codes
+        specs["source-event-envelope-v1"]["negative_cases"] = [
+            {"id": f"NEG-{i:03d}", "case": "bad", "expected_rejection": entry["code"]}
+            for i, entry in enumerate(normative_codes, 1)
+        ]
         for name, spec in specs.items():
             (root / "contracts" / f"{name}.json").write_text(
                 json.dumps(spec, sort_keys=True, separators=(",", ":")), encoding="utf-8"
@@ -578,6 +962,13 @@ def self_test() -> dict:
             return {
                 "schema_version": 1,
                 "specs": entries,
+                "fixtures": {
+                    "path": "contracts/fixtures/manifest.json",
+                    "schema_version": 1,
+                    "sha256": fixture_digest,
+                    "conformance_status": FIXTURE_STATUS_PENDING,
+                    "note": "Conformance evidence only; not data admission, rights grant, collection or live execution.",
+                },
                 "blocked_research": {"status": "BLOCKED"},
             }
 
@@ -588,6 +979,56 @@ def self_test() -> dict:
             index_path.write_text(json.dumps(index, sort_keys=True, separators=(",", ":")), encoding="utf-8")
 
         heads = {repo: write_fixture_repo(root / repo) for repo in ("fieldbook", "nirnay")}
+        (root / "contracts" / "fixtures").mkdir()
+        for name, data in fixture_bytes.items():
+            (root / "contracts" / "fixtures" / name).write_bytes(data)
+
+        def write_copies() -> None:
+            for repo in ("fieldbook", "nirnay"):
+                copy_dir = root / repo / FIXTURE_COPY_DIR
+                copy_dir.mkdir(parents=True, exist_ok=True)
+                for name, data in fixture_bytes.items():
+                    (copy_dir / name).write_bytes(data)
+
+        def commit_copies() -> None:
+            env = dict(os.environ)
+            env.update(
+                GIT_AUTHOR_NAME="fixture",
+                GIT_AUTHOR_EMAIL="fixture@example.invalid",
+                GIT_COMMITTER_NAME="fixture",
+                GIT_COMMITTER_EMAIL="fixture@example.invalid",
+                GIT_AUTHOR_DATE="2026-01-02T00:00:00Z",
+                GIT_COMMITTER_DATE="2026-01-02T00:00:00Z",
+            )
+            for repo in ("fieldbook", "nirnay"):
+                repo_path = root / repo
+                proc = subprocess.run(
+                    ["git", "-C", str(repo_path), "add", str(FIXTURE_COPY_DIR)],
+                    capture_output=True, text=True, env=env, check=False,
+                )
+                if proc.returncode != 0:
+                    raise RuntimeError(f"fixture copy git add failed: {proc.stderr.strip()}")
+                code, _ = git(repo_path, "diff", "--cached", "--quiet")
+                if code == 0:
+                    continue
+                proc = subprocess.run(
+                    ["git", "-C", str(repo_path), "commit", "-q", "-m", "fixture copies"],
+                    capture_output=True, text=True, env=env, check=False,
+                )
+                if proc.returncode != 0:
+                    raise RuntimeError(f"fixture copy git commit failed: {proc.stderr.strip()}")
+
+        write_copies()
+        commit_copies()
+        for repo in ("fieldbook", "nirnay"):
+            _, committed_head = git(root / repo, "rev-parse", "HEAD")
+            heads[repo] = committed_head
+
+        def restore_fixtures() -> None:
+            for name, data in fixture_bytes.items():
+                (root / "contracts" / "fixtures" / name).write_bytes(data)
+            write_copies()
+
         freeze = dict(EXPECTED_FREEZE)
         freeze["m4"] = {"EXP-M4-0001": {"synthetic_holdout": EXPECTED_HOLDOUT_DISPOSITION}}
         base_state = {
@@ -630,11 +1071,93 @@ def self_test() -> dict:
         )
         write_state(base_state)
         write_index(fresh_index())
+        # Remove fixture copies from the Nirnay token scan so the missing-token
+        # negative case is not masked by field names inside the JSON fixtures.
+        removed = subprocess.run(
+            ["git", "-C", str(root / "nirnay"), "rm", "-r", "-q", str(FIXTURE_COPY_DIR)],
+            capture_output=True, text=True, check=False,
+        )
+        if removed.returncode != 0:
+            raise RuntimeError(f"fixture copy removal failed: {removed.stderr.strip()}")
         missing_head = write_fixture_repo(root / "nirnay", with_tokens=False)
         broken = json.loads(json.dumps(base_state))
         broken["source_heads_at_record_time"]["nirnay"] = missing_head
         write_state(broken)
         cases.append({"id": "SELF-006", "expect": "FAIL:TOKENS", "result": verify(root)})
+
+        write_copies()
+        commit_copies()
+        for repo in ("fieldbook", "nirnay"):
+            _, committed_head = git(root / repo, "rev-parse", "HEAD")
+            heads[repo] = committed_head
+        base_state = json.loads(json.dumps(base_state))
+        base_state["source_heads_at_record_time"]["nirnay"] = heads["nirnay"]
+        write_state(base_state)
+        write_index(fresh_index())
+        restore_fixtures()
+        fieldbook_copies = root / "fieldbook" / FIXTURE_COPY_DIR
+        for item in fieldbook_copies.iterdir():
+            item.unlink()
+        fieldbook_copies.rmdir()
+        cases.append({"id": "SELF-007", "expect": "FAIL:COPIES", "result": verify(root)})
+        write_copies()
+
+        nirnay_copy = root / "nirnay" / FIXTURE_COPY_DIR / "VAL-001.json"
+        nirnay_copy.write_bytes(nirnay_copy.read_bytes() + b"\n")
+        cases.append({"id": "SELF-008", "expect": "FAIL:COPY_DIGEST", "result": verify(root)})
+        restore_fixtures()
+
+        broken_index = fresh_index()
+        broken_index["fixtures"]["sha256"] = "0" * 64
+        write_index(broken_index)
+        cases.append({"id": "SELF-009", "expect": "FAIL:FIXTURE_INDEX", "result": verify(root)})
+        write_index(fresh_index())
+
+        def stub_runner(command: tuple[str, ...], cwd: Path, env: dict) -> dict:
+            exit_code = 1 if Path(cwd).name == "nirnay" else 0
+            return {"exit_code": exit_code, "stdout": "", "stderr": "determin-stub"}
+
+        cases.append({
+            "id": "SELF-010",
+            "expect": "FAIL:BEHAVIOUR",
+            "result": verify(
+                root,
+                behaviour=True,
+                runner=stub_runner,
+                forced_target_dir=str(root / "cargo-target-selftest"),
+            ),
+        })
+        cases.append({
+            "id": "SELF-011",
+            "expect": "FAIL:TARGET",
+            "result": verify(
+                root,
+                behaviour=True,
+                runner=stub_runner,
+                forced_target_dir=str(root / "fieldbook" / "target"),
+            ),
+        })
+
+        fixture_path = root / "contracts" / "fixtures" / "VAL-001.json"
+        mutated_fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        mutated_fixture["expect"] = [{"rejected_code": "BOGUS_CODE"}]
+        fixture_path.write_text(
+            json.dumps(mutated_fixture, sort_keys=True, separators=(",", ":")), encoding="utf-8"
+        )
+        manifest_path = root / "contracts" / "fixtures" / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        for entry in manifest["files"]:
+            if entry["id"] == "VAL-001":
+                entry["sha256"] = sha256_file(fixture_path)
+        manifest_path.write_text(
+            json.dumps(manifest, sort_keys=True, separators=(",", ":")), encoding="utf-8"
+        )
+        repaired_index = fresh_index()
+        repaired_index["fixtures"]["sha256"] = sha256_file(manifest_path)
+        write_index(repaired_index)
+        cases.append({"id": "SELF-012", "expect": "FAIL:FIXTURE_SEMANTICS", "result": verify(root)})
+        write_index(fresh_index())
+        restore_fixtures()
 
     def classify(case: dict) -> bool:
         expect = case["expect"]
@@ -652,6 +1175,23 @@ def self_test() -> dict:
             return not result["ok"] and any(c.endswith("/schema_version") and "envelope" in c for c in codes)
         if expect == "FAIL:TOKENS":
             return not result["ok"] and "source/nirnay/field_tokens" in codes
+        if expect == "FAIL:COPIES":
+            return not result["ok"] and any(c.startswith("fixture/copies/fieldbook/") for c in codes)
+        if expect == "FAIL:COPY_DIGEST":
+            return not result["ok"] and "fixture/copies/nirnay/files" in codes
+        if expect == "FAIL:FIXTURE_INDEX":
+            return not result["ok"] and "fixture/manifest/sha256" in codes
+        if expect == "FAIL:BEHAVIOUR":
+            return (
+                not result["ok"]
+                and "behaviour/nirnay/cargo_test" in codes
+                and result["behaviour"]["repos"]["nirnay"]["exit_code"] == 1
+                and result["behaviour"]["repos"]["fieldbook"]["exit_code"] == 0
+            )
+        if expect == "FAIL:TARGET":
+            return not result["ok"] and "behaviour/target_dir_outside_repos" in codes
+        if expect == "FAIL:FIXTURE_SEMANTICS":
+            return not result["ok"] and "fixture/file/VAL-001/expectations" in codes
         return False
 
     passed = sum(classify(c) for c in cases)
@@ -677,10 +1217,19 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--self-test", action="store_true", help="run deterministic fixture tests")
     parser.add_argument("--root", default=None, help="workspace root (default: parent of scripts/)")
+    parser.add_argument(
+        "--behaviour",
+        action="store_true",
+        help="run cargo test --test contract_conformance in both repos; both must exit 0",
+    )
+    parser.add_argument("--out", default=None, help="also write the JSON result to this path")
     args = parser.parse_args()
     root = Path(args.root).resolve() if args.root else Path(__file__).resolve().parent.parent
-    result = self_test() if args.self_test else verify(root)
-    print(json.dumps(result, sort_keys=True, separators=(",", ":")))
+    result = self_test() if args.self_test else verify(root, behaviour=args.behaviour)
+    payload = json.dumps(result, sort_keys=True, separators=(",", ":"))
+    if args.out:
+        Path(args.out).write_text(payload + "\n", encoding="utf-8")
+    print(payload)
     return 0 if result["ok"] else 1
 
 

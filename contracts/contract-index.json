@@ -31,6 +31,13 @@
       "status": "SPECIFIED_ONLY"
     }
   },
+  "fixtures": {
+    "path": "contracts/fixtures/manifest.json",
+    "schema_version": 1,
+    "sha256": "3edcfde5fdd7fb0ecadda4cc447cf2a52ea29f6d5df723a3185a08150c057654",
+    "conformance_status": "FIXTURES_DEFINED_BEHAVIOURAL_RESULTS_PENDING",
+    "note": "Conformance evidence only; not data admission, dataset acceptance, rights authorization, provider collection, market-data permission or live execution."
+  },
   "blocked_research": {
     "status": "BLOCKED",
     "scope": "point-in-time research and reference authority over frozen crates/india-reference",
