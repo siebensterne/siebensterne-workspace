@@ -76,9 +76,9 @@ jobs:
           E2E_WORK_DIR: ${{ runner.temp }}/e2e-paper-path
         run: |
           set -uo pipefail
+          code=0
           bash scripts/e2e_paper_path.sh \
-            --out "$E2E_WORK_DIR/e2e-paper-path.json" --work "$E2E_WORK_DIR"
-          code=$?
+            --out "$E2E_WORK_DIR/e2e-paper-path.json" --work "$E2E_WORK_DIR" || code=$?
           # Exit 3 is the documented BLOCKED outcome: the script still emits
           # complete fail-closed evidence. Only unexpected failures fail the job.
           if [[ "$code" -ne 0 && "$code" -ne 3 ]]; then
