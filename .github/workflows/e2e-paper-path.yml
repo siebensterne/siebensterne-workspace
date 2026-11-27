@@ -5,9 +5,11 @@ name: M8 e2e paper path
 # CURRENT-STATE.json, runs an abstract non-market fixture through producer ->
 # verifier (typed REJECT_RIGHTS_EVIDENCE refusal, no receipt), and records a
 # deterministic neutral paper replay with typed risk and OMS/account evidence.
-# A Fieldbook -> Nirnay paper adapter is required for a cross-repository paper
-# claim; when it is absent the gate returns BLOCKED and the job fails. The
-# evidence JSON is always uploaded. No secret, provider contact, collection,
+# A verified Fieldbook -> Nirnay neutral adapter closes G6 only for the
+# rights-refused, opaque sequence-only fixture. G9 stays BLOCKED because Q5
+# operator authorization cannot be automated, so the documented exit is 3 and
+# the job stays green while preserving failure_reason. Unexpected exits fail.
+# The evidence JSON is always uploaded. No secret, provider contact, collection,
 # experiment, holdout, market data or live execution is used.
 
 on:
@@ -98,16 +100,18 @@ jobs:
           set -euo pipefail
           result="$E2E_WORK_DIR/e2e-paper-path.json"
           [[ -s "$result" ]] || { printf 'required evidence is missing: %s\n' "$result" >&2; exit 1; }
-          if [[ "$GATE_EXIT" == "3" ]]; then
-            jq -e '.result == "BLOCKED" and (.failure_reason | type == "string" and length > 0)' "$result" >/dev/null
-          else
-            jq -e '.result == "PASS"' "$result" >/dev/null
-          fi
+          # Exit 3 is the only expected documented outcome while G9 is BLOCKED.
+          # Any other successful-looking result is rejected here.
+          [[ "$GATE_EXIT" == "3" ]] || {
+            printf 'unexpected gate exit in evidence verification: %s\n' "$GATE_EXIT" >&2
+            exit 1
+          }
           jq -e '
             .schema_version == 1 and
             .gate == "m8-e2e-paper-path" and
-            (.result == "PASS" or .result == "BLOCKED") and
-            (.failure_reason == null) == (.result == "PASS") and
+            .result == "BLOCKED" and
+            (.failure_reason | type == "string" and length > 0) and
+            (.failure_reason | contains("G9") and contains("Q5")) and
             (.run_id | type == "string" and length > 0) and
             .source_heads.fieldbook == env.FIELDBOOK_SHA and
             .source_heads.nirnay == env.NIRNAY_SHA and
@@ -121,10 +125,20 @@ jobs:
             (.paper_path.risk_baseline.accepted == false) and
             (.paper_path.risk_tight.accepted == false) and
             ([.qualification.checks[] | .id] == ["Q0","Q1","Q2","Q3","Q4","Q5"]) and
-            ([.qualification.checks[2:5][] | .status] | all(. == "BLOCKED")) and
+            ([.qualification.checks[0:5][] | .status] | all(. == "PASS")) and
+            (.qualification.checks[5].status == "BLOCKED") and
             ([.boundaries[]] | all(. == false)) and
             (.gates.G6 == (if .paper_path.adapter.status == "linked" then "PASS" else "BLOCKED" end)) and
-            (.gates.G9 == "BLOCKED")
+            (.gates.G9 == "BLOCKED") and
+            (if .paper_path.adapter.status == "linked" then
+               .paper_path.adapter.cross_repository_claim == true and
+               .paper_path.adapter.claim_scope == "NEUTRAL_RIGHTS_REFUSED_FIXTURE_ONLY" and
+               .paper_path.adapter.rights_refused_only == true and
+               (.paper_path.adapter.determinism == "PASS") and
+               (.paper_path.adapter.neutral_dataset_sha256 | type == "string" and length == 64)
+             else
+               .paper_path.adapter.cross_repository_claim == false
+             end)
           ' "$result" >/dev/null
 
       - name: Upload e2e paper path evidence
@@ -138,5 +152,6 @@ jobs:
             ${{ runner.temp }}/e2e-paper-path/paper/baseline/*.json
             ${{ runner.temp }}/e2e-paper-path/paper/baseline-replay/*.json
             ${{ runner.temp }}/e2e-paper-path/paper/tight/*.json
+            ${{ runner.temp }}/e2e-paper-path/qualification/*.json
             ${{ runner.temp }}/e2e-paper-path/logs/*.log
           if-no-files-found: error
