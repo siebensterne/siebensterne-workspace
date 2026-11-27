@@ -1,0 +1,128 @@
+name: M8 e2e paper path
+
+# REQUIRED, fail-closed gate. Builds the Fieldbook producer and the Nirnay
+# verifier and paper engine from the exact commits recorded in
+# CURRENT-STATE.json, runs an abstract non-market fixture through producer ->
+# verifier (typed REJECT_RIGHTS_EVIDENCE refusal, no receipt), and records a
+# deterministic neutral paper replay with typed risk and OMS/account evidence.
+# A Fieldbook -> Nirnay paper adapter is required for a cross-repository paper
+# claim; when it is absent the gate returns BLOCKED and the job fails. The
+# evidence JSON is always uploaded. No secret, provider contact, collection,
+# experiment, holdout, market data or live execution is used.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  e2e-paper-path:
+    name: Deterministic producer/verifier and paper replay
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out workspace authority and gate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Resolve exact repository commits from CURRENT-STATE.json
+        id: heads
+        run: |
+          set -euo pipefail
+          fieldbook_sha="$(jq -er '.source_heads_at_record_time.fieldbook' CURRENT-STATE.json)"
+          nirnay_sha="$(jq -er '.source_heads_at_record_time.nirnay' CURRENT-STATE.json)"
+          [[ "$fieldbook_sha" =~ ^[0-9a-f]{40}$ ]] || { echo "invalid Fieldbook SHA" >&2; exit 1; }
+          [[ "$nirnay_sha" =~ ^[0-9a-f]{40}$ ]] || { echo "invalid Nirnay SHA" >&2; exit 1; }
+          echo "fieldbook=$fieldbook_sha" >> "$GITHUB_OUTPUT"
+          echo "nirnay=$nirnay_sha" >> "$GITHUB_OUTPUT"
+          echo "Fieldbook $fieldbook_sha / Nirnay $nirnay_sha"
+
+      - name: Check out Fieldbook at the recorded commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: siebensterne/fieldbook
+          ref: ${{ steps.heads.outputs.fieldbook }}
+          path: fieldbook
+          persist-credentials: false
+
+      - name: Check out Nirnay at the recorded commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: siebensterne/nirnay
+          ref: ${{ steps.heads.outputs.nirnay }}
+          path: nirnay
+          persist-credentials: false
+
+      - name: Install pinned Rust toolchain
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: 1.99.1
+
+      - name: Run required e2e paper path
+        id: gate
+        env:
+          FIELDBOOK_SHA: ${{ steps.heads.outputs.fieldbook }}
+          NIRNAY_SHA: ${{ steps.heads.outputs.nirnay }}
+          E2E_WORK_DIR: ${{ runner.temp }}/e2e-paper-path
+        run: |
+          set -euo pipefail
+          bash scripts/e2e_paper_path.sh \
+            --out "$E2E_WORK_DIR/e2e-paper-path.json" --work "$E2E_WORK_DIR"
+
+      - name: Verify e2e evidence describes this run
+        if: always()
+        env:
+          FIELDBOOK_SHA: ${{ steps.heads.outputs.fieldbook }}
+          NIRNAY_SHA: ${{ steps.heads.outputs.nirnay }}
+          E2E_WORK_DIR: ${{ runner.temp }}/e2e-paper-path
+        run: |
+          set -euo pipefail
+          result="$E2E_WORK_DIR/e2e-paper-path.json"
+          [[ -s "$result" ]] || { printf 'required evidence is missing: %s\n' "$result" >&2; exit 1; }
+          jq -e '
+            .schema_version == 1 and
+            .gate == "m8-e2e-paper-path" and
+            (.result == "PASS" or .result == "BLOCKED") and
+            (.failure_reason == null) == (.result == "PASS") and
+            (.run_id | type == "string" and length > 0) and
+            .source_heads.fieldbook == env.FIELDBOOK_SHA and
+            .source_heads.nirnay == env.NIRNAY_SHA and
+            (.binaries.producer.sha256 | type == "string" and length == 64) and
+            (.binaries.verifier.sha256 | type == "string" and length == 64) and
+            (.binaries.paper_engine.sha256 | type == "string" and length == 64) and
+            .rights.state == "UNKNOWN" and
+            .rights.case.status == "PASS" and
+            .rights.case.actual.code == "REJECT_RIGHTS_EVIDENCE" and
+            (.paper_path.replay_digest | type == "string" and length == 64) and
+            (.paper_path.risk_baseline.accepted == false) and
+            (.paper_path.risk_tight.accepted == false) and
+            ([.qualification.checks[] | .id] == ["Q0","Q1","Q2","Q3","Q4","Q5"]) and
+            ([.qualification.checks[2:5][] | .status] | all(. == "BLOCKED")) and
+            ([.boundaries[]] | all(. == false)) and
+            (.gates.G6 == (if .paper_path.adapter.status == "linked" then "PASS" else "BLOCKED" end)) and
+            (.gates.G9 == "BLOCKED")
+          ' "$result" >/dev/null
+
+      - name: Upload e2e paper path evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: e2e-paper-path-evidence
+          path: |
+            ${{ runner.temp }}/e2e-paper-path/e2e-paper-path.json
+            ${{ runner.temp }}/e2e-paper-path/diagnostics/*.json
+            ${{ runner.temp }}/e2e-paper-path/paper/baseline/*.json
+            ${{ runner.temp }}/e2e-paper-path/paper/baseline-replay/*.json
+            ${{ runner.temp }}/e2e-paper-path/paper/tight/*.json
+            ${{ runner.temp }}/e2e-paper-path/logs/*.log
+          if-no-files-found: error
