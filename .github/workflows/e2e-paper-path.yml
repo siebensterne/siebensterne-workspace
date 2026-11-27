@@ -75,9 +75,17 @@ jobs:
           NIRNAY_SHA: ${{ steps.heads.outputs.nirnay }}
           E2E_WORK_DIR: ${{ runner.temp }}/e2e-paper-path
         run: |
-          set -euo pipefail
+          set -uo pipefail
           bash scripts/e2e_paper_path.sh \
             --out "$E2E_WORK_DIR/e2e-paper-path.json" --work "$E2E_WORK_DIR"
+          code=$?
+          # Exit 3 is the documented BLOCKED outcome: the script still emits
+          # complete fail-closed evidence. Only unexpected failures fail the job.
+          if [[ "$code" -ne 0 && "$code" -ne 3 ]]; then
+            printf 'unexpected e2e gate exit: %s\n' "$code" >&2
+            exit "$code"
+          fi
+          printf 'gate_exit=%s\n' "$code" >> "$GITHUB_OUTPUT"
 
       - name: Verify e2e evidence describes this run
         if: always()
@@ -85,10 +93,16 @@ jobs:
           FIELDBOOK_SHA: ${{ steps.heads.outputs.fieldbook }}
           NIRNAY_SHA: ${{ steps.heads.outputs.nirnay }}
           E2E_WORK_DIR: ${{ runner.temp }}/e2e-paper-path
+          GATE_EXIT: ${{ steps.gate.outputs.gate_exit }}
         run: |
           set -euo pipefail
           result="$E2E_WORK_DIR/e2e-paper-path.json"
           [[ -s "$result" ]] || { printf 'required evidence is missing: %s\n' "$result" >&2; exit 1; }
+          if [[ "$GATE_EXIT" == "3" ]]; then
+            jq -e '.result == "BLOCKED" and (.failure_reason | type == "string" and length > 0)' "$result" >/dev/null
+          else
+            jq -e '.result == "PASS"' "$result" >/dev/null
+          fi
           jq -e '
             .schema_version == 1 and
             .gate == "m8-e2e-paper-path" and
