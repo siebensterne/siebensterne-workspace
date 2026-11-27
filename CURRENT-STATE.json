@@ -1,7 +1,7 @@
 {
   "schema_version": 3,
-  "generated_utc_date": "2026-11-26",
-  "purpose": "Single machine-readable authority for current cross-repository state. It records only current heads with their tested CI runs, capability states, freezes, open decisions and residual items. Historical values remain in Git history and in the owning repositories executable tests.",
+  "generated_utc_date": "2026-11-27",
+  "purpose": "Single machine-readable authority for current cross-repository state. It records only current heads with their tested CI runs, capability states, current limitations, freezes, open decisions and residual items. Historical values remain in Git history and in the owning repositories executable tests.",
   "source_heads_at_record_time": {
     "fieldbook": "093c0ad14057187b7a67afc436cd2226bdb438a4",
     "nirnay": "3f8b2f9c81cd7c09c97e92075337c0f5fd1725b4",
@@ -19,24 +19,62 @@
       "conclusion": "success"
     },
     "workspace": {
-      "hosted_ci": "45891432485",
-      "head_sha_at_run": "2bb2afca7cae5fc7653a408895ca26773abe9b60",
+      "hosted_ci": "45965392088",
+      "head_sha_at_run": "f21997f74e597880239b49c9b9f272b68893c3ef",
       "conclusion": "success",
       "static_gates": [
         "make consistency",
         "make audit",
         "make package-review"
+      ],
+      "evidence_scope": "Exact head only: this hosted run is evidence for f21997f74e597880239b49c9b9f272b68893c3ef, the base head of the state correction. The record cannot contain its own commit.",
+      "historical_hosted_ci": [
+        {
+          "run_id": "45891432485",
+          "head_sha_at_run": "2bb2afca7cae5fc7653a408895ca26773abe9b60",
+          "conclusion": "success",
+          "role": "HISTORICAL_ONLY_NOT_EXACT_HEAD_EVIDENCE"
+        }
       ]
     },
-    "principle": "A CI identifier is evidence only when paired with the exact head SHA it tested. Static gates, tests and deployment qualification are separate claims."
+    "principle": "A CI identifier is evidence only when paired with the exact head SHA it tested. Static gates, tests and deployment qualification are separate claims. Historical runs are retained as history, not as evidence for the current head."
   },
   "freeze": {
     "incremental_data_budget_inr": 0,
     "provider_rights": "21 UNKNOWN",
     "dataset_acceptance": "BLOCKED",
     "provider_collection": "DISABLED",
+    "market_data": "BLOCKED",
     "experiment_registration": "BLOCKED",
-    "m4_holdout": "UNTOUCHED",
+    "m4_holdout": "NOT_DEFINED",
+    "m4_holdout_detail": "No separate protected research holdout is defined beyond the historical EXP-M4-0001 synthetic holdout, which was consumed once post-selection. Do not relabel it as UNTOUCHED and do not reuse it.",
+    "distinct_m4_labels": {
+      "ENG-M4": "ENGINEERING_MILESTONE_PERSISTENT_STARTUP_BOUNDARY",
+      "EXP-M4-0001": "HISTORICAL_SYNTHETIC_EXPERIMENT"
+    },
+    "m4": {
+      "ENG-M4": {
+        "kind": "engineering_milestone",
+        "status": "ACHIEVED_LIBRARY_BOUNDARY",
+        "scope": "Persistent startup boundary via RecoveryJournalRoot::load; returns NOT-READY until real durable adapters are integrated."
+      },
+      "EXP-M4-0001": {
+        "kind": "historical_synthetic_experiment",
+        "status": "COMPLETED_POSITIVE_SCREEN_NOT_ALPHA_CERTIFIED",
+        "registered": true,
+        "completed": true,
+        "attempted_configurations": 4,
+        "holdout_observations": 83,
+        "synthetic_holdout": "CONSUMED_ONCE_POST_SELECTION_DO_NOT_REUSE",
+        "report_path": "nirnay/evidence/m4/search-report.json",
+        "evidence_digest_reference": {
+          "report_sha256": "2170dcf955b09b5b267634fd63fc590d43f1f3c066fb51bc321fce5bf14fb04f",
+          "terminal_record_hash": "0c8a295987706225cc1599647f32ef6e86787b6d2da93bb328ebd16e28531288",
+          "holdout_key": "5fc7e760aec22f5c7162e827577b03e55eea4fc812a2641836cbb434ef7d94a7"
+        },
+        "historical_record": "Retained as historical evidence; not erased, relabelled or reused. A positive synthetic screen is not alpha certification or permission to trade."
+      }
+    },
     "synthetic_market_shaped_tests": "RETIRED_UNDER_D11",
     "live_execution": "DISABLED",
     "rights_or_permission_from_url_token_or_checksum": "NEVER"
@@ -61,6 +99,38 @@
     "publication_receipt_consumer": "PROPOSED_NOT_IMPLEMENTED",
     "venue_adapters": "NONE_REGISTERED"
   },
+  "current_limitations": [
+    {
+      "id": "LIM-M3-CONCURRENCY-001",
+      "scope": "M3 concurrency evidence",
+      "status": "THREADS_WITH_FLOCK_DESCRIPTOR_OBSERVATION",
+      "detail": "The concurrency test observes flock descriptors from threads; it does not spawn or qualify independent processes."
+    },
+    {
+      "id": "LIM-ROLLBACK-001",
+      "scope": "rollback protection",
+      "status": "OWNER_CONTROLLED_DIRECTORY_BOUND_ONLY",
+      "detail": "Protection is bounded to an owner-controlled directory and is not hardware-backed."
+    },
+    {
+      "id": "LIM-M4-STARTUP-001",
+      "scope": "M4 persistent startup",
+      "status": "LIBRARY_BOUNDARY_NOT_READY",
+      "detail": "RecoveryJournalRoot::load is a library boundary that returns NOT-READY; no real durable adapters are integrated."
+    },
+    {
+      "id": "LIM-RECOVERY-001",
+      "scope": "recovery qualification",
+      "status": "D0_PROCESS_RECOVERY_ONLY",
+      "detail": "No D1 or beyond, power-loss, replication, nanosecond or horizontal-scale claim is made."
+    },
+    {
+      "id": "LIM-EXECUTION-001",
+      "scope": "execution path",
+      "status": "NO_REGISTERED_VENUE_ADAPTER_OR_LIVE_BROKER_PATH",
+      "detail": "No registered venue adapter or live broker path exists."
+    }
+  ],
   "open_owner_decisions": [
     "Provide written source rights for an exact operation and scope",
     "Accept a dataset after qualification",
