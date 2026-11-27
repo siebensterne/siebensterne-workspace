@@ -147,5 +147,45 @@
       "status": "CLOSED",
       "effect": "A required gate now recomputes and binds the declared digest over the declared research source set; drift fails closed. Experiments remain BLOCKED by the standing freeze; this gate proves source identity only."
     }
-  ]
+  ],
+  "release_gates": {
+    "schema_version": 1,
+    "recorded_utc_date": "2026-11-27",
+    "base_commit": "55580513f7e4e29039735df937ccc843f53374cf",
+    "authority_script": "scripts/e2e_paper_path.sh",
+    "workflow": ".github/workflows/e2e-paper-path.yml",
+    "evidence_artifact": "e2e-paper-path-evidence/e2e-paper-path.json",
+    "status_vocabulary": {
+      "PASS": "check executed and assertion held in the recorded evidence",
+      "BLOCKED": "required adapter or deployment qualification is absent; fail closed, never a pass",
+      "EXTERNAL": "verified by workspace commands outside the e2e script"
+    },
+    "gates": [
+      {"id": "G0", "name": "exact_source_heads_and_clean_trees", "status": "PASS", "evidence": ["CURRENT-STATE.json:source_heads_at_record_time", "e2e-paper-path.json:source_heads,checked_out_heads,source_provenance.clean_tree_checked"]},
+      {"id": "G1", "name": "exact_head_binaries_with_recorded_digests", "status": "PASS", "evidence": ["e2e-paper-path.json:binaries,source_provenance.mode"]},
+      {"id": "G2", "name": "neutral_fixture_producer_verifier_interoperability", "status": "PASS", "evidence": ["e2e-paper-path.json:neutral_fixture,rights.case"]},
+      {"id": "G3", "name": "typed_rights_refusal_without_admission", "status": "PASS", "evidence": ["e2e-paper-path.json:rights.case,rights.mutation_sentinel"]},
+      {"id": "G4", "name": "deterministic_neutral_paper_replay", "status": "PASS", "evidence": ["e2e-paper-path.json:paper_path.replay_digest,paper_path.journals"]},
+      {"id": "G5", "name": "risk_verdict_and_oms_account_effect_from_evidence", "status": "PASS", "evidence": ["e2e-paper-path.json:paper_path.risk_baseline,paper_path.risk_tight"]},
+      {"id": "G6", "name": "fieldbook_to_nirnay_paper_adapter", "status": "BLOCKED", "evidence": ["e2e-paper-path.json:paper_path.adapter.status,candidates_checked"], "checked_paths": ["nirnay/apps/paper-runner/src/bin/ndc_to_paper.rs", "nirnay/crates/release-verifier/src/bin/ndc_to_paper.rs", "fieldbook/src/bin/ndc-to-paper-dataset.rs", "scripts/ndc_to_paper_dataset.sh"], "effect": "No adapter converts a rights-refused NDC release into a neutral paper dataset. Cross-repository paper replay fails closed; the standalone neutral paper replay is not relabelled as cross-repository evidence."},
+      {"id": "G7", "name": "deployment_owner_path_derivation", "status": "PASS", "evidence": ["scripts/e2e_paper_path.sh:check_owner_paths", "e2e-paper-path.json:qualification.checks.Q0"]},
+      {"id": "G8", "name": "stale_sentinel_runbook_no_pid_or_age_clearing", "status": "PASS", "evidence": ["nirnay/crates/risk-authority/src/authority.rs:AuthorityOwnership", "e2e-paper-path.json:qualification.checks.Q1"]},
+      {"id": "G9", "name": "deployment_restart_kill_fault_injection_backup_restore_operator", "status": "BLOCKED", "evidence": ["e2e-paper-path.json:qualification.checks.Q2,Q3,Q4,Q5", "CURRENT-STATE.json:capabilities.operational_qualification"], "effect": "No restart/kill, disk-full/permission/symlink/path-replacement, backup/restore or operator readiness drill is executed by this gate."},
+      {"id": "G10", "name": "workspace_consistency_package_review_and_freeze_preservation", "status": "PASS", "evidence": ["local commands: bash -n scripts/e2e_paper_path.sh", "local commands: python3 YAML parse .github/workflows/e2e-paper-path.yml", "local commands: make consistency", "local commands: make package-review", "local commands: git diff --check"], "scope": "Workspace-level verification; reported as EXTERNAL by the e2e script because it is not computed inside that script."}
+    ],
+    "qualification_checks": [
+      {"id": "Q0", "name": "owner_path_derivation", "status": "PASS", "implemented_by": "scripts/e2e_paper_path.sh:check_owner_paths", "evidence": "e2e-paper-path.json:qualification.checks.Q0"},
+      {"id": "Q1", "name": "stale_sentinel_runbook_no_pid_or_age_clearing", "status": "PASS", "implemented_by": "scripts/e2e_paper_path.sh:check_sentinel_policy", "evidence": "nirnay/crates/risk-authority/src/authority.rs; e2e-paper-path.json:qualification.checks.Q1"},
+      {"id": "Q2", "name": "restart_kill", "status": "BLOCKED", "reason": "No deployment, restart or kill drill is executed; live execution stays disabled.", "evidence": "CURRENT-STATE.json:capabilities.operational_qualification"},
+      {"id": "Q3", "name": "disk_full_permission_symlink_path_replacement", "status": "BLOCKED", "reason": "No owner-host fault injection is executed by this read-only gate.", "evidence": "CURRENT-STATE.json:capabilities.filesystem_and_power_loss_qualification"},
+      {"id": "Q4", "name": "backup_restore", "status": "BLOCKED", "reason": "No durable backup or restore drill is executed; D1 and beyond are not achieved.", "evidence": "CURRENT-STATE.json:capabilities.d1_and_beyond"},
+      {"id": "Q5", "name": "operator_readiness", "status": "BLOCKED", "reason": "No operator authorization or production readiness claim is made.", "evidence": "CURRENT-STATE.json:open_owner_decisions"}
+    ],
+    "overall": {
+      "status": "BLOCKED",
+      "reason": "G6 cross-repository paper adapter is absent and G9 deployment qualification is not executed. Interoperability, typed rights refusal and deterministic neutral paper replay are proven; no data admission, rights grant, market data or live execution is claimed.",
+      "closed": ["G0", "G1", "G2", "G3", "G4", "G5", "G7", "G8", "G10"],
+      "blocked": ["G6", "G9"]
+    }
+  }
 }
