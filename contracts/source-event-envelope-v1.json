@@ -1,0 +1,266 @@
+{
+  "name": "source-event-envelope-v1",
+  "schema_version": 1,
+  "title": "Source event envelope v1",
+  "purpose": "Canonical, machine-readable identity and continuity contract for a single source event. This is a specification of the wire/identity envelope only; it does not grant rights, admit a dataset, or assert a market data claim.",
+  "status": "SPECIFIED",
+  "freeze_binding": {
+    "rights": "21 UNKNOWN",
+    "collection": "DISABLED",
+    "market_data": "BLOCKED",
+    "dataset_acceptance": "BLOCKED",
+    "experiment_registration": "BLOCKED",
+    "live_execution": "DISABLED",
+    "note": "A conforming envelope is necessary but never sufficient for admission. No evidence token, URL, checksum or digest in this envelope is a rights grant."
+  },
+  "canonicalization": {
+    "encoding": "UTF-8",
+    "json": "JSON object with unique string keys; no duplicate members; integers are decimal, not floats",
+    "digest_input": "All envelope members except envelope_digest, sorted by key, serialized with json.dumps(obj, sort_keys=True, separators=(',', ':'), ensure_ascii=False)",
+    "digest_algorithm": "SHA-256",
+    "digest_encoding": "64 lowercase hexadecimal characters",
+    "digest_is_not_a_rights_grant": true
+  },
+  "fields": [
+    {
+      "ordinal": 1,
+      "name": "schema_version",
+      "json_type": "integer",
+      "semantic_type": "u32_literal",
+      "required": true,
+      "rules": ["Must equal 1 exactly."]
+    },
+    {
+      "ordinal": 2,
+      "name": "source_id",
+      "json_type": "string",
+      "semantic_type": "non_empty_string",
+      "required": true,
+      "rules": ["Must be non-empty after no trimming; whitespace-only is invalid."]
+    },
+    {
+      "ordinal": 3,
+      "name": "source_product_ref",
+      "json_type": "string",
+      "semantic_type": "non_empty_string",
+      "required": true,
+      "rules": ["Must be a non-empty reference to a versioned source-product record. It is a reference, not an entitlement."]
+    },
+    {
+      "ordinal": 4,
+      "name": "session_ref",
+      "json_type": "string",
+      "semantic_type": "non_empty_string",
+      "required": true,
+      "rules": ["Must be a non-empty reference to a source session. Per-session monotonicity is scoped to this value."]
+    },
+    {
+      "ordinal": 5,
+      "name": "decoder_version",
+      "json_type": "string",
+      "semantic_type": "non_empty_string",
+      "required": true,
+      "rules": ["Must be a non-empty versioned decoder identifier. Required as evidence for VALIDATED."]
+    },
+    {
+      "ordinal": 6,
+      "name": "reference_data_revision",
+      "json_type": "string",
+      "semantic_type": "non_empty_string",
+      "required": true,
+      "rules": ["Must be a non-empty reference-data revision identifier. Required as evidence for VALIDATED."]
+    },
+    {
+      "ordinal": 7,
+      "name": "rights_evidence_ref",
+      "json_type": "string",
+      "semantic_type": "non_empty_string",
+      "required": true,
+      "rules": ["Must be a non-empty reference to rights evidence; the reference never grants rights and is never inferred from a URL token or checksum."]
+    },
+    {
+      "ordinal": 8,
+      "name": "connection_epoch",
+      "json_type": "integer",
+      "semantic_type": "u64_positive",
+      "required": true,
+      "rules": ["Must be greater than 0."]
+    },
+    {
+      "ordinal": 9,
+      "name": "capture_sequence",
+      "json_type": "integer",
+      "semantic_type": "u64_positive_strictly_increasing",
+      "required": true,
+      "rules": ["Must be greater than 0 and strictly increasing within a (source_id, session_ref) scope."]
+    },
+    {
+      "ordinal": 10,
+      "name": "canonical_sequence",
+      "json_type": "integer",
+      "semantic_type": "u64_positive_strictly_increasing",
+      "required": true,
+      "rules": ["Must be greater than 0 and strictly increasing within a (source_id, session_ref) scope; it is assigned by canonicalization, never by the provider."]
+    },
+    {
+      "ordinal": 11,
+      "name": "provider_sequence",
+      "json_type": ["integer", "null"],
+      "semantic_type": "u64_or_null",
+      "required": true,
+      "rules": ["Must be null or an integer greater than 0; 0 is invalid.", "Null means the provider did not supply a sequence. No sequence may be synthesized, inferred or backfilled."]
+    },
+    {
+      "ordinal": 12,
+      "name": "source_timestamp_ns",
+      "json_type": ["integer", "null"],
+      "semantic_type": "u64_or_null",
+      "required": true,
+      "rules": ["Must be null or an integer in the u64 range. No source time is synthesized when null."]
+    },
+    {
+      "ordinal": 13,
+      "name": "receive_utc_ns",
+      "json_type": "integer",
+      "semantic_type": "u64_positive",
+      "required": true,
+      "rules": ["Must be greater than 0."]
+    },
+    {
+      "ordinal": 14,
+      "name": "receive_monotonic_ns",
+      "json_type": "integer",
+      "semantic_type": "u64_positive",
+      "required": true,
+      "rules": ["Must be greater than 0; monotonic receive time is never derived from UTC time."]
+    },
+    {
+      "ordinal": 15,
+      "name": "raw_frame_digest",
+      "json_type": "string",
+      "semantic_type": "hex64_lowercase",
+      "required": true,
+      "rules": ["Must match ^[0-9a-f]{64}$. Uppercase hex, short or long digests are invalid."]
+    },
+    {
+      "ordinal": 16,
+      "name": "envelope_digest",
+      "json_type": "string",
+      "semantic_type": "hex64_lowercase",
+      "required": true,
+      "rules": ["Must match ^[0-9a-f]{64}$.", "Must equal SHA-256 of the canonical sorted-key JSON of all other fields, with no field omitted except envelope_digest itself."]
+    },
+    {
+      "ordinal": 17,
+      "name": "quality_state",
+      "json_type": "string",
+      "semantic_type": "enum",
+      "required": true,
+      "rules": ["Must be one of CAPTURED, DECODED, VALIDATED, QUARANTINED."],
+      "enum": ["CAPTURED", "DECODED", "VALIDATED", "QUARANTINED"]
+    },
+    {
+      "ordinal": 18,
+      "name": "continuity_state",
+      "json_type": "string",
+      "semantic_type": "enum",
+      "required": true,
+      "rules": ["Must be one of CONTINUOUS, GAP_SUSPECTED, RECOVERED, UNKNOWN."],
+      "enum": ["CONTINUOUS", "GAP_SUSPECTED", "RECOVERED", "UNKNOWN"]
+    }
+  ],
+  "validation_rules": [
+    {
+      "id": "ENV-V001",
+      "rule": "Reject any envelope whose member set differs from the ordered field list above; no unknown, missing or duplicate members."
+    },
+    {
+      "id": "ENV-V002",
+      "rule": "Reject unless schema_version == 1."
+    },
+    {
+      "id": "ENV-V003",
+      "rule": "Reject unless connection_epoch > 0 and receive_utc_ns > 0 and receive_monotonic_ns > 0."
+    },
+    {
+      "id": "ENV-V004",
+      "rule": "Reject a repeated or decreasing capture_sequence or canonical_sequence for the same (source_id, session_ref)."
+    },
+    {
+      "id": "ENV-V005",
+      "rule": "Reject provider_sequence == 0 and reject any synthesized provider_sequence; null is the only absence value."
+    },
+    {
+      "id": "ENV-V006",
+      "rule": "Reject a digest that is not 64 lowercase hex characters; recompute envelope_digest over all other fields and reject on mismatch."
+    },
+    {
+      "id": "ENV-V007",
+      "rule": "VALIDATED requires a non-empty decoder_version and a non-empty reference_data_revision, and continuity_state must not be GAP_SUSPECTED or UNKNOWN."
+    },
+    {
+      "id": "ENV-V008",
+      "rule": "QUARANTINED envelopes are never admissible to replay, research or publication."
+    },
+    {
+      "id": "ENV-V009",
+      "rule": "No rights, collection, market-data or live-execution permission is implied by a valid envelope."
+    }
+  ],
+  "rejection_reason_codes": [
+    {"code": "SCHEMA_VERSION_MISMATCH", "condition": "schema_version is not the literal 1"},
+    {"code": "UNKNOWN_OR_MISSING_MEMBER", "condition": "member set differs from the canonical field list"},
+    {"code": "EMPTY_REQUIRED_STRING", "condition": "a required non-empty string is empty or whitespace-only"},
+    {"code": "INVALID_CONNECTION_EPOCH", "condition": "connection_epoch is not greater than 0"},
+    {"code": "NON_MONOTONIC_CAPTURE_SEQUENCE", "condition": "capture_sequence repeats or decreases within a session"},
+    {"code": "NON_MONOTONIC_CANONICAL_SEQUENCE", "condition": "canonical_sequence repeats or decreases within a session"},
+    {"code": "INVALID_PROVIDER_SEQUENCE", "condition": "provider_sequence is 0 or otherwise outside u64-or-null"},
+    {"code": "SYNTHESIZED_PROVIDER_SEQUENCE", "condition": "a provider sequence was inferred, synthesized or backfilled"},
+    {"code": "INVALID_SOURCE_TIMESTAMP", "condition": "source_timestamp_ns is neither null nor a u64"},
+    {"code": "INVALID_RECEIVE_TIME", "condition": "receive_utc_ns or receive_monotonic_ns is not greater than 0"},
+    {"code": "INVALID_DIGEST_FORMAT", "condition": "raw_frame_digest or envelope_digest is not 64 lowercase hex characters"},
+    {"code": "ENVELOPE_DIGEST_MISMATCH", "condition": "recomputed digest does not equal envelope_digest"},
+    {"code": "INVALID_QUALITY_STATE", "condition": "quality_state is outside its enum"},
+    {"code": "INVALID_CONTINUITY_STATE", "condition": "continuity_state is outside its enum"},
+    {"code": "VALIDATED_MISSING_REVISIONS", "condition": "VALIDATED without decoder_version or reference_data_revision evidence"},
+    {"code": "VALIDATED_CONTINUITY_UNRESOLVED", "condition": "VALIDATED with GAP_SUSPECTED or UNKNOWN continuity"},
+    {"code": "QUARANTINED_NOT_ADMISSIBLE", "condition": "QUARANTINED envelope presented for admission"}
+  ],
+  "admission": {
+    "admissible_quality_states": ["CAPTURED", "DECODED", "VALIDATED"],
+    "inadmissible_quality_states": ["QUARANTINED"],
+    "validated_preconditions": [
+      "decoder_version is non-empty",
+      "reference_data_revision is non-empty",
+      "continuity_state is not GAP_SUSPECTED",
+      "continuity_state is not UNKNOWN"
+    ],
+    "fail_closed": true
+  },
+  "negative_cases": [
+    {"id": "NEG-ENV-001", "case": "schema_version = 2", "expected_rejection": "SCHEMA_VERSION_MISMATCH"},
+    {"id": "NEG-ENV-002", "case": "empty source_id", "expected_rejection": "EMPTY_REQUIRED_STRING"},
+    {"id": "NEG-ENV-003", "case": "unknown extra member", "expected_rejection": "UNKNOWN_OR_MISSING_MEMBER"},
+    {"id": "NEG-ENV-004", "case": "connection_epoch = 0", "expected_rejection": "INVALID_CONNECTION_EPOCH"},
+    {"id": "NEG-ENV-005", "case": "capture_sequence repeats in the same session", "expected_rejection": "NON_MONOTONIC_CAPTURE_SEQUENCE"},
+    {"id": "NEG-ENV-006", "case": "canonical_sequence decreases in the same session", "expected_rejection": "NON_MONOTONIC_CANONICAL_SEQUENCE"},
+    {"id": "NEG-ENV-007", "case": "provider_sequence = 0", "expected_rejection": "INVALID_PROVIDER_SEQUENCE"},
+    {"id": "NEG-ENV-008", "case": "provider_sequence synthesized from capture_sequence", "expected_rejection": "SYNTHESIZED_PROVIDER_SEQUENCE"},
+    {"id": "NEG-ENV-009", "case": "uppercase raw_frame_digest", "expected_rejection": "INVALID_DIGEST_FORMAT"},
+    {"id": "NEG-ENV-010", "case": "envelope_digest computed with a missing field", "expected_rejection": "ENVELOPE_DIGEST_MISMATCH"},
+    {"id": "NEG-ENV-011", "case": "quality_state = QUARANTINED offered for admission", "expected_rejection": "QUARANTINED_NOT_ADMISSIBLE"},
+    {"id": "NEG-ENV-012", "case": "VALIDATED with empty decoder_version", "expected_rejection": "VALIDATED_MISSING_REVISIONS"},
+    {"id": "NEG-ENV-013", "case": "VALIDATED with continuity_state = GAP_SUSPECTED", "expected_rejection": "VALIDATED_CONTINUITY_UNRESOLVED"},
+    {"id": "NEG-ENV-014", "case": "VALIDATED with continuity_state = UNKNOWN", "expected_rejection": "VALIDATED_CONTINUITY_UNRESOLVED"},
+    {"id": "NEG-ENV-015", "case": "receive_monotonic_ns = 0", "expected_rejection": "INVALID_RECEIVE_TIME"}
+  ],
+  "source_verification": {
+    "purpose": "Machine-readable scan instruction for scripts/check_contracts.py; independent implementations must be present at the exact heads recorded in CURRENT-STATE.json.",
+    "head_authority": "source_heads_at_record_time in CURRENT-STATE.json",
+    "repositories": ["fieldbook", "nirnay"],
+    "schema_version_constant_pattern": "SOURCE[_-]?EVENT[_-]?ENVELOPE[_-]?(V1[_-]?)?SCHEMA[_-]?VERSION",
+    "schema_version_constant_value": 1,
+    "field_name_tokens_are": "the name of every entry in fields, in ordinal order",
+    "fail_closed_on": ["head mismatch", "dirty checkout", "missing constant", "missing field token", "constant value other than 1"]
+  }
+}

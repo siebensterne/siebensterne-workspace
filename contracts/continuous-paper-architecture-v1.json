@@ -1,0 +1,108 @@
+{
+  "name": "continuous-paper-architecture-v1",
+  "schema_version": 1,
+  "title": "Continuous paper architecture v1",
+  "purpose": "Ordered specification of the continuous capture-to-paper lifecycle and its fail-closed conditions. This document is a specification only, not an implemented service, not a broker or live-trading path, and not a production-readiness claim.",
+  "status": "SPECIFIED_ONLY",
+  "specification_only": {
+    "is_implemented_service": false,
+    "is_live_execution_path": false,
+    "is_production_readiness_claim": false,
+    "statement": "SPECIFICATION_ONLY_NOT_AN_IMPLEMENTED_SERVICE. No stage in this document is executed, registered or qualified by publishing this specification.",
+    "freeze_binding": {
+      "live_execution": "DISABLED",
+      "market_data": "BLOCKED",
+      "dataset_acceptance": "BLOCKED",
+      "rights": "21 UNKNOWN",
+      "experiment_registration": "BLOCKED",
+      "provider_collection": "DISABLED",
+      "production_readiness": "BLOCKED",
+      "venue_adapters": "NONE_REGISTERED",
+      "synthetic_market_shaped_tests": "RETIRED_UNDER_D11"
+    }
+  },
+  "no_broker_writes": {
+    "enabled": false,
+    "statement": "NO_BROKER_WRITES. This architecture must never place, amend or cancel an order at a broker, venue or live adapter, and must never contact a provider, collect market data or authorize an entitlement.",
+    "forbidden_operations": [
+      "order_place",
+      "order_amend",
+      "order_cancel",
+      "broker_session_login",
+      "provider_contact",
+      "market_data_collection",
+      "entitlement_acceptance"
+    ],
+    "paper_execution_scope": "LOCAL_PAPER_SIMULATION_ONLY",
+    "fail_closed_on_attempt": true
+  },
+  "lifecycle_stages": [
+    {"ordinal": 1, "name": "capture", "input": "source session observation", "output": "raw frame and receive timestamps", "fail_closed_on": ["STALE_DATA", "NO_RIGHTS_EVIDENCE_REF"]},
+    {"ordinal": 2, "name": "validate", "input": "raw frame and envelope", "output": "validated or quarantined envelope", "fail_closed_on": ["ENVELOPE_DIGEST_MISMATCH", "QUARANTINED", "DUPLICATE_EVENT"]},
+    {"ordinal": 3, "name": "NDC publication", "input": "validated envelope", "output": "versioned NDC release", "fail_closed_on": ["STALE_OWNERSHIP", "MISSING_RELEASE_DIGEST"]},
+    {"ordinal": 4, "name": "admission/replay", "input": "NDC release", "output": "admitted replay stream", "fail_closed_on": ["RIGHTS_NOT_APPROVED", "DATASET_NOT_ACCEPTED", "DUPLICATE_EVENT", "CORRECTION_OR_BUST"]},
+    {"ordinal": 5, "name": "strategy", "input": "admitted replay stream", "output": "intents", "fail_closed_on": ["STALE_DATA", "NO_LINEAGE"]},
+    {"ordinal": 6, "name": "risk", "input": "intents and current limits", "output": "approved or rejected intents", "fail_closed_on": ["RISK_LIMIT_CHANGE", "STALE_OWNERSHIP", "NO_AUTHORITY"]},
+    {"ordinal": 7, "name": "OMS", "input": "approved intents", "output": "paper orders and lifecycle events", "fail_closed_on": ["CANCEL_FILL_RACE", "PARTIAL_FILL", "DUPLICATE_EVENT"]},
+    {"ordinal": 8, "name": "paper execution", "input": "paper orders", "output": "paper fills", "fail_closed_on": ["NO_BROKER_WRITES_VIOLATION", "STALE_DATA", "PARTIAL_FILL"]},
+    {"ordinal": 9, "name": "fees/accounting", "input": "paper fills and fee schedule", "output": "accounting entries", "fail_closed_on": ["UNKNOWN_ACCOUNTING_BASIS", "CORRECTION_OR_BUST"]},
+    {"ordinal": 10, "name": "reconciliation", "input": "accounting entries and exchange view", "output": "reconciliation result", "fail_closed_on": ["UNKNOWN_RECONCILIATION", "CORRECTION_OR_BUST", "DUPLICATE_EVENT"]},
+    {"ordinal": 11, "name": "checkpoint/recovery", "input": "durable transition state", "output": "restart boundary", "fail_closed_on": ["RESTART_AT_EVERY_DURABLE_TRANSITION", "STALE_OWNERSHIP", "UNKNOWN_RECONCILIATION"]}
+  ],
+  "lifecycle_order_contract": {
+    "exact_order": [
+      "capture",
+      "validate",
+      "NDC publication",
+      "admission/replay",
+      "strategy",
+      "risk",
+      "OMS",
+      "paper execution",
+      "fees/accounting",
+      "reconciliation",
+      "checkpoint/recovery"
+    ],
+    "no_stage_skipping": true,
+    "no_stage_reordering": true,
+    "every_transition_is_durable": true
+  },
+  "fail_closed_conditions": [
+    {"id": "FC-001", "name": "stale data", "trigger": "input is older than the declared freshness boundary or its lineage is missing", "action": "REJECT_AND_HOLD"},
+    {"id": "FC-002", "name": "stale ownership", "trigger": "writer epoch, fencing token or ownership evidence is absent or superseded", "action": "REJECT_AND_HOLD"},
+    {"id": "FC-003", "name": "unknown reconciliation", "trigger": "reconciliation outcome is unknown, partial or unresolved", "action": "REJECT_AND_HOLD"},
+    {"id": "FC-004", "name": "risk limit change", "trigger": "limits changed after intent approval or their digest is unavailable", "action": "REJECT_AND_HOLD"},
+    {"id": "FC-005", "name": "duplicate events", "trigger": "identity or sequence already applied at the same durable transition", "action": "REJECT_AND_HOLD"},
+    {"id": "FC-006", "name": "partial fills", "trigger": "a fill is incomplete or cannot be bound to one order lifecycle", "action": "REJECT_AND_HOLD"},
+    {"id": "FC-007", "name": "cancel/fill races", "trigger": "cancel and fill order cannot be totally ordered by durable sequence", "action": "REJECT_AND_HOLD"},
+    {"id": "FC-008", "name": "corrections/busts", "trigger": "a correction or bust is not fully applied and reconciled before the next transition", "action": "REJECT_AND_HOLD"},
+    {"id": "FC-009", "name": "restart at every durable transition", "trigger": "any durable transition lacks a restart boundary and recovery checkpoint", "action": "REJECT_AND_HOLD"}
+  ],
+  "restart_policy": {
+    "restart_at_every_durable_transition": true,
+    "checkpoint_before_advance": true,
+    "unknown_state_after_restart": "FAIL_CLOSED",
+    "no_partial_transition_replay": true
+  },
+  "guarantees": {
+    "no_broker_writes": true,
+    "no_provider_contact": true,
+    "no_collection": true,
+    "no_market_shaped_replay_claim": true,
+    "no_alpha_claim": true,
+    "no_live_execution": true,
+    "specification_only": true
+  },
+  "negative_cases": [
+    {"id": "NEG-ARCH-001", "case": "advance with stale data", "expected_rejection": "FC-001"},
+    {"id": "NEG-ARCH-002", "case": "write with stale ownership or fencing", "expected_rejection": "FC-002"},
+    {"id": "NEG-ARCH-003", "case": "advance while reconciliation is unknown", "expected_rejection": "FC-003"},
+    {"id": "NEG-ARCH-004", "case": "risk limits change after approval", "expected_rejection": "FC-004"},
+    {"id": "NEG-ARCH-005", "case": "replay a duplicate event at a transition", "expected_rejection": "FC-005"},
+    {"id": "NEG-ARCH-006", "case": "accept a partial fill", "expected_rejection": "FC-006"},
+    {"id": "NEG-ARCH-007", "case": "unresolved cancel/fill race", "expected_rejection": "FC-007"},
+    {"id": "NEG-ARCH-008", "case": "correction or bust not reconciled", "expected_rejection": "FC-008"},
+    {"id": "NEG-ARCH-009", "case": "durable transition without restart boundary", "expected_rejection": "FC-009"},
+    {"id": "NEG-ARCH-010", "case": "attempt a broker order write", "expected_rejection": "NO_BROKER_WRITES"}
+  ]
+}
