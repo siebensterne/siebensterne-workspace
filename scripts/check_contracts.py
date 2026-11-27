@@ -262,27 +262,40 @@ def verify_contracts(results: list[dict], root: Path) -> None:
     if err is not None or not isinstance(state, dict):
         return
     assert isinstance(state, dict)
-    contracts = state.get("contracts")
-    ok = isinstance(contracts, dict) and contracts.get("schema_version") == 1
-    check(results, ok, "state/contracts_section", "schema_version=1" if ok else "missing or wrong version")
+    check(
+        results,
+        "contracts" not in state,
+        "state/contracts_absent",
+        "contracts references live in contracts/contract-index.json",
+    )
+    index, index_err = load_json(root / "contracts" / "contract-index.json")
+    check(results, index_err is None and isinstance(index, dict), "index/parse", index_err or "parsed")
+    if index_err is not None or not isinstance(index, dict):
+        return
+    assert isinstance(index, dict)
+    ok = index.get("schema_version") == 1
+    check(results, ok, "index/schema_version", f"schema_version={index.get('schema_version')!r}")
     if not ok:
         return
-    assert isinstance(contracts, dict)
-    specs = contracts.get("specs")
+    specs = index.get("specs")
     if not isinstance(specs, dict):
-        check(results, False, "state/contracts_specs", "missing specs object")
+        check(results, False, "index/specs", "missing specs object")
         return
     for name in SPEC_NAMES:
         entry = specs.get(name)
-        entry_ok = isinstance(entry, dict) and entry.get("path") == f"contracts/{name}.json"
-        check(results, entry_ok, f"state/contracts/{name}/path", f"path={(entry or {}).get('path')!r}")
+        entry_ok = (
+            isinstance(entry, dict)
+            and entry.get("path") == f"contracts/{name}.json"
+            and entry.get("schema_version") == 1
+        )
+        check(results, entry_ok, f"index/{name}/path_and_version", f"path={(entry or {}).get('path')!r}")
         if not entry_ok:
             continue
         assert isinstance(entry, dict)
         check(
             results,
             entry.get("status") == SPEC_STATUS[name],
-            f"state/contracts/{name}/status",
+            f"index/{name}/status",
             f"status={entry.get('status')!r}",
         )
         spec_path = root / entry["path"]
@@ -294,7 +307,7 @@ def verify_contracts(results: list[dict], root: Path) -> None:
         check(
             results,
             digest_ok,
-            f"state/contracts/{name}/sha256",
+            f"index/{name}/sha256",
             f"recorded={str(entry.get('sha256'))[:12]} actual={sha256_file(spec_path)[:12] if spec_path.is_file() else 'missing'}",
         )
 
@@ -510,11 +523,34 @@ def self_test() -> dict:
     with tempfile.TemporaryDirectory(prefix="check-contracts-selftest-") as tmp:
         root = Path(tmp)
         (root / "contracts").mkdir()
+        state_path = root / "CURRENT-STATE.json"
+        index_path = root / "contracts" / "contract-index.json"
         specs = fixture_specs()
         for name, spec in specs.items():
             (root / "contracts" / f"{name}.json").write_text(
                 json.dumps(spec, sort_keys=True, separators=(",", ":")), encoding="utf-8"
             )
+
+        def fresh_index() -> dict:
+            return {
+                "schema_version": 1,
+                "specs": {
+                    name: {
+                        "path": f"contracts/{name}.json",
+                        "schema_version": 1,
+                        "sha256": sha256_file(root / "contracts" / f"{name}.json"),
+                        "status": SPEC_STATUS[name],
+                    }
+                    for name in SPEC_NAMES
+                },
+            }
+
+        def write_state(state: dict) -> None:
+            state_path.write_text(json.dumps(state, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+
+        def write_index(index: dict) -> None:
+            index_path.write_text(json.dumps(index, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+
         heads = {repo: write_fixture_repo(root / repo) for repo in ("fieldbook", "nirnay")}
         freeze = dict(EXPECTED_FREEZE)
         freeze["m4"] = {"EXP-M4-0001": {"synthetic_holdout": EXPECTED_HOLDOUT_DISPOSITION}}
@@ -523,35 +559,25 @@ def self_test() -> dict:
             "freeze": freeze,
             "capabilities": {"operational_qualification": "BLOCKED"},
             "release_gates": {"overall": {"status": "BLOCKED"}},
-            "contracts": {
-                "schema_version": 1,
-                "specs": {
-                    name: {
-                        "path": f"contracts/{name}.json",
-                        "sha256": sha256_file(root / "contracts" / f"{name}.json"),
-                        "status": SPEC_STATUS[name],
-                    }
-                    for name in SPEC_NAMES
-                },
-            },
         }
-        state_path = root / "CURRENT-STATE.json"
-        state_path.write_text(json.dumps(base_state, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+        write_state(base_state)
+        write_index(fresh_index())
         cases.append({"id": "SELF-001", "expect": "PASS", "result": verify(root)})
 
-        broken = json.loads(json.dumps(base_state))
-        broken["contracts"]["specs"]["research-governance-v1"]["sha256"] = "0" * 64
-        state_path.write_text(json.dumps(broken, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+        broken_index = fresh_index()
+        broken_index["specs"]["research-governance-v1"]["sha256"] = "0" * 64
+        write_index(broken_index)
         cases.append({"id": "SELF-002", "expect": "FAIL:DIGEST", "result": verify(root)})
+        write_index(fresh_index())
 
         broken = json.loads(json.dumps(base_state))
         broken["freeze"]["dataset_acceptance"] = "ACCEPTED"
-        state_path.write_text(json.dumps(broken, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+        write_state(broken)
         cases.append({"id": "SELF-003", "expect": "FAIL:FREEZE", "result": verify(root)})
 
         broken = json.loads(json.dumps(base_state))
         broken["source_heads_at_record_time"]["nirnay"] = "0" * 40
-        state_path.write_text(json.dumps(broken, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+        write_state(broken)
         cases.append({"id": "SELF-004", "expect": "FAIL:HEAD", "result": verify(root)})
 
         broken_spec = json.loads(json.dumps(specs["source-event-envelope-v1"]))
@@ -559,21 +585,18 @@ def self_test() -> dict:
         (root / "contracts" / "source-event-envelope-v1.json").write_text(
             json.dumps(broken_spec, sort_keys=True, separators=(",", ":")), encoding="utf-8"
         )
-        broken = json.loads(json.dumps(base_state))
-        broken["contracts"]["specs"]["source-event-envelope-v1"]["sha256"] = sha256_file(
-            root / "contracts" / "source-event-envelope-v1.json"
-        )
-        state_path.write_text(json.dumps(broken, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+        write_index(fresh_index())
         cases.append({"id": "SELF-005", "expect": "FAIL:SPEC", "result": verify(root)})
 
         (root / "contracts" / "source-event-envelope-v1.json").write_text(
             json.dumps(specs["source-event-envelope-v1"], sort_keys=True, separators=(",", ":")), encoding="utf-8"
         )
-        state_path.write_text(json.dumps(base_state, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+        write_state(base_state)
+        write_index(fresh_index())
         missing_head = write_fixture_repo(root / "nirnay", with_tokens=False)
         broken = json.loads(json.dumps(base_state))
         broken["source_heads_at_record_time"]["nirnay"] = missing_head
-        state_path.write_text(json.dumps(broken, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+        write_state(broken)
         cases.append({"id": "SELF-006", "expect": "FAIL:TOKENS", "result": verify(root)})
 
     def classify(case: dict) -> bool:

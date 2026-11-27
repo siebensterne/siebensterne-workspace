@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "specs": {
+    "source-event-envelope-v1": {
+      "path": "contracts/source-event-envelope-v1.json",
+      "schema_version": 1,
+      "sha256": "a31c81d262006b6afe38f2fc1f1a4c809084b2a2425498f712adbe1ff20fc3a2",
+      "status": "SPECIFIED_AND_IMPLEMENTED_INDEPENDENTLY"
+    },
+    "research-governance-v1": {
+      "path": "contracts/research-governance-v1.json",
+      "schema_version": 1,
+      "sha256": "9e41afab8fd04a4ba8c8304c14641c6676ebd60bd08a842e4e783a88ba6ada18",
+      "status": "SPECIFIED_ONLY"
+    },
+    "continuous-paper-architecture-v1": {
+      "path": "contracts/continuous-paper-architecture-v1.json",
+      "schema_version": 1,
+      "sha256": "7ba2f06e17dfe2e42dbe4e06e1143dcc054b5a258dd72621077cbcb68a43631d",
+      "status": "SPECIFIED_ONLY"
+    }
+  }
+}
