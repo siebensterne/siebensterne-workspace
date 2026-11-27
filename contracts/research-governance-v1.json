@@ -1,0 +1,123 @@
+{
+  "name": "research-governance-v1",
+  "schema_version": 1,
+  "title": "Research governance v1",
+  "purpose": "Machine-readable research governance rules under the standing freeze. These rules bind any future experiment, holdout, dataset use and decision record; they do not authorize research, collection or trading.",
+  "status": "SPECIFIED_ONLY",
+  "freeze_binding": {
+    "experiment_registration": "BLOCKED",
+    "m4_holdout": "NOT_DEFINED",
+    "dataset_acceptance": "BLOCKED",
+    "rights": "21 UNKNOWN",
+    "market_data": "BLOCKED",
+    "incremental_data_budget_inr": 0,
+    "live_execution": "DISABLED",
+    "synthetic_market_shaped_tests": "RETIRED_UNDER_D11",
+    "production_readiness": "BLOCKED"
+  },
+  "rules": [
+    {
+      "id": "RG-001",
+      "priority": 1,
+      "subject": "EXP-M4-0001",
+      "predicate": "is_consumed_once_post_selection",
+      "required_value": "CONSUMED_ONCE_POST_SELECTION_DO_NOT_REUSE",
+      "statement": "EXP-M4-0001 is a historical synthetic experiment whose holdout was consumed once after selection; it must not be relabelled UNTOUCHED, reused, extended or re-split for any new decision.",
+      "enforcement": "FAIL_CLOSED"
+    },
+    {
+      "id": "RG-002",
+      "priority": 2,
+      "subject": "experiment_registration",
+      "predicate": "blocked_while_freeze_holds",
+      "required_value": "BLOCKED",
+      "statement": "No new experiment registration, variant, rerun or holdout selection is permitted while the freeze holds; registration requires a separate versioned owner decision that explicitly lifts this rule.",
+      "enforcement": "FAIL_CLOSED"
+    },
+    {
+      "id": "RG-003",
+      "priority": 3,
+      "subject": "future_research_holdout",
+      "predicate": "fresh_holdout_required",
+      "required_value": "FRESH_HOLDOUT_REQUIRED_BEFORE_ANY_FUTURE_RESEARCH",
+      "statement": "Any future research must define and record a fresh, previously unused holdout before selection; no prior synthetic holdout may serve as that holdout.",
+      "enforcement": "FAIL_CLOSED"
+    },
+    {
+      "id": "RG-004",
+      "priority": 4,
+      "subject": "dataset",
+      "predicate": "rights_approved_dataset_required",
+      "required_value": "RIGHTS_APPROVED_DATASET_REQUIRED",
+      "statement": "A rights-approved, accepted dataset with written owner authorization is required before any research result may be treated as admitted evidence; UNKNOWN rights and BLOCKED acceptance remain blocking.",
+      "enforcement": "FAIL_CLOSED"
+    },
+    {
+      "id": "RG-005",
+      "priority": 5,
+      "subject": "alpha_claims",
+      "predicate": "no_alpha_claim_from_synthetic_evidence",
+      "required_value": "NO_ALPHA_CLAIM_FROM_SYNTHETIC_EVIDENCE",
+      "statement": "A positive synthetic screen, including EXP-M4-0001, is not alpha certification, not a production-readiness claim and not permission to trade or to contact a provider.",
+      "enforcement": "FAIL_CLOSED"
+    },
+    {
+      "id": "RG-006",
+      "priority": 6,
+      "subject": "future_decision_record",
+      "predicate": "lineage_fields_required",
+      "required_value": "LINEAGE_REQUIRED",
+      "statement": "Any future decision record must carry the lineage fields listed in decision_record_required_lineage; a record without them is rejected, not treated as partial evidence.",
+      "enforcement": "FAIL_CLOSED"
+    }
+  ],
+  "experiment_register": {
+    "EXP-M4-0001": {
+      "kind": "HISTORICAL_SYNTHETIC_EXPERIMENT",
+      "status": "COMPLETED_POSITIVE_SCREEN_NOT_ALPHA_CERTIFIED",
+      "holdout_disposition": "CONSUMED_ONCE_POST_SELECTION_DO_NOT_REUSE",
+      "holdout_may_be_reused": false,
+      "holdout_may_be_relabelled_untouched": false,
+      "counts_as_fresh_holdout": false,
+      "supports_alpha_claim": false
+    },
+    "new_registration_while_frozen": "BLOCKED"
+  },
+  "decision_record_required_lineage": [
+    "decision_id",
+    "schema_version",
+    "owner_decision_ref",
+    "rights_evidence_ref",
+    "dataset_digest",
+    "source_heads",
+    "code_digest",
+    "experiment_id",
+    "holdout_disposition",
+    "selection_rule_digest",
+    "result_digest",
+    "recorded_utc_date"
+  ],
+  "lineage_policy": {
+    "missing_field_action": "REJECT_DECISION_RECORD",
+    "unknown_or_unset_values": "NOT_EVIDENCE",
+    "code_digest_is_not_a_rights_grant": true,
+    "no_provider_contact": true,
+    "no_collection": true,
+    "no_live_execution": true
+  },
+  "claims_prohibited": [
+    "alpha certification from synthetic evidence",
+    "fresh or untouched holdout based on EXP-M4-0001",
+    "admitted dataset without rights approval and acceptance",
+    "research registration while the freeze holds",
+    "production readiness or live trading permission from any research result"
+  ],
+  "negative_cases": [
+    {"id": "NEG-RG-001", "case": "reuse EXP-M4-0001 holdout for a new decision", "expected_rejection": "RG-001"},
+    {"id": "NEG-RG-002", "case": "register a new experiment while freeze holds", "expected_rejection": "RG-002"},
+    {"id": "NEG-RG-003", "case": "select on the historical synthetic holdout and call it fresh", "expected_rejection": "RG-003"},
+    {"id": "NEG-RG-004", "case": "treat UNKNOWN-rights data as admitted evidence", "expected_rejection": "RG-004"},
+    {"id": "NEG-RG-005", "case": "claim alpha from the EXP-M4-0001 positive screen", "expected_rejection": "RG-005"},
+    {"id": "NEG-RG-006", "case": "decision record missing code_digest or holdout_disposition", "expected_rejection": "RG-006"}
+  ]
+}
