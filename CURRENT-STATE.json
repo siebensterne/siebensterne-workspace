@@ -4,7 +4,7 @@
   "purpose": "Single machine-readable authority for current cross-repository state. It records only current heads with their tested CI runs, capability states, freezes, open decisions and residual items. Historical values remain in Git history and in the owning repositories executable tests.",
   "source_heads_at_record_time": {
     "fieldbook": "093c0ad14057187b7a67afc436cd2226bdb438a4",
-    "nirnay": "2ab7d706b10cf55025b3580da298cec801d4ae29",
+    "nirnay": "9ae4e2604ea21586b28da2d5c402702508febe89",
     "workspace": "omitted by design; the record cannot contain its own commit"
   },
   "ci": {
@@ -14,8 +14,8 @@
       "conclusion": "success"
     },
     "nirnay": {
-      "run_id": "45899319225",
-      "head_sha": "2ab7d706b10cf55025b3580da298cec801d4ae29",
+      "run_id": "45950662737",
+      "head_sha": "9ae4e2604ea21586b28da2d5c402702508febe89",
       "conclusion": "success"
     },
     "workspace": {
