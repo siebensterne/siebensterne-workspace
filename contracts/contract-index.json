@@ -8,8 +8,8 @@
       "status": "SPECIFIED_AND_IMPLEMENTED_INDEPENDENTLY",
       "verification": {
         "status": "VERIFIED_AT_EXACT_HEADS",
-        "fieldbook": "10a9b4a2e64cc9196b4677806efb0ab4d3bce9c6",
-        "nirnay": "fc2da03b1e3f1a3f99afd01864d2e7581dba55c0",
+        "fieldbook": "2ef503ff397186abfcd7fc619f0d1703d73aa9d1",
+        "nirnay": "360c80711f6a10174f60787f6f08c89df51aca85",
         "checker": "scripts/check_contracts.py --root .",
         "schema_version_constants": {
           "fieldbook": "SOURCE_EVENT_SCHEMA_VERSION = 1",
@@ -30,6 +30,21 @@
       "sha256": "7ba2f06e17dfe2e42dbe4e06e1143dcc054b5a258dd72621077cbcb68a43631d",
       "status": "SPECIFIED_ONLY"
     }
+  },
+  "fixtures": {
+    "path": "contracts/fixtures/manifest.json",
+    "schema_version": 1,
+    "sha256": "3edcfde5fdd7fb0ecadda4cc447cf2a52ea29f6d5df723a3185a08150c057654",
+    "conformance_status": "BEHAVIOUR_VERIFIED",
+    "observed_heads": {
+      "fieldbook": "2ef503ff397186abfcd7fc619f0d1703d73aa9d1",
+      "nirnay": "360c80711f6a10174f60787f6f08c89df51aca85"
+    },
+    "test_counts": {
+      "fieldbook": 1,
+      "nirnay": 10
+    },
+    "note": "Conformance evidence only; not data admission, dataset acceptance, rights authorization, provider collection, market-data permission or live execution."
   },
   "blocked_research": {
     "status": "BLOCKED",

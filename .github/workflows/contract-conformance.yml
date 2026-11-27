@@ -1,0 +1,122 @@
+name: Contract v1 conformance fixtures
+
+# REQUIRED conformance evidence gate. Runs the canonical golden fixtures as
+# `cargo test --test contract_conformance` in both independent source
+# checkouts at the exact commits recorded in CURRENT-STATE.json. Both runs must
+# exit 0; a missing test target, a wrong head or a non-zero exit fails closed.
+# CARGO_TARGET_DIR is kept outside both repositories. Byte-identical fixture
+# copies under tests/contract_fixtures/ in each checkout are digest-verified
+# before any test claim is made. This is conformance evidence only: no data
+# admission, rights grant, collection, market data, experiment or live
+# execution is performed or implied. No secret is used.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  contract-conformance:
+    name: Golden v1 fixture conformance in both repositories
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out workspace authority and checker
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Resolve exact source commits and fixture manifest digest
+        id: pins
+        run: |
+          set -euo pipefail
+          fieldbook_sha="$(jq -er '.source_heads_at_record_time.fieldbook' CURRENT-STATE.json)"
+          nirnay_sha="$(jq -er '.source_heads_at_record_time.nirnay' CURRENT-STATE.json)"
+          fixture_sha="$(jq -er '.fixtures.sha256' contracts/contract-index.json)"
+          fixture_path="$(jq -er '.fixtures.path' contracts/contract-index.json)"
+          [[ "$fieldbook_sha" =~ ^[0-9a-f]{40}$ ]] || { echo 'invalid Fieldbook SHA' >&2; exit 1; }
+          [[ "$nirnay_sha" =~ ^[0-9a-f]{40}$ ]] || { echo 'invalid Nirnay SHA' >&2; exit 1; }
+          [[ "$fixture_sha" =~ ^[0-9a-f]{64}$ ]] || { echo 'invalid fixture manifest SHA' >&2; exit 1; }
+          echo "fieldbook=$fieldbook_sha" >> "$GITHUB_OUTPUT"
+          echo "nirnay=$nirnay_sha" >> "$GITHUB_OUTPUT"
+          echo "fixture=$fixture_sha" >> "$GITHUB_OUTPUT"
+          echo "Fieldbook $fieldbook_sha / Nirnay $nirnay_sha / fixtures $fixture_path $fixture_sha"
+
+      - name: Check out Fieldbook at the recorded commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: siebensterne/fieldbook
+          ref: ${{ steps.pins.outputs.fieldbook }}
+          path: fieldbook
+          persist-credentials: false
+
+      - name: Check out Nirnay at the recorded commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: siebensterne/nirnay
+          ref: ${{ steps.pins.outputs.nirnay }}
+          path: nirnay
+          persist-credentials: false
+
+      - name: Install pinned Rust toolchain
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: 1.99.1
+
+      - name: Run golden fixture conformance in both repositories
+        id: conformance
+        env:
+          CONFORMANCE_WORK_DIR: ${{ runner.temp }}/contract-conformance
+          CONTRACT_CONFORMANCE_TARGET_DIR: ${{ runner.temp }}/contract-conformance-target
+        run: |
+          set -euo pipefail
+          mkdir -p "$CONFORMANCE_WORK_DIR" "$CONTRACT_CONFORMANCE_TARGET_DIR"
+          python3 scripts/check_contracts.py --root . --behaviour \
+            --out "$CONFORMANCE_WORK_DIR/contract-conformance.json"
+
+      - name: Verify conformance evidence describes this run
+        if: always()
+        env:
+          CONFORMANCE_WORK_DIR: ${{ runner.temp }}/contract-conformance
+          FIELDBOOK_SHA: ${{ steps.pins.outputs.fieldbook }}
+          NIRNAY_SHA: ${{ steps.pins.outputs.nirnay }}
+          FIXTURE_SHA: ${{ steps.pins.outputs.fixture }}
+        run: |
+          set -euo pipefail
+          result="$CONFORMANCE_WORK_DIR/contract-conformance.json"
+          [[ -s "$result" ]] || { echo 'conformance evidence is missing' >&2; exit 1; }
+          jq -e '
+            .tool == "check_contracts" and
+            .mode == "behaviour" and
+            .ok == true and
+            .structural.total == 65 and
+            .structural.failed == 0 and
+            .fixture_manifest_digest == env.FIXTURE_SHA and
+            .behaviour.status == "PASS" and
+            .behaviour.required_exit_code == 0 and
+            .behaviour.cargo_target_dir_outside_repos == true and
+            .behaviour.fixture_manifest_digest == env.FIXTURE_SHA and
+            .behaviour.repos.fieldbook.head == env.FIELDBOOK_SHA and
+            .behaviour.repos.nirnay.head == env.NIRNAY_SHA and
+            .behaviour.repos.fieldbook.exit_code == 0 and
+            .behaviour.repos.nirnay.exit_code == 0 and
+            .behaviour.repos.fieldbook.status == "PASS" and
+            .behaviour.repos.nirnay.status == "PASS"
+          ' "$result" >/dev/null
+
+      - name: Upload conformance evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: contract-conformance-evidence
+          path: ${{ runner.temp }}/contract-conformance/contract-conformance.json
+          if-no-files-found: error
