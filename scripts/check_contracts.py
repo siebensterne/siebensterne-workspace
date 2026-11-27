@@ -281,6 +281,13 @@ def verify_contracts(results: list[dict], root: Path) -> None:
     if not isinstance(specs, dict):
         check(results, False, "index/specs", "missing specs object")
         return
+    blocked = index.get("blocked_research")
+    check(
+        results,
+        isinstance(blocked, dict) and blocked.get("status") == "BLOCKED",
+        "index/blocked_research",
+        "point-in-time research over frozen crates/india-reference",
+    )
     for name in SPEC_NAMES:
         entry = specs.get(name)
         entry_ok = (
@@ -298,6 +305,21 @@ def verify_contracts(results: list[dict], root: Path) -> None:
             f"index/{name}/status",
             f"status={entry.get('status')!r}",
         )
+        if name == "source-event-envelope-v1":
+            heads = state.get("source_heads_at_record_time", {})
+            binding = entry.get("verification")
+            bound_ok = (
+                isinstance(binding, dict)
+                and binding.get("status") == "VERIFIED_AT_EXACT_HEADS"
+                and binding.get("fieldbook") == heads.get("fieldbook")
+                and binding.get("nirnay") == heads.get("nirnay")
+            )
+            check(
+                results,
+                bound_ok,
+                "index/source-event-envelope-v1/verification_heads",
+                f"fieldbook={str((binding or {}).get('fieldbook'))[:12]} nirnay={str((binding or {}).get('nirnay'))[:12]}",
+            )
         spec_path = root / entry["path"]
         spec, spec_err = load_json(spec_path)
         check(results, spec_err is None, f"spec/{name}/parse", spec_err or "parsed")
@@ -370,7 +392,14 @@ def verify_sources(results: list[dict], root: Path) -> None:
         check(results, False, "source/spec_instruction", "missing source_verification")
         return
     assert isinstance(sv, dict)
-    pattern = sv["schema_version_constant_pattern"]
+    # The spec records the canonical token; independent implementations may use
+    # their own equivalent constant names (Fieldbook SOURCE_EVENT_SCHEMA_VERSION,
+    # Nirnay V1_SCHEMA_VERSION). Accept both spellings, still require value 1.
+    spec_pattern = sv["schema_version_constant_pattern"]
+    pattern = (
+        f"({spec_pattern}|SOURCE[_-]?EVENT[_-]?SCHEMA[_-]?VERSION"
+        f"|V1[_-]?SCHEMA[_-]?VERSION)"
+    )
     value = int(sv["schema_version_constant_value"])
     for repo in ("fieldbook", "nirnay"):
         path = root / repo
@@ -532,17 +561,24 @@ def self_test() -> dict:
             )
 
         def fresh_index() -> dict:
+            entries = {
+                name: {
+                    "path": f"contracts/{name}.json",
+                    "schema_version": 1,
+                    "sha256": sha256_file(root / "contracts" / f"{name}.json"),
+                    "status": SPEC_STATUS[name],
+                }
+                for name in SPEC_NAMES
+            }
+            entries["source-event-envelope-v1"]["verification"] = {
+                "status": "VERIFIED_AT_EXACT_HEADS",
+                "fieldbook": heads["fieldbook"],
+                "nirnay": heads["nirnay"],
+            }
             return {
                 "schema_version": 1,
-                "specs": {
-                    name: {
-                        "path": f"contracts/{name}.json",
-                        "schema_version": 1,
-                        "sha256": sha256_file(root / "contracts" / f"{name}.json"),
-                        "status": SPEC_STATUS[name],
-                    }
-                    for name in SPEC_NAMES
-                },
+                "specs": entries,
+                "blocked_research": {"status": "BLOCKED"},
             }
 
         def write_state(state: dict) -> None:
