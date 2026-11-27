@@ -1,16 +1,17 @@
 name: M8 e2e paper path
 
 # REQUIRED, fail-closed gate. Builds the Fieldbook producer and the Nirnay
-# verifier and paper engine from the exact commits recorded in
-# CURRENT-STATE.json, runs an abstract non-market fixture through producer ->
-# verifier (typed REJECT_RIGHTS_EVIDENCE refusal, no receipt), and records a
-# deterministic neutral paper replay with typed risk and OMS/account evidence.
-# A verified Fieldbook -> Nirnay neutral adapter closes G6 only for the
-# rights-refused, opaque sequence-only fixture. G9 stays BLOCKED because Q5
-# operator authorization cannot be automated, so the documented exit is 3 and
-# the job stays green while preserving failure_reason. Unexpected exits fail.
-# The evidence JSON is always uploaded. No secret, provider contact, collection,
-# experiment, holdout, market data or live execution is used.
+# verifier from the exact commits recorded in CURRENT-STATE.json, runs abstract
+# non-market NDC bytes through producer -> verifier (typed REJECT_RIGHTS_EVIDENCE
+# refusal, no receipt), and verifies a Fieldbook -> Nirnay neutral adapter that
+# emits deterministic opaque sequence-only events. G6 closes only for that
+# rights-refused neutral fixture. D11 retires synthetic market-shaped fixtures
+# and no approved fixture amendment or admitted dataset exists, so no paper
+# replay runs here and G4/G5 stay BLOCKED. G9 stays BLOCKED because Q5 operator
+# authorization cannot be automated. The documented exit is 3 and the job stays
+# green while accepting only that exit and preserving failure_reason. Unexpected
+# exits fail. The evidence JSON is always uploaded. No secret, provider contact,
+# collection, holdout, admitted dataset, market data or live execution is used.
 
 on:
   push:
@@ -28,7 +29,7 @@ permissions:
 
 jobs:
   e2e-paper-path:
-    name: Deterministic producer/verifier and paper replay
+    name: Deterministic producer/verifier, rights refusal and neutral adapter
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
@@ -100,8 +101,8 @@ jobs:
           set -euo pipefail
           result="$E2E_WORK_DIR/e2e-paper-path.json"
           [[ -s "$result" ]] || { printf 'required evidence is missing: %s\n' "$result" >&2; exit 1; }
-          # Exit 3 is the only expected documented outcome while G9 is BLOCKED.
-          # Any other successful-looking result is rejected here.
+          # Exit 3 is the only expected documented outcome while G4/G5/G9 are
+          # BLOCKED. Any other successful-looking result is rejected here.
           [[ "$GATE_EXIT" == "3" ]] || {
             printf 'unexpected gate exit in evidence verification: %s\n' "$GATE_EXIT" >&2
             exit 1
@@ -111,23 +112,41 @@ jobs:
             .gate == "m8-e2e-paper-path" and
             .result == "BLOCKED" and
             (.failure_reason | type == "string" and length > 0) and
-            (.failure_reason | contains("G9") and contains("Q5")) and
+            (.failure_reason | contains("D11") and contains("G4") and contains("G5")
+             and contains("G9") and contains("Q5")) and
             (.run_id | type == "string" and length > 0) and
             .source_heads.fieldbook == env.FIELDBOOK_SHA and
             .source_heads.nirnay == env.NIRNAY_SHA and
             (.binaries.producer.sha256 | type == "string" and length == 64) and
             (.binaries.verifier.sha256 | type == "string" and length == 64) and
-            (.binaries.paper_engine.sha256 | type == "string" and length == 64) and
+            .binaries.paper_engine.sha256 == null and
+            .binaries.paper_engine.source == "NOT_BUILT_D11_RETIRED_MARKET_SHAPED_REPLAY" and
             .rights.state == "UNKNOWN" and
             .rights.case.status == "PASS" and
             .rights.case.actual.code == "REJECT_RIGHTS_EVIDENCE" and
-            (.paper_path.replay_digest | type == "string" and length == 64) and
-            (.paper_path.risk_baseline.accepted == false) and
-            (.paper_path.risk_tight.accepted == false) and
+            (.paper_path.d11_scope.status == "BLOCKED") and
+            (.paper_path.d11_scope.market_shaped_replay_executed == false) and
+            (.paper_path.d11_scope.standalone_paper_engine_claim == false) and
+            (.paper_path.d11_scope.cross_repository_claim == false) and
+            (.paper_path.d11_scope.admitted_data == false) and
+            (.paper_path.d11_scope.reason | contains("D11")) and
+            (.paper_path | has("replay_digest") | not) and
+            (.paper_path | has("risk_baseline") | not) and
+            (.paper_path | has("risk_tight") | not) and
+            (.neutral_fixture.d11_market_shaped_paper_fixture == "RETIRED_NOT_GENERATED") and
+            (.qualification.d11_scope.status == "BLOCKED") and
+            (.qualification.d11_scope.market_shaped_replay_executed == false) and
+            (.gates.G4 == "BLOCKED") and
+            (.gates.G5 == "BLOCKED") and
+            (.gate_explanations.G4 | contains("D11")) and
+            (.gate_explanations.G5 | contains("D11")) and
             ([.qualification.checks[] | .id] == ["Q0","Q1","Q2","Q3","Q4","Q5"]) and
             ([.qualification.checks[0:5][] | .status] | all(. == "PASS")) and
             (.qualification.checks[5].status == "BLOCKED") and
             ([.boundaries[]] | all(. == false)) and
+            ([paths(scalars) as $p | ($p | map(tostring) | join(".") | ascii_downcase)
+              | select(test("venue|instrument|quote|bid|ask|price|trade|strategy|order"))]
+             | length == 0) and
             (.gates.G6 == (if .paper_path.adapter.status == "linked" then "PASS" else "BLOCKED" end)) and
             (.gates.G9 == "BLOCKED") and
             (if .paper_path.adapter.status == "linked" then
@@ -149,9 +168,8 @@ jobs:
           path: |
             ${{ runner.temp }}/e2e-paper-path/e2e-paper-path.json
             ${{ runner.temp }}/e2e-paper-path/diagnostics/*.json
-            ${{ runner.temp }}/e2e-paper-path/paper/baseline/*.json
-            ${{ runner.temp }}/e2e-paper-path/paper/baseline-replay/*.json
-            ${{ runner.temp }}/e2e-paper-path/paper/tight/*.json
+            ${{ runner.temp }}/e2e-paper-path/paper/dataset-adapted/events.jsonl
+            ${{ runner.temp }}/e2e-paper-path/paper/dataset-adapted-repeat/events.jsonl
             ${{ runner.temp }}/e2e-paper-path/qualification/*.json
             ${{ runner.temp }}/e2e-paper-path/logs/*.log
           if-no-files-found: error

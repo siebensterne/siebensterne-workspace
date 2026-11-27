@@ -1,30 +1,32 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: Apache-2.0
-# M8 deterministic workspace-orchestrated end-to-end paper path.
+# M8 deterministic workspace-orchestrated NDC/rights/adapter evidence gate.
 #
-# This gate composes two exact-source builds and two neutral fixtures into one
-# evidence document. It is a REQUIRED gate: there is no SKIP, no simulated
+# This gate composes exact-source producer and verifier builds with abstract
+# NDC bytes, a typed rights refusal and the rights-refused neutral adapter into
+# one evidence document. It is a REQUIRED gate: there is no SKIP, no simulated
 # producer output and no fabricated adapter result. If a check fails, the gate
 # emits a FAIL (or BLOCKED) JSON and exits non-zero.
 #
 # Invariants enforced here:
 #   * Fieldbook and Nirnay heads come from CURRENT-STATE.json only; the exact
 #     checkouts used for the builds must be at those heads and have clean trees.
-#   * The producer, verifier and paper engine are built from those commits with
-#     an isolated CARGO_TARGET_DIR; their bytes are hashed. A supplied binary is
-#     a local diagnostic override and needs a provenance sidecar.
+#   * The producer and verifier are built from those commits with an isolated
+#     CARGO_TARGET_DIR; their bytes are hashed. A supplied binary is a local
+#     diagnostic override and needs a provenance sidecar. No paper engine is
+#     built or replayed by this required gate.
 #   * The NDC fixture is abstract and non-market. The verifier must refuse it at
 #     stage 6 with typed REJECT_RIGHTS_EVIDENCE, with no admission receipt and
 #     no rights grant. A pass is interoperability plus correct refusal.
-#   * The paper replay uses a neutral abstract fixture only. It must be replay
-#     deterministic, must show the typed risk verdict and OMS/account effect in
-#     the account journal, and must never create a real order or admission.
 #   * A Fieldbook -> Nirnay neutral adapter is REQUIRED for a cross-repository
 #     claim. The committed workspace adapter converts a rights-refused NDC
 #     release into opaque, sequence-only events.jsonl bytes. A linked adapter
-#     supports ONLY a neutral, rights-refused fixture claim; the market-shaped
-#     standalone paper replay is reported separately and is never relabelled as
-#     cross-repository evidence. No adapter means a recorded blocker.
+#     supports ONLY that rights-refused neutral fixture; it is not admitted
+#     data and never becomes a paper replay or market-shaped claim.
+#   * D11 retires synthetic market-shaped test fixtures. There is no recorded
+#     exception, fixture amendment or admitted dataset here, so this gate
+#     generates no quote/price/book fixture and runs no paper replay. G4/G5 are
+#     BLOCKED with that reason and the overall result stays BLOCKED.
 #   * Deployment qualification is machine-readable. Static checks and temporary
 #     directory-only, fail-closed drills (restart/kill, fault refusals, backup
 #     restore) run here; no deployment occurs. Q5 operator readiness and G9 stay
@@ -53,8 +55,7 @@ Optional environment:
   E2E_NIRNAY_DIR        Nirnay checkout (default: <root>/nirnay)
   E2E_PRODUCER_BIN      diagnostic producer override + <path>.paper-provenance.json
   E2E_VERIFIER_BIN      diagnostic verifier override + <path>.paper-provenance.json
-  E2E_PAPER_BIN         diagnostic paper engine override + provenance sidecar
-  E2E_PAPER_ADAPTER_BIN diagnostic NDC->paper adapter override + provenance sidecar
+  E2E_PAPER_ADAPTER_BIN diagnostic NDC->neutral-events adapter override + provenance sidecar
   E2E_RUN_ID            explicit run id for the result document (diagnostic use)
   FIELDBOOK_SHA         expected head; must equal CURRENT-STATE.json
   NIRNAY_SHA            expected head; must equal CURRENT-STATE.json
@@ -63,10 +64,10 @@ A provenance sidecar is JSON with schema_version=1, source_repository,
 source_head and binary_sha256. Overrides are recorded in the result and replace
 the exact-source build only for local diagnostics; they never relax a check.
 
-Exit codes: 0 is reserved for a fully qualified PASS (not reachable while G9
-is BLOCKED), 3 BLOCKED (fail-closed evidence emitted; adapter absent or
-operator readiness unavailable), 1 FAIL (an assertion failed). All diagnostics
-go to stderr; stdout is one JSON.
+Exit codes: 0 is reserved for a fully qualified PASS (not reachable while G4,
+G5 and G9 are BLOCKED), 3 BLOCKED (fail-closed evidence emitted; D11-retired
+market replay, missing adapter or unavailable operator readiness), 1 FAIL (an
+assertion failed). All diagnostics go to stderr; stdout is one JSON.
 USAGE
 }
 
@@ -677,9 +678,6 @@ emit_json() {
   E2E_EVID_VERIFIER_SHA="${VERIFIER_SHA:-}" \
   E2E_EVID_VERIFIER_SOURCE="${VERIFIER_SOURCE:-}" \
   E2E_EVID_VERIFIER_PROV="${VERIFIER_PROVENANCE:-}" \
-  E2E_EVID_PAPER="${PAPER_BIN:-}" \
-  E2E_EVID_PAPER_SHA="${PAPER_SHA:-}" \
-  E2E_EVID_PAPER_SOURCE="${PAPER_SOURCE:-}" \
   E2E_EVID_SPEC_SHA="${SPEC_SHA:-}" \
   E2E_EVID_BASE_SPEC_SHA="${BASE_SPEC_SHA:-}" \
   E2E_EVID_RELEASE="${RELEASE_DIR:-}" \
@@ -693,12 +691,6 @@ emit_json() {
   E2E_EVID_ADAPTER_NEUTRAL_SHA="${ADAPTER_NEUTRAL_SHA:-}" \
   E2E_EVID_ADAPTER_DETERMINISM="${ADAPTER_DETERMINISM:-}" \
   E2E_EVID_ADAPTER_SCOPE="${ADAPTER_SCOPE:-}" \
-  E2E_EVID_DATASET_SHA="${DATASET_SHA:-}" \
-  E2E_EVID_DATASET_SOURCE="${DATASET_SOURCE:-}" \
-  E2E_EVID_PAPER_SPEC_SHA="${PAPER_SPEC_SHA:-}" \
-  E2E_EVID_REPLAY_DIGEST="${REPLAY_DIGEST:-}" \
-  E2E_EVID_RISK_BASELINE_SUMMARY="${RISK_BASELINE_SUMMARY:-}" \
-  E2E_EVID_RISK_TIGHT_SUMMARY="${RISK_TIGHT_SUMMARY:-}" \
   E2E_EVID_QUAL_OWNER="${QUAL_OWNER_STATUS:-}" \
   E2E_EVID_QUAL_SENTINEL="${QUAL_SENTINEL_STATUS:-}" \
   E2E_EVID_QUAL_RESTART="${QUAL_RESTART_STATUS:-}" \
@@ -788,13 +780,18 @@ qualification = [
           "No operator authorization or production readiness exists; this check cannot be automated."),
 ]
 
+d11_reason = (
+    "D11 retires synthetic market-shaped fixture tests; no approved fixture amendment "
+    "or admitted dataset exists, so no market-shaped paper replay is executed."
+)
+
 gates = {
     "G0": "PASS" if value("CLEAN") == "yes" and value("FB_SHA") and value("NR_SHA") else "FAIL",
-    "G1": "PASS" if value("PRODUCER_SHA") and value("VERIFIER_SHA") and value("PAPER_SHA") else "FAIL",
+    "G1": "PASS" if value("PRODUCER_SHA") and value("VERIFIER_SHA") else "FAIL",
     "G2": "PASS" if relative(value("RELEASE")) and refused("rights.json", "RIGHTS_ADMISSION_REFUSED", 6, "REJECT_RIGHTS_EVIDENCE")["status"] == "PASS" else "FAIL",
     "G3": "PASS" if refused("rights.json", "RIGHTS_ADMISSION_REFUSED", 6, "REJECT_RIGHTS_EVIDENCE")["status"] == "PASS" else "FAIL",
-    "G4": "PASS" if value("REPLAY_DIGEST") and value("DATASET_SHA") else "FAIL",
-    "G5": "PASS" if value("RISK_BASELINE_SUMMARY") and value("RISK_TIGHT_SUMMARY") else "FAIL",
+    "G4": "BLOCKED",
+    "G5": "BLOCKED",
     "G6": "PASS" if value("ADAPTER_STATUS") == "linked" else "BLOCKED",
     "G7": (value("QUAL_OWNER") or "FAIL"),
     "G8": (value("QUAL_SENTINEL") or "FAIL"),
@@ -803,10 +800,12 @@ gates = {
 }
 
 gate_explanations = {
+    "G4": d11_reason,
+    "G5": d11_reason,
     "G6": ("Neutral adapter linked for the rights-refused NDC fixture only; "
-           "no market data or production paper execution is admitted."
+           "no market data, admitted dataset or production paper execution is claimed."
            if value("ADAPTER_STATUS") == "linked" else
-           "No verified neutral adapter links the Fieldbook release to a paper dataset."),
+           "No verified neutral adapter links the Fieldbook release to opaque neutral events."),
     "G9": ("Q2/Q3/Q4 temporary-directory drills are executable evidence, but "
            "Q5 operator readiness/authorization is BLOCKED; no deployment, "
            "D1+ durability, power-loss or production readiness is claimed."),
@@ -830,17 +829,15 @@ record = {
                      "source": value("PRODUCER_SOURCE"), "provenance": relative(value("PRODUCER_PROV"))},
         "verifier": {"path": value("VERIFIER"), "sha256": value("VERIFIER_SHA"),
                      "source": value("VERIFIER_SOURCE"), "provenance": relative(value("VERIFIER_PROV"))},
-        "paper_engine": {"path": value("PAPER"), "sha256": value("PAPER_SHA"),
-                         "source": value("PAPER_SOURCE")},
+        "paper_engine": {"path": None, "sha256": None,
+                         "source": "NOT_BUILT_D11_RETIRED_MARKET_SHAPED_REPLAY"},
     },
     "neutral_fixture": {
         "base_spec_sha256": value("BASE_SPEC_SHA"),
         "derived_spec_sha256": value("SPEC_SHA"),
         "spec_source": "committed-abstract-fieldbook-fixture-with-test-only-identity-bindings",
         "release": relative(value("RELEASE")),
-        "paper_dataset_sha256": value("DATASET_SHA"),
-        "paper_dataset_source": value("DATASET_SOURCE"),
-        "paper_spec_sha256": value("PAPER_SPEC_SHA"),
+        "d11_market_shaped_paper_fixture": "RETIRED_NOT_GENERATED",
         "adapted_neutral_dataset_sha256": value("ADAPTER_NEUTRAL_SHA"),
         "adapted_dataset_determinism": value("ADAPTER_DETERMINISM"),
         "market_data_admitted": False,
@@ -868,30 +865,27 @@ record = {
             "determinism": value("ADAPTER_DETERMINISM"),
             "claim_text": ("Fieldbook NDC release manifest/digests were converted, under a typed "
                            "stage 6 REJECT_RIGHTS_EVIDENCE refusal, into deterministic opaque "
-                           "sequence-only events.jsonl bytes. No rights admission, instrument, "
-                           "price, quote, trade, strategy, market data, receipt or live execution "
-                           "is claimed. The standalone market-shaped paper replay is a separate "
-                           "workspace fixture and is not cross-repository evidence."
+                           "sequence-only events.jsonl bytes. No rights admission, market data, "
+                           "admitted dataset, receipt or live execution is claimed. This is a "
+                           "standalone rights-refused adapter result, never a replay."
                            if value("ADAPTER_STATUS") == "linked" else
                            "No cross-repository claim; adapter absent or unverified."),
         },
-        "replay_digest": value("REPLAY_DIGEST"),
-        "risk_baseline": object_value("RISK_BASELINE_SUMMARY"),
-        "risk_tight": object_value("RISK_TIGHT_SUMMARY"),
-        "journals": {
-            "baseline": relative(str(Path(value("WORK")) / "paper" / "baseline" / "journal-summary.json")),
-            "baseline_replay": relative(str(Path(value("WORK")) / "paper" / "baseline-replay" / "journal-summary.json")),
-            "tight": relative(str(Path(value("WORK")) / "paper" / "tight" / "journal-summary.json")),
-        },
-        "reports": {
-            "baseline": relative(str(Path(value("WORK")) / "paper" / "baseline" / "run-report.json")),
-            "baseline_replay": relative(str(Path(value("WORK")) / "paper" / "baseline-replay" / "run-report.json")),
-            "tight": relative(str(Path(value("WORK")) / "paper" / "tight" / "run-report.json")),
+        "d11_scope": {
+            "status": "BLOCKED",
+            "market_shaped_replay_executed": False,
+            "standalone_paper_engine_claim": False,
+            "cross_repository_claim": False,
+            "adapter_cross_repository_claim": value("ADAPTER_STATUS") == "linked",
+            "admitted_data": False,
+            "reason": d11_reason,
         },
     },
     "qualification": {
         "mode": "machine-readable static checks plus temporary-directory-only fail-closed drills; no deployment",
         "checks": qualification,
+        "d11_scope": {"status": "BLOCKED", "market_shaped_replay_executed": False,
+                      "reason": d11_reason},
     },
     "gates": gates,
     "gate_explanations": gate_explanations,
@@ -918,8 +912,6 @@ verify_result_json() {
   E2E_EVID_NR_SHA="${NR_SHA:-}" \
   E2E_EVID_PRODUCER_SHA="${PRODUCER_SHA:-}" \
   E2E_EVID_VERIFIER_SHA="${VERIFIER_SHA:-}" \
-  E2E_EVID_PAPER_SHA="${PAPER_SHA:-}" \
-  E2E_EVID_REPLAY_DIGEST="${REPLAY_DIGEST:-}" \
   E2E_EVID_ADAPTER_STATUS="${ADAPTER_STATUS:-}" \
   E2E_EVID_ADAPTER_NEUTRAL_SHA="${ADAPTER_NEUTRAL_SHA:-}" \
   E2E_EVID_ADAPTER_DETERMINISM="${ADAPTER_DETERMINISM:-}" \
@@ -953,12 +945,40 @@ equal("result", data.get("result"), os.environ.get("E2E_EVID_STATUS", "").upper(
 equal("source_heads.fieldbook", (data.get("source_heads") or {}).get("fieldbook"), os.environ.get("E2E_EVID_FB_SHA"))
 equal("source_heads.nirnay", (data.get("source_heads") or {}).get("nirnay"), os.environ.get("E2E_EVID_NR_SHA"))
 binaries = data.get("binaries") or {}
-for label in ("producer", "verifier", "paper_engine"):
-    expected = os.environ.get(f"E2E_EVID_{'PAPER' if label == 'paper_engine' else label.upper()}_SHA")
-    equal(f"binaries.{label}.sha256", (binaries.get(label) or {}).get("sha256"), expected)
+for label in ("producer", "verifier"):
+    equal(f"binaries.{label}.sha256", (binaries.get(label) or {}).get("sha256"),
+          os.environ.get(f"E2E_EVID_{label.upper()}_SHA"))
+paper_engine = binaries.get("paper_engine") or {}
+equal("binaries.paper_engine.sha256", paper_engine.get("sha256"), None)
+equal("binaries.paper_engine.source", paper_engine.get("source"),
+      "NOT_BUILT_D11_RETIRED_MARKET_SHAPED_REPLAY")
 equal("rights.state", (data.get("rights") or {}).get("state"), "UNKNOWN")
-equal("paper_path.replay_digest", (data.get("paper_path") or {}).get("replay_digest"), os.environ.get("E2E_EVID_REPLAY_DIGEST"))
-equal("paper_path.adapter.status", ((data.get("paper_path") or {}).get("adapter") or {}).get("status"), os.environ.get("E2E_EVID_ADAPTER_STATUS"))
+paper_path = data.get("paper_path") or {}
+d11_scope = paper_path.get("d11_scope") or {}
+if d11_scope.get("status") != "BLOCKED" or d11_scope.get("market_shaped_replay_executed") is not False \
+        or d11_scope.get("standalone_paper_engine_claim") is not False \
+        or d11_scope.get("admitted_data") is not False \
+        or "D11" not in (d11_scope.get("reason") or ""):
+    raise SystemExit("result verification failed: D11 retired-fixture scope is missing")
+if "replay_digest" in paper_path or "risk_baseline" in paper_path or "risk_tight" in paper_path:
+    raise SystemExit("result verification failed: a paper replay claim is present")
+def market_keys(node):
+    found = []
+    if isinstance(node, dict):
+        for key, value in node.items():
+            lowered = str(key).lower()
+            if any(word in lowered for word in ("venue", "instrument", "quote", "bid", "ask",
+                                                "price", "trade", "strategy", "order")):
+                found.append(lowered)
+            found.extend(market_keys(value))
+    elif isinstance(node, list):
+        for value in node:
+            found.extend(market_keys(value))
+    return found
+shaped = market_keys(data)
+if shaped:
+    raise SystemExit(f"result verification failed: market-shaped fields in evidence: {shaped[:5]}")
+equal("paper_path.adapter.status", (paper_path.get("adapter") or {}).get("status"), os.environ.get("E2E_EVID_ADAPTER_STATUS"))
 checks = ((data.get("qualification") or {}).get("checks") or [])
 if len(checks) != 6 or [item.get("id") for item in checks] != ["Q0", "Q1", "Q2", "Q3", "Q4", "Q5"]:
     raise SystemExit("result verification failed: qualification checklist is incomplete")
@@ -974,6 +994,12 @@ if set(gates) != {f"G{i}" for i in range(11)}:
     raise SystemExit("result verification failed: release gates G0-G10 are incomplete")
 if gates.get("G9") != "BLOCKED":
     raise SystemExit("result verification failed: deployment qualification gate must be blocked")
+explanations = data.get("gate_explanations") or {}
+for gate in ("G4", "G5"):
+    if gates.get(gate) != "BLOCKED" or "D11" not in (explanations.get(gate) or ""):
+        raise SystemExit(f"result verification failed: {gate} must be BLOCKED with a D11 reason")
+if ((data.get("qualification") or {}).get("d11_scope") or {}).get("market_shaped_replay_executed") is not False:
+    raise SystemExit("result verification failed: qualification must record no market-shaped replay")
 if gates.get("G6") != ("PASS" if os.environ.get("E2E_EVID_ADAPTER_STATUS") == "linked" else "BLOCKED"):
     raise SystemExit("result verification failed: adapter gate disagrees with adapter status")
 adapter = ((data.get("paper_path") or {}).get("adapter") or {})
@@ -991,8 +1017,8 @@ if data.get("result") == "PASS":
     raise SystemExit("result verification failed: PASS is not permitted while G9 is BLOCKED")
 if data.get("result") == "BLOCKED":
     reason = data.get("failure_reason")
-    if not isinstance(reason, str) or "G9" not in reason or "Q5" not in reason:
-        raise SystemExit("result verification failed: blocked reason must identify G9 and Q5")
+    if not isinstance(reason, str) or not all(word in reason for word in ("G4", "G5", "G9", "Q5", "D11")):
+        raise SystemExit("result verification failed: blocked reason must identify D11, G4/G5 and G9/Q5")
     rights_case = (data.get("rights") or {}).get("case") or {}
     if rights_case.get("status") != "PASS":
         raise SystemExit("result verification failed: typed rights refusal is missing")
@@ -1052,6 +1078,29 @@ def check(label, condition, detail=""):
     print(f"{'PASS' if condition else 'FAIL'} {label}" + ("" if condition else f" :: {detail}"))
     if not condition:
         failures.append(label)
+
+# D11: the required path must not emit any market-shaped field. Word boundaries
+# keep abstract NDC identifiers out of scope; keys and values are both scanned.
+FORBIDDEN = re.compile(
+    r"\b(venue|instrument|quote|bids?|asks?|prices?|trades?|strateg(?:y|ies)|orders?)\b",
+    re.IGNORECASE)
+PAPER_REPORT_FIELDS = ("intent_submitted", "decision_recorded", "source_build_hash")
+
+def token_hits(text):
+    return sorted({match.group(0).lower() for match in FORBIDDEN.finditer(str(text))})
+
+def shaped_hits(node):
+    hits = []
+    if isinstance(node, dict):
+        for key, value in node.items():
+            hits.extend(token_hits(key))
+            hits.extend(shaped_hits(value))
+    elif isinstance(node, (list, tuple)):
+        for value in node:
+            hits.extend(shaped_hits(value))
+    elif isinstance(node, str):
+        hits.extend(token_hits(node))
+    return hits
 
 def run(command, env=None, check_setup=True):
     result = subprocess.run(command, env=env, text=True, capture_output=True)
@@ -1220,96 +1269,6 @@ Path(out).write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encodi
 raise SystemExit(rc)
 '''
 
-paper_stub = r'''#!/usr/bin/env python3
-import hashlib
-import json
-import os
-import struct
-import sys
-from pathlib import Path
-
-dataset = spec = output = None
-replay = False
-args = sys.argv[1:]
-while args:
-    flag = args.pop(0)
-    if flag == "--dataset":
-        dataset = args.pop(0)
-    elif flag == "--spec":
-        spec = args.pop(0)
-    elif flag == "--output":
-        output = args.pop(0)
-    elif flag == "--replay":
-        replay = True
-    else:
-        raise SystemExit(f"stub paper engine: unexpected argument {flag}")
-if not dataset or not spec or not output:
-    raise SystemExit("stub paper engine: bad arguments")
-if os.environ.get("E2E_TEST_PAPER_MISSING") == "1":
-    raise SystemExit(3)
-configuration = json.load(open(spec, encoding="utf-8"))
-if "note" in configuration or "spec_version" in configuration:
-    raise SystemExit("stub paper engine: run spec has unknown fields")
-allowed_risk = {"max_order_quantity", "max_order_notional_paise", "max_position_quantity",
-                "max_gross_exposure_paise", "max_daily_loss_paise", "max_open_orders",
-                "max_orders_per_second", "max_price_deviation_ppm", "allow_short"}
-if set(configuration["risk"]) - allowed_risk:
-    raise SystemExit("stub paper engine: risk spec has unknown fields")
-events_bytes = (Path(dataset) / "events.jsonl").read_bytes()
-out = Path(output)
-out.mkdir(parents=True, exist_ok=True)
-journal = out / "journal.jsonl"
-segments = journal / "segments"
-segments.mkdir(parents=True, exist_ok=True)
-(length := segments / "segment-00000000000000000001.nrj")
-kinds = ["AccountOpened", "QuoteReceived", "DecisionMade", "RiskAssessed"]
-frames = []
-for sequence, kind in enumerate(kinds, 1):
-    body = json.dumps({"envelope": {"event_id": f"probe-{sequence:016x}"},
-                       "payload": {kind: {}}}, sort_keys=True,
-                      separators=(",", ":")).encode("utf-8")
-    header = b"NRJ1" + struct.pack(">HHIQ", 1, 0, len(body), sequence) + b"\x00" * 64
-    frames.append(header + body)
-length.write_bytes(b"".join(frames))
-journal_sha = hashlib.sha256(length.read_bytes()).hexdigest()
-if replay and os.environ.get("E2E_TEST_PAPER_DRIFT") == "1":
-    journal_sha = "00" * 32
-report = {
-    "schema_version": 1,
-    "dataset_sha256": hashlib.sha256(events_bytes).hexdigest(),
-    "input_rows": 2,
-    "quotes_accepted": 2,
-    "intent_submitted": not replay,
-    "decision_deduplicated": replay,
-    "journal_records": len(kinds),
-    "journal_sha256": journal_sha,
-    "evidence_sequence": 3,
-    "evidence_hash": "11" * 32,
-    "verification": f"VerificationReport {{ record_count: {len(kinds)}, repaired_tail_bytes: 0 }}",
-    "paper_fill_model_notice": "abstract fixture; no execution simulation",
-}
-(out / "run-report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-# The risk verdict is delivered as a typed journal body for the script to parse.
-assessment_frame = None
-for sequence, kind in enumerate(kinds, 1):
-    if kind != "RiskAssessed":
-        continue
-    checks = [{"check": name, "passed": False, "detail": "abstract"}
-              for name in ("session_open", "account_snapshot_available",
-                           "kill_switch", "reconciliation")]
-    if configuration["risk"]["max_order_notional_paise"] < 1000:
-        checks.extend({"check": name, "passed": False, "detail": "abstract"}
-                      for name in ("order_notional", "gross_exposure", "strategy_exposure"))
-    body = json.dumps({"envelope": {"event_id": f"probe-{sequence:016x}"},
-                       "payload": {"RiskAssessed": {"assessment": {
-                           "accepted": False, "checks": checks}}}},
-                      sort_keys=True, separators=(",", ":")).encode("utf-8")
-    assessment_frame = (b"NRJ1" + struct.pack(">HHIQ", 1, 0, len(body), sequence)
-                        + b"\x00" * 64 + body)
-    frames[sequence - 1] = assessment_frame
-length.write_bytes(b"".join(frames))
-'''
-
 adapter_stub = r'''#!/usr/bin/env python3
 import hashlib, json, sys
 from pathlib import Path
@@ -1340,10 +1299,9 @@ rows = [json.dumps({"schema_version": 1, "sequence": ordinal,
 stubs = root / "stubs"
 producer = stubs / "producer"
 verifier = stubs / "verifier"
-paper = stubs / "paper"
 adapter = stubs / "adapter"
 for path, body in ((producer, producer_stub), (verifier, verifier_stub),
-                   (paper, paper_stub), (adapter, adapter_stub)):
+                   (adapter, adapter_stub)):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(body, encoding="utf-8")
     path.chmod(0o755)
@@ -1365,7 +1323,6 @@ def write_sidecar(binary, repository, head):
 
 producer_sidecar = write_sidecar(producer, "fieldbook", fb_sha)
 verifier_sidecar = write_sidecar(verifier, "nirnay", nr_sha)
-paper_sidecar = write_sidecar(paper, "nirnay", nr_sha)
 adapter_sidecar = write_sidecar(adapter, "workspace", "workspace-authority")
 
 fakebin = root / "fakebin"
@@ -1383,7 +1340,6 @@ done
 case "$name" in
   ndc-conformance-producer) source="${E2E_TEST_STUB_PRODUCER:?}" ;;
   ndc-conformance-verifier) source="${E2E_TEST_STUB_VERIFIER:?}" ;;
-  paper-engine-run) source="${E2E_TEST_STUB_PAPER:?}" ;;
   *) printf 'fake cargo: unexpected bin %s\n' "$name" >&2; exit 2 ;;
 esac
 target="${CARGO_TARGET_DIR:?}/release"
@@ -1412,7 +1368,7 @@ def probe(name, env_extra=None, setup=None, expect_code=0, omit_overrides=False)
         if key.startswith("E2E_TEST_") or key in {
             "E2E_WORKSPACE_ROOT", "E2E_CURRENT_STATE", "E2E_FIELDBOOK_DIR",
             "E2E_NIRNAY_DIR", "E2E_PRODUCER_BIN", "E2E_VERIFIER_BIN",
-            "E2E_PAPER_BIN", "E2E_PAPER_ADAPTER_BIN", "E2E_RUN_ID",
+            "E2E_PAPER_ADAPTER_BIN", "E2E_RUN_ID",
             "FIELDBOOK_SHA", "NIRNAY_SHA",
         }:
             env.pop(key, None)
@@ -1423,13 +1379,12 @@ def probe(name, env_extra=None, setup=None, expect_code=0, omit_overrides=False)
         "E2E_NIRNAY_DIR": str(nirnay),
         "E2E_PRODUCER_BIN": str(producer),
         "E2E_VERIFIER_BIN": str(verifier),
-        "E2E_PAPER_BIN": str(paper),
         "E2E_RUN_ID": f"probe-{name}",
     })
     env.update(env_extra or {})
     if omit_overrides:
         for key in ("E2E_CURRENT_STATE", "E2E_FIELDBOOK_DIR", "E2E_NIRNAY_DIR",
-                    "E2E_PRODUCER_BIN", "E2E_VERIFIER_BIN", "E2E_PAPER_BIN"):
+                    "E2E_PRODUCER_BIN", "E2E_VERIFIER_BIN"):
             env.pop(key, None)
     result = run(["bash", str(script), "--out", str(out), "--work", str(work)],
                  env=env, check_setup=False)
@@ -1472,24 +1427,46 @@ if data:
           and data["paper_path"]["adapter"]["determinism"] == "PASS"
           and len(data["paper_path"]["adapter"]["neutral_dataset_sha256"]) == 64,
           str(data["paper_path"]["adapter"]))
-    check("neutral_adapter_default: standalone replay reported separately",
-          data["neutral_fixture"]["paper_dataset_source"]
-          == "workspace-neutral-fixture-not-cross-repository-admitted",
-          str(data["neutral_fixture"]["paper_dataset_source"]))
-    check("neutral_adapter_default: paper replay digest",
-          bool(data["paper_path"]["replay_digest"])
-          and data["gates"]["G4"] == "PASS", str(data["paper_path"]["replay_digest"]))
-    check("neutral_adapter_default: risk refusal evidence",
-          "session_open" in data["paper_path"]["risk_baseline"]["failed_checks"]
-          and "order_notional" in data["paper_path"]["risk_tight"]["failed_checks"],
-          str(data["paper_path"]["risk_baseline"]))
+    check("neutral_adapter_default: D11 retires market-shaped replay",
+          data["gates"]["G4"] == "BLOCKED" and data["gates"]["G5"] == "BLOCKED"
+          and data["paper_path"]["d11_scope"]["status"] == "BLOCKED"
+          and data["paper_path"]["d11_scope"]["market_shaped_replay_executed"] is False
+          and data["paper_path"]["d11_scope"]["standalone_paper_engine_claim"] is False
+          and data["paper_path"]["d11_scope"]["cross_repository_claim"] is False
+          and data["paper_path"]["d11_scope"]["adapter_cross_repository_claim"] is True
+          and data["paper_path"]["d11_scope"]["admitted_data"] is False
+          and "D11" in data["paper_path"]["d11_scope"]["reason"]
+          and data["binaries"]["paper_engine"]["sha256"] is None,
+          str(data["paper_path"]["d11_scope"]))
+    check("neutral_adapter_default: no replay claim in evidence",
+          not any(key in data["paper_path"]
+                  for key in ("replay_digest", "risk_baseline", "risk_tight",
+                              "journals", "reports")),
+          str(sorted(data["paper_path"])))
+    check("neutral_adapter_default: no market-shaped fields in required evidence",
+          not shaped_hits(data), str(shaped_hits(data)[:5]))
+    paper_dir = default_work / "paper"
+    emitted = [path for path in paper_dir.rglob("*") if path.is_file()] if paper_dir.is_dir() else []
+    check("neutral_adapter_default: no market-shaped paper fixture files",
+          not (paper_dir / "dataset-neutral").exists()
+          and not any(path.name in ("baseline-spec.json", "tight-spec.json",
+                                    "run-report.json", "journal-summary.json")
+                      for path in emitted),
+          str(sorted(path.name for path in emitted)))
+    check("neutral_adapter_default: adapter events are opaque only",
+          bool(emitted) and not any(token_hits(path.read_text(encoding="utf-8"))
+                                    for path in emitted)
+          and not any(field in path.read_text(encoding="utf-8")
+                      for path in emitted for field in PAPER_REPORT_FIELDS),
+          str(sorted(path.name for path in emitted)))
     check("neutral_adapter_default: qualification machine-readable",
           [item["status"] for item in data["qualification"]["checks"]]
           == ["PASS", "PASS", "PASS", "PASS", "PASS", "BLOCKED"],
           str(data["qualification"]["checks"]))
-    check("neutral_adapter_default: G9 blocked reason",
-          data["gates"]["G9"] == "BLOCKED" and "G9" in data["failure_reason"]
-          and "Q5" in data["failure_reason"], str(data["failure_reason"]))
+    check("neutral_adapter_default: blocked reason is complete",
+          data["gates"]["G9"] == "BLOCKED"
+          and all(word in data["failure_reason"] for word in ("D11", "G4", "G5", "G9", "Q5")),
+          str(data["failure_reason"]))
     check("neutral_adapter_default: boundaries",
           all(value is False for value in data["boundaries"].values()), str(data["boundaries"]))
 
@@ -1521,7 +1498,6 @@ result, out = probe("exact_source_build", expect_code=3, env_extra={
     "PATH": f"{fakebin}:{os.environ.get('PATH', '')}",
     "E2E_TEST_STUB_PRODUCER": str(producer),
     "E2E_TEST_STUB_VERIFIER": str(verifier),
-    "E2E_TEST_STUB_PAPER": str(paper),
 }, omit_overrides=True)
 data = load_json(out)
 if data:
@@ -1529,8 +1505,9 @@ if data:
           data["source_provenance"]["mode"] == "exact-source-build"
           and data["result"] == "BLOCKED", str(data["source_provenance"]))
     check("exact_source_build: binaries from recorded commits",
-          all(item["source"] == "built-from-recorded-commit"
-              for item in data["binaries"].values()), str(data["binaries"]))
+          all(data["binaries"][name]["source"] == "built-from-recorded-commit"
+              for name in ("producer", "verifier"))
+          and data["binaries"]["paper_engine"]["sha256"] is None, str(data["binaries"]))
 
 result, out = probe("stale_result", setup=stale_setup, expect_code=3)
 data = load_json(out)
@@ -1584,9 +1561,6 @@ try:
     }, expect_code=1)
 finally:
     adapter_sidecar.write_bytes(sidecar_body)
-
-probe("paper_replay_drift", env_extra={"E2E_TEST_PAPER_DRIFT": "1"}, expect_code=1)
-probe("paper_missing_assessment", env_extra={"E2E_TEST_PAPER_MISSING": "1"}, expect_code=1)
 
 for drill, hook in (("restart", "E2E_TEST_DRILL_RESTART_FAIL"),
                     ("fault", "E2E_TEST_DRILL_FAULT_FAIL"),
@@ -1720,14 +1694,14 @@ fi
 DIAGNOSTIC_OVERRIDES=()
 for name in E2E_WORKSPACE_ROOT E2E_CURRENT_STATE E2E_FIELDBOOK_DIR \
             E2E_NIRNAY_DIR E2E_PRODUCER_BIN E2E_VERIFIER_BIN \
-            E2E_PAPER_BIN E2E_PAPER_ADAPTER_BIN E2E_RUN_ID; do
+            E2E_PAPER_ADAPTER_BIN E2E_RUN_ID; do
   if [[ -n "${!name:-}" ]]; then DIAGNOSTIC_OVERRIDES+=("$name"); fi
 done
 OVERRIDES_CSV="$(IFS=,; printf '%s' "${DIAGNOSTIC_OVERRIDES[*]:-}")"
 SOURCE_PROVENANCE_MODE="exact-source-build"
 if [[ -n "${E2E_CURRENT_STATE:-}" || -n "${E2E_FIELDBOOK_DIR:-}" \
       || -n "${E2E_NIRNAY_DIR:-}" || -n "${E2E_PRODUCER_BIN:-}" \
-      || -n "${E2E_VERIFIER_BIN:-}" || -n "${E2E_PAPER_BIN:-}" ]]; then
+      || -n "${E2E_VERIFIER_BIN:-}" ]]; then
   SOURCE_PROVENANCE_MODE="local-diagnostic-overrides"
 fi
 
@@ -1745,9 +1719,6 @@ VERIFIER_BIN=""
 VERIFIER_SHA=""
 VERIFIER_SOURCE=""
 VERIFIER_PROVENANCE=""
-PAPER_BIN=""
-PAPER_SHA=""
-PAPER_SOURCE=""
 BASE_SPEC_SHA=""
 SPEC_SHA=""
 RELEASE_DIR=""
@@ -1758,12 +1729,6 @@ ADAPTER_CANDIDATES_CSV=""
 ADAPTER_NEUTRAL_SHA=""
 ADAPTER_DETERMINISM=""
 ADAPTER_SCOPE=""
-DATASET_SHA=""
-DATASET_SOURCE=""
-PAPER_SPEC_SHA=""
-REPLAY_DIGEST=""
-RISK_BASELINE_SUMMARY=""
-RISK_TIGHT_SUMMARY=""
 QUAL_OWNER_STATUS="FAIL"
 QUAL_SENTINEL_STATUS="FAIL"
 QUAL_RESTART_STATUS="FAIL"
@@ -1811,7 +1776,7 @@ require_clean_tree "$NIRNAY_DIR" "Nirnay" \
   || die "Nirnay checkout failed the clean-tree check"
 CLEAN_TREE_CHECKED="yes"
 
-# 3. Build the three exact-source binaries into an isolated target directory.
+# 3. Build the two required exact-source binaries into an isolated target directory.
 build_bin() {
   local label="$1" dir="$2" bin="$3"
   run_logged "$WORK/logs/$label-build.log" \
@@ -1851,20 +1816,8 @@ if [[ -n "${E2E_VERIFIER_BIN:-}" ]]; then
     || die "verifier provenance check failed"
 fi
 
-if [[ -n "${E2E_PAPER_BIN:-}" ]]; then
-  PAPER_BIN="$E2E_PAPER_BIN"
-  PAPER_SOURCE="supplied-executable-with-verified-source-provenance"
-else
-  PAPER_BIN="$(build_bin paper "$NIRNAY_DIR" paper-engine-run)"
-  PAPER_SOURCE="built-from-recorded-commit"
-fi
-[[ -f "$PAPER_BIN" && -s "$PAPER_BIN" && -x "$PAPER_BIN" ]] \
-  || die "required paper engine binary missing, empty or not executable: $PAPER_BIN"
-PAPER_SHA="$(sha256_file "$PAPER_BIN")" || die "cannot hash paper engine binary"
-if [[ -n "${E2E_PAPER_BIN:-}" ]]; then
-  PAPER_PROVENANCE="$(require_binary_provenance "$PAPER_BIN" nirnay "$NR_SHA" paper_engine)" \
-    || die "paper engine provenance check failed"
-fi
+# D11: no paper engine is built or replayed by this required gate. The only
+# neutral paper-shaped bytes admitted here are the adapter's opaque events.
 
 # 4. Neutral producer -> verifier path. The derived spec aligns only TEST_ONLY
 #    identity bindings; no release byte is synthesized by this script.
@@ -2013,82 +1966,11 @@ run_verifier "$mutated" "$WORK/diagnostics/one-byte-stored-artifact.json" "one-b
 assert_verifier_diagnostic "$WORK/diagnostics/one-byte-stored-artifact.json" "one-byte stored artifact" \
   "RIGHTS_ADMISSION_REFUSED" 5 "REJECT_ARTIFACT_DIGESTS"
 
-# 5. Neutral abstract paper dataset and run specs. Event identities are derived
-#    from the derived spec digest; all values are abstract test constants.
-DATASET_DIR="$WORK/paper/dataset-neutral"
-mkdir -p "$DATASET_DIR"
-python3 - "$SPEC" "$SPEC_SHA" "$DATASET_DIR" "$WORK/paper/baseline-spec.json" \
-          "$WORK/paper/tight-spec.json" <<'PYPAPERFIX'
-import hashlib
-import json
-import sys
-from pathlib import Path
-
-spec_path, spec_sha, dataset_dir, baseline_path, tight_path = sys.argv[1:6]
-digest = hashlib.sha256(f"{spec_sha}:m8-neutral-paper".encode("utf-8")).hexdigest()
-root = Path(dataset_dir)
-root.mkdir(parents=True, exist_ok=True)
-rows = []
-for ordinal, (bid, ask) in enumerate(((1000, 1010), (1005, 1015), (1020, 1030)), 1):
-    event_id = f"{digest[:16]}{ordinal:016x}"
-    row = {
-        "event_id": event_id,
-        "instrument_id": "abs-instrument-01",
-        "venue": "NSE",
-        "event_kind": "quote",
-        "received_utc_ns": ordinal * 1_000_000_000,
-        "source_timestamp_ns": ordinal * 1_000_000_000,
-        "local_sequence": ordinal,
-        "bids": [{"price": f"{bid // 100}.{bid % 100:02d}", "quantity": 10}],
-        "asks": [{"price": f"{ask // 100}.{ask % 100:02d}", "quantity": 10}],
-    }
-    rows.append(json.dumps(row, sort_keys=True, separators=(",", ":")))
-(root / "events.jsonl").write_text("\n".join(rows) + "\n", encoding="utf-8")
-
-# `paper-engine-run` RunSpec uses the narrow RiskSpec, not the full
-# RiskPolicy. Unknown fields are rejected by the binary's deny_unknown_fields.
-policy = {
-    "max_order_quantity": 10, "max_order_notional_paise": 1_000_000,
-    "max_position_quantity": 100, "max_gross_exposure_paise": 10_000_000,
-    "max_daily_loss_paise": 1_000_000, "max_open_orders": 10,
-    "max_orders_per_second": 100, "max_price_deviation_ppm": 1_000_000,
-    "allow_short": False,
-}
-spec_body = {
-    "schema_version": 1,
-    "stream_id": "m8-neutral-paper-stream",
-    "run_id": "0123456789abcdef0123456789abcdef",
-    "account_id": 1, "strategy_id": 1, "algo_id": 1,
-    "strategy_version": "m8-abstract-paper-v1",
-    "starting_cash_paise": 100_000_000,
-    "trade_date": "2026-11-27",
-    "max_quote_age_ns": 1_000_000_000_000,
-    "instrument": {
-        "instrument_id": "abs-instrument-01", "isin": "INTEST000009",
-        "venue": "NSE", "venue_symbol": "ABSTRACT-PAPER",
-        "market_lot": 1, "tick_paise": 100,
-    },
-    "risk": policy,
-    "strategy": {"max_entry_price_paise": 20000, "order_quantity": 1},
-}
-Path(baseline_path).write_text(
-    json.dumps(spec_body, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-tight = json.loads(json.dumps(spec_body))
-tight["risk"]["max_order_notional_paise"] = 100
-tight["risk"]["max_gross_exposure_paise"] = 100
-Path(tight_path).write_text(
-    json.dumps(tight, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-PYPAPERFIX
-DATASET_SHA="$(sha256_file "$DATASET_DIR/events.jsonl")" \
-  || die "cannot hash neutral paper dataset"
-PAPER_SPEC_SHA="$(sha256_file "$WORK/paper/baseline-spec.json")" \
-  || die "cannot hash neutral paper spec"
-
 # 6. Fieldbook -> Nirnay neutral adapter discovery. Absence is a recorded
 #    blocker, never a simulated bridge. The committed workspace adapter is bound
 #    by its exact digest in CURRENT-STATE.json. Diagnostic overrides require
 #    provenance. A linked adapter supports only the neutral, rights-refused
-#    fixture claim; the paper engine keeps replaying the standalone fixture.
+#    fixture claim; it is not admitted data and drives no paper replay.
 ADAPTER_CANDIDATES_CSV="nirnay/apps/paper-runner/src/bin/ndc_to_paper.rs,nirnay/crates/release-verifier/src/bin/ndc_to_paper.rs,fieldbook/src/bin/ndc-to-paper-dataset.rs,scripts/ndc_to_paper_dataset.sh"
 ADAPTER_BIN=""
 declared_adapter="$(python3 - "$CURRENT_STATE" <<'PYDECL'
@@ -2145,10 +2027,9 @@ elif [[ -f "$FIELDBOOK_DIR/src/bin/ndc-to-paper-dataset.rs" ]]; then
   ADAPTER_STATUS="linked"
 fi
 
-# The paper engine input remains the standalone neutral fixture. The adapter
-# output is verified as a separate, deterministic, rights-refused neutral claim.
-PAPER_DATASET="$DATASET_DIR"
-DATASET_SOURCE="workspace-neutral-fixture-not-cross-repository-admitted"
+# The adapter output is verified as a standalone, deterministic, rights-refused
+# neutral claim. It is never a paper replay and never admitted data. D11 retires
+# the market-shaped fixture that the earlier required replay depended on.
 if [[ "$ADAPTER_STATUS" == "linked" ]]; then
   ADAPTED_DATASET="$WORK/paper/dataset-adapted"
   REPEAT_DATASET="$WORK/paper/dataset-adapted-repeat"
@@ -2179,7 +2060,7 @@ if body != (repeat / "events.jsonl").read_bytes():
 rows = [json.loads(line) for line in body.decode("utf-8").splitlines()]
 if not rows or [row.get("sequence") for row in rows] != list(range(1, len(rows) + 1)):
     raise SystemExit("adapter events are not monotonically sequenced")
-forbidden = ("instrument", "price", "quote", "bid", "ask", "trade", "strategy", "order")
+forbidden = ("venue", "instrument", "quote", "bid", "ask", "price", "trade", "strategy", "order")
 if any(word in body.decode("utf-8").lower() for word in forbidden):
     raise SystemExit("adapter events contain market-shaped fields")
 PYADAPTCHECK
@@ -2193,117 +2074,8 @@ PYSHA
   ADAPTER_SCOPE="NEUTRAL_RIGHTS_REFUSED_FIXTURE_ONLY"
 fi
 
-# 7. Paper decision replay: baseline, replay, and a restricted risk case.
-run_paper_case() {
-  local label="$1" spec="$2" dataset="$3" out="$4"
-  shift 4
-  mkdir -p "$(dirname "$out")"
-  run_logged "$WORK/logs/paper-$label.log" \
-    bash -c '"$1" --dataset "$2" --spec "$3" --output "$4" "${@:5}"' \
-    _ "$PAPER_BIN" "$dataset" "$spec" "$out" "$@" \
-    || die "paper case $label failed: $WORK/logs/paper-$label.log"
-  [[ -f "$out/run-report.json" ]] || die "paper case $label wrote no run report"
-  parse_journal "$out/journal.jsonl" "$out/journal-summary.json" \
-    || die "paper case $label journal could not be parsed: $WORK/logs/paper-$label.log"
-}
-
-# The journal digest binds absolute journal file paths, so a true replay must
-# reopen the SAME output directory rather than a copy at a different path.
-BASE_OUT="$WORK/paper/baseline"
-REPLAY_OUT="$WORK/paper/baseline-replay"
-mkdir -p "$REPLAY_OUT"
-run_paper_case "baseline" "$WORK/paper/baseline-spec.json" "$PAPER_DATASET" "$BASE_OUT"
-cp "$BASE_OUT/run-report.json" "$REPLAY_OUT/first-run-report.json" \
-  || die "cannot retain first-run report for replay evidence"
-cp "$BASE_OUT/journal-summary.json" "$REPLAY_OUT/first-journal-summary.json" \
-  || die "cannot retain first-run journal summary for replay evidence"
-run_paper_case "baseline-replay" "$WORK/paper/baseline-spec.json" "$PAPER_DATASET" "$BASE_OUT" --replay
-cp "$BASE_OUT/run-report.json" "$REPLAY_OUT/run-report.json" \
-  || die "cannot retain replay report"
-cp "$BASE_OUT/journal-summary.json" "$REPLAY_OUT/journal-summary.json" \
-  || die "cannot retain replay journal summary"
-run_paper_case "tight" "$WORK/paper/tight-spec.json" "$PAPER_DATASET" "$WORK/paper/tight"
-
-REPLAY_DIGEST="$(python3 - \
-  "$WORK/paper/baseline-replay/first-run-report.json" "$WORK/paper/baseline/run-report.json" \
-  "$WORK/paper/baseline-replay/first-journal-summary.json" \
-  "$WORK/paper/baseline/journal-summary.json" <<'PYREPLAY'
-import hashlib
-import json
-import sys
-first, replay, first_journal, replay_journal = map(lambda p: json.load(open(p, encoding="utf-8")), sys.argv[1:5])
-fields = ("dataset_sha256", "input_rows", "quotes_accepted", "journal_records",
-          "evidence_sequence", "evidence_hash", "verification")
-# The binary journal_sha256 binds absolute journal paths; compare it only
-# within the same output directory and exclude it from the portable digest.
-for field in fields + ("journal_sha256",):
-    if first.get(field) != replay.get(field):
-        raise SystemExit(f"replay changed {field}")
-for field in ("record_count", "body_chain_sha256", "content_sha256"):
-    if first_journal.get(field) != replay_journal.get(field):
-        raise SystemExit(f"replay changed journal {field}")
-if replay.get("decision_deduplicated") is not True:
-    raise SystemExit("replay did not report decision deduplication")
-preimage = json.dumps({field: first.get(field) for field in fields}, sort_keys=True,
-                      separators=(",", ":")).encode("utf-8")
-print(hashlib.sha256(preimage).hexdigest())
-PYREPLAY
-)" || die "paper replay digest could not be computed"
-
-RISK_BASELINE_SUMMARY="$(python3 - \
-  "$WORK/paper/baseline/journal-summary.json" "$WORK/paper/baseline/run-report.json" <<'PYRISK'
-import json
-import sys
-summary = json.load(open(sys.argv[1], encoding="utf-8"))
-report = json.load(open(sys.argv[2], encoding="utf-8"))
-kinds = [event["kind"] for event in summary["events"]]
-required = {"AccountOpened", "QuoteReceived", "DecisionMade", "RiskAssessed"}
-if not required.issubset(set(kinds)):
-    raise SystemExit("paper journal lacks required account/decision/risk events")
-if "OrderCreated" in kinds or "FillBooked" in kinds:
-    raise SystemExit("paper journal created an order or fill without admission evidence")
-assessments = [event["body"]["assessment"] for event in summary["events"]
-               if event["kind"] == "RiskAssessed"]
-if len(assessments) != 1 or assessments[0]["accepted"] is not False:
-    raise SystemExit("paper risk verdict is missing or incorrectly accepted")
-failed = sorted(check["check"] for check in assessments[0]["checks"] if not check["passed"])
-for expected in ("session_open", "account_snapshot_available", "kill_switch", "reconciliation"):
-    if expected not in failed:
-        raise SystemExit(f"expected fail-closed risk check is absent: {expected}")
-if not isinstance(report.get("dataset_sha256"), str) or len(report["dataset_sha256"]) != 64:
-    raise SystemExit("paper report has no valid dataset digest")
-print(json.dumps({"accepted": False, "failed_checks": failed,
-                  "record_count": summary["record_count"],
-                  "body_chain_sha256": summary["body_chain_sha256"],
-                  "journal_content_sha256": summary["content_sha256"],
-                  "verification": report["verification"]}, sort_keys=True))
-PYRISK
-)" || die "baseline risk effect could not be reproduced from evidence"
-
-RISK_TIGHT_SUMMARY="$(python3 - \
-  "$WORK/paper/tight/journal-summary.json" "$WORK/paper/tight/run-report.json" <<'PYTIGHT'
-import json
-import sys
-summary = json.load(open(sys.argv[1], encoding="utf-8"))
-report = json.load(open(sys.argv[2], encoding="utf-8"))
-assessments = [event["body"]["assessment"] for event in summary["events"]
-               if event["kind"] == "RiskAssessed"]
-if len(assessments) != 1 or assessments[0]["accepted"] is not False:
-    raise SystemExit("restricted paper risk verdict is missing or incorrectly accepted")
-failed = sorted(check["check"] for check in assessments[0]["checks"] if not check["passed"])
-for expected in ("order_notional", "gross_exposure", "strategy_exposure"):
-    if expected not in failed:
-        raise SystemExit(f"restricted case did not fail closed on {expected}")
-kinds = [event["kind"] for event in summary["events"]]
-if "OrderCreated" in kinds or "FillBooked" in kinds:
-    raise SystemExit("restricted paper case created an order or fill")
-print(json.dumps({"accepted": False, "failed_checks": failed,
-                  "record_count": summary["record_count"],
-                  "body_chain_sha256": summary["body_chain_sha256"],
-                  "journal_content_sha256": summary["content_sha256"],
-                  "verification": report["verification"]}, sort_keys=True))
-PYTIGHT
-)" || die "restricted risk effect could not be reproduced from evidence"
+# 7. D11: no market-shaped paper replay is executed here. G4/G5 stay BLOCKED.
+#   No paper engine, replay digest, risk verdict or journal is generated.
 
 # 8. Deployment qualification: static checks and temporary-directory drills.
 mkdir -p "$WORK/qualification" || die "cannot create qualification evidence directory"
@@ -2334,13 +2106,15 @@ else
 fi
 # Q5 is deliberately not automatable: no operator authorization exists.
 
-# 9. Conclusion. G6 may close for the neutral fixture, but G9 stays BLOCKED, so
-#    the overall result is BLOCKED and the script exits 3 with full evidence.
+# 9. Conclusion. D11 keeps G4/G5 BLOCKED, G6 may close only for the neutral
+#    rights-refused fixture, and G9 stays BLOCKED, so the overall result is
+#    BLOCKED and the script exits 3 with full evidence.
+D11_REASON="D11 retires synthetic market-shaped fixture tests; no approved fixture amendment or admitted dataset exists, so no market-shaped paper replay is executed."
 if [[ "$ADAPTER_STATUS" != "linked" ]]; then
   STATUS="BLOCKED"
-  REASON="G6 FIELDBOOK_TO_NIRNAY_NEUTRAL_ADAPTER: no verified adapter converts a rights-refused NDC release into neutral opaque sequence-only events.jsonl bytes; cross-repository claim fails closed. G9 DEPLOYMENT_QUALIFICATION: Q5 operator readiness/authorization is BLOCKED; no production readiness is claimed."
+  REASON="G4/G5 D11: $D11_REASON G6 FIELDBOOK_TO_NIRNAY_NEUTRAL_ADAPTER: no verified adapter converts a rights-refused NDC release into neutral opaque sequence-only events.jsonl bytes; cross-repository claim fails closed. G9 DEPLOYMENT_QUALIFICATION: Q5 operator readiness/authorization is BLOCKED; no production readiness is claimed."
   exit 3
 fi
 STATUS="BLOCKED"
-REASON="G9 DEPLOYMENT_QUALIFICATION: Q5 operator readiness/authorization remains BLOCKED because no production authorization exists and cannot be automated; Q2/Q3/Q4 temporary-directory drills and Q0/Q1 static checks are PASS but do not qualify deployment, D1+ durability or power loss. G6 is closed only for the neutral, rights-refused Fieldbook release fixture (opaque sequence-only events.jsonl, no rights admission, market data, receipt or live execution); the standalone paper replay is reported separately."
+REASON="G4/G5 D11: $D11_REASON G9 DEPLOYMENT_QUALIFICATION: Q5 operator readiness/authorization remains BLOCKED because no production authorization exists and cannot be automated; Q2/Q3/Q4 temporary-directory drills and Q0/Q1 static checks are PASS but do not qualify deployment, D1+ durability or power loss. G6 is closed only for the neutral, rights-refused Fieldbook release fixture (opaque sequence-only events.jsonl, no rights admission, market data, receipt or live execution); no paper replay is claimed."
 exit 3
