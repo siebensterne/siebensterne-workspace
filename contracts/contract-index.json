@@ -8,8 +8,8 @@
       "status": "SPECIFIED_AND_IMPLEMENTED_INDEPENDENTLY",
       "verification": {
         "status": "VERIFIED_AT_EXACT_HEADS",
-        "fieldbook": "e2bd10c5f39ec271a030a863384dc6effcf15f1c",
-        "nirnay": "bd6d7bbdee89b2abde80b5a27453ab2b311b9c7e",
+        "fieldbook": "2df4b8e94b9b9c7eea95488c89659c788ca14c49",
+        "nirnay": "9e1231d7e213be23498de11dfcb3419f7d0fc4e1",
         "checker": "scripts/check_contracts.py --root .",
         "schema_version_constants": {
           "fieldbook": "SOURCE_EVENT_SCHEMA_VERSION = 1",
@@ -34,15 +34,15 @@
   "fixtures": {
     "path": "contracts/fixtures/manifest.json",
     "schema_version": 1,
-    "sha256": "3edcfde5fdd7fb0ecadda4cc447cf2a52ea29f6d5df723a3185a08150c057654",
+    "sha256": "b9066d915d77eb63b309e5f05eace4288e833754de2d731ebf25538347a3a3fd",
     "conformance_status": "BEHAVIOUR_VERIFIED",
     "observed_heads": {
-      "fieldbook": "e2bd10c5f39ec271a030a863384dc6effcf15f1c",
-      "nirnay": "bd6d7bbdee89b2abde80b5a27453ab2b311b9c7e"
+      "fieldbook": "2df4b8e94b9b9c7eea95488c89659c788ca14c49",
+      "nirnay": "9e1231d7e213be23498de11dfcb3419f7d0fc4e1"
     },
     "test_counts": {
       "fieldbook": 1,
-      "nirnay": 10
+      "nirnay": 11
     },
     "note": "Conformance evidence only; not data admission, dataset acceptance, rights authorization, provider collection, market-data permission or live execution."
   },
