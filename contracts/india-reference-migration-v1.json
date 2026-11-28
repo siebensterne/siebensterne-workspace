@@ -1,0 +1,294 @@
+{
+  "schema_version": 1,
+  "name": "india-reference-migration-v1",
+  "record_type": "PROPOSED_P2_MIGRATION_RECORD",
+  "status": "PROPOSED_NOT_APPROVED",
+  "code_freeze": "REMAINS_FROZEN_PENDING_APPROVAL",
+  "design_only": true,
+  "generated_utc_date": "2026-11-28",
+  "purpose": "Design-only, machine-readable specification of the ten proposed P2 reference-data items. This record proposes definitions; it approves nothing, admits no data and authorizes no code change.",
+  "approval": {
+    "approved": false,
+    "approver": null,
+    "approved_utc_date": null,
+    "required_before_any_implementation": [
+      "Separate owner approval of an explicit amendment that names this record",
+      "Rights determination and written authority for any proposed reference source",
+      "A new, separately approved fixture amendment if behavioural evidence is needed",
+      "An explicit, separately approved unfreeze decision for the named code path"
+    ]
+  },
+  "frozen_scope": {
+    "repository": "nirnay",
+    "path": "crates/india-reference",
+    "current_status": "FROZEN_UNDER_RRP-004",
+    "unfrozen": false,
+    "code_change_authorized": false,
+    "effect_of_this_record": "NO_CODE_CHANGE_NO_UNFREEZE_NO_DATA_ADMISSION"
+  },
+  "gate_impact": {
+    "gate_statuses_changed": false,
+    "overall_status": "BLOCKED",
+    "blocked_gates_unchanged": ["G4", "G5", "G9"],
+    "statement": "No gate status, release condition or freeze value is altered by this design-only record."
+  },
+  "examples": {
+    "note": "Both examples are illustrative design inputs only and are explicitly NOT APPROVED. They do not grant rights, authorize collection or admit any data.",
+    "instrument_universe": {
+      "id": "UNIVERSE-EXAMPLE-NSE-NIFTY50-NEARMONTH-FUTIDX",
+      "status": "PROPOSED_NOT_APPROVED",
+      "exchange_code": "NSE",
+      "segment": "EQUITY_INDEX_DERIVATIVES",
+      "product_code": "FUTIDX",
+      "underlying": "NIFTY 50",
+      "contract_scope": "current near-month monthly futures series only",
+      "max_instruments": 1,
+      "data_admitted": false,
+      "rights_status": "UNKNOWN"
+    },
+    "reference_authority": {
+      "id": "AUTHORITY-EXAMPLE-NSE-OFFICIAL-ARCHIVE",
+      "status": "PROPOSED_NOT_APPROVED",
+      "name": "NSE official historical reference archive",
+      "proposed_role": "reference metadata and revision authority for the example universe",
+      "contacted": false,
+      "data_obtained": false,
+      "rights_status": "UNKNOWN",
+      "rights_evidence_ref": null
+    }
+  },
+  "p2_items": [
+    {
+      "id": "P2-01",
+      "title": "Instrument identity across exchange/product/contract changes",
+      "status": "PROPOSED_NOT_APPROVED",
+      "problem": "A venue, product or contract reclassification must not silently create a second identity for the same economic instrument, nor merge two different ones.",
+      "proposed_model": {
+        "identity_key_fields": ["exchange_code", "product_code", "instrument_symbol", "contract_expiry", "strike_price", "option_type", "instrument_class"],
+        "stable_id_rule": "Stable ID = versioned hash of canonical JSON of identity_key_fields; aliases carry effective_from_ns and effective_to_ns.",
+        "alias_table": "old_id -> new_id with non-overlapping effective intervals",
+        "id_reuse": "FORBIDDEN"
+      },
+      "invariants": [
+        "Exactly one canonical identity per instrument at any instant.",
+        "Every alias maps to a canonical identity with an explicit effective interval.",
+        "No identity is reassigned to a different economic instrument."
+      ],
+      "acceptance_criteria_proposed": [
+        "Replay of the example universe resolves each historical record to exactly one canonical ID.",
+        "Ambiguous or overlapping alias intervals fail closed."
+      ],
+      "not_authorized": ["code change in crates/india-reference", "data admission", "live execution"]
+    },
+    {
+      "id": "P2-02",
+      "title": "Listing, expiry, symbol-change and delisting lifecycle",
+      "status": "PROPOSED_NOT_APPROVED",
+      "problem": "Instrument state transitions must be point-in-time addressable and must not leave gaps or overlapping states.",
+      "proposed_model": {
+        "states": ["PRE_LISTING", "LISTED", "SUSPENDED", "SYMBOL_CHANGED", "EXPIRED", "DELISTED"],
+        "transition_record_fields": ["instrument_id", "from_state", "to_state", "effective_from_ns", "source_revision_ref"],
+        "terminal_states": ["EXPIRED", "DELISTED"],
+        "interval_rule": "States are half-open intervals [effective_from_ns, effective_to_ns) with no gaps or overlaps per instrument."
+      },
+      "invariants": [
+        "Exactly one lifecycle state per instrument at any instant.",
+        "Symbol changes preserve the stable ID and append an alias.",
+        "Terminal states cannot be silently reopened; a new listing requires a new identity."
+      ],
+      "acceptance_criteria_proposed": [
+        "Interval coverage is contiguous and non-overlapping across the example universe.",
+        "Lifecycle queries at boundary instants are deterministic."
+      ],
+      "not_authorized": ["code change in crates/india-reference", "data admission", "live execution"]
+    },
+    {
+      "id": "P2-03",
+      "title": "Corporate actions and adjustment history",
+      "status": "PROPOSED_NOT_APPROVED",
+      "problem": "Historical series must remain reproducible after splits, bonuses, dividends, mergers, spin-offs and rights issues.",
+      "proposed_model": {
+        "action_types": ["SPLIT", "BONUS", "DIVIDEND", "MERGER", "SPINOFF", "RIGHTS"],
+        "adjustment_record_fields": ["instrument_id", "action_type", "ratio", "ex_date_ns", "effective_from_ns", "source_revision_ref"],
+        "adjustment_model": "append-only factor series; never rewrite prior observations",
+        "reconstruction": "raw observation plus all applicable factors as of the query knowledge time"
+      },
+      "invariants": [
+        "Adjustment history is immutable and append-only; corrections are new revisions.",
+        "Adjusted and raw series are both reproducible from recorded factors.",
+        "No factor may be applied before its ex_date_ns."
+      ],
+      "acceptance_criteria_proposed": [
+        "Reconstructed series match recorded digests before and after each proposed action in the example universe.",
+        "Missing or ambiguous factors fail closed."
+      ],
+      "not_authorized": ["code change in crates/india-reference", "data admission", "live execution"]
+    },
+    {
+      "id": "P2-04",
+      "title": "Exchange calendars, holidays and sessions",
+      "status": "PROPOSED_NOT_APPROVED",
+      "problem": "Session boundaries and holidays must be explicit, versioned and timezone-safe before any time-series alignment is claimable.",
+      "proposed_model": {
+        "calendar_key": ["exchange_code", "trading_date", "session_type"],
+        "session_fields": ["open_ns", "close_ns", "timezone", "half_day_flag", "holiday_flag", "source_revision_ref"],
+        "session_types": ["REGULAR", "PRE_OPEN", "POST_CLOSE", "SPECIAL"],
+        "effective_ranges": true
+      },
+      "invariants": [
+        "Each (exchange, trading_date, session_type) has at most one effective definition.",
+        "Holidays are explicit records, not inferred from an absence of data.",
+        "All instants are stored in UTC nanoseconds with the source timezone retained."
+      ],
+      "acceptance_criteria_proposed": [
+        "Every example-universe observation maps to exactly one effective session.",
+        "Calendar conflicts fail closed."
+      ],
+      "not_authorized": ["code change in crates/india-reference", "data admission", "live execution"]
+    },
+    {
+      "id": "P2-05",
+      "title": "Effective time versus observation and knowledge time",
+      "status": "PROPOSED_NOT_APPROVED",
+      "problem": "Using an effective timestamp as if it were known at that time permits look-ahead in point-in-time research.",
+      "proposed_model": {
+        "time_axes": {
+          "event_effective_ns": "when the event is stated to take effect",
+          "source_published_ns": "when the authority published the record",
+          "observed_ns": "when this workspace first captured the record",
+          "knowledge_available_ns": "earliest instant at which the record may be used",
+          "recorded_ns": "when the record was written to the migration store"
+        },
+        "ordering_rule": "knowledge_available_ns >= max(source_published_ns, observed_ns) when those values exist",
+        "query_gate": "point-in-time queries filter on knowledge_available_ns, never on event_effective_ns alone"
+      },
+      "invariants": [
+        "No record is visible to a query whose as-of knowledge time precedes knowledge_available_ns.",
+        "Absent publication or observation time fails closed for research use.",
+        "Effective and knowledge times are stored in separate named fields."
+      ],
+      "acceptance_criteria_proposed": [
+        "A replay with as-of knowledge time immediately before publication returns no record.",
+        "No future-knowledge record appears in any proposed point-in-time result."
+      ],
+      "not_authorized": ["code change in crates/india-reference", "data admission", "live execution"]
+    },
+    {
+      "id": "P2-06",
+      "title": "Source authority, revisions and correction precedence",
+      "status": "PROPOSED_NOT_APPROVED",
+      "problem": "Multiple revisions and multiple sources require a deterministic precedence rule that never destroys history.",
+      "proposed_model": {
+        "authority_fields": ["authority_id", "authority_rank", "rights_status", "rights_evidence_ref"],
+        "revision_fields": ["revision_id", "revision_seq", "supersedes_revision_id", "correction_flag", "source_revision_ref"],
+        "precedence_order": ["higher authority_rank", "later revision_seq", "explicit correction_flag"],
+        "storage": "append-only revision chain; superseded revisions retained"
+      },
+      "invariants": [
+        "Corrections append a new revision; they never overwrite a prior revision.",
+        "Precedence is total and deterministic for any pair of revisions.",
+        "A source with UNKNOWN rights cannot outrank an approved authority."
+      ],
+      "acceptance_criteria_proposed": [
+        "Every conflict in the example universe resolves to one revision by the declared order.",
+        "Superseded revisions remain byte-addressable by digest."
+      ],
+      "not_authorized": ["code change in crates/india-reference", "data admission", "live execution"]
+    },
+    {
+      "id": "P2-07",
+      "title": "Historical backfill and migration",
+      "status": "PROPOSED_NOT_APPROVED",
+      "problem": "Bulk historical loading must be reproducible, resumable and verifiable before it is trusted for any research claim.",
+      "proposed_model": {
+        "phases": ["DRY_RUN", "DIGEST_VERIFY", "STAGED_LOAD", "POINT_IN_TIME_REPLAY", "OWNER_SIGN_OFF"],
+        "batch_fields": ["batch_id", "input_digest", "record_count", "checkpoint_ns", "output_digest"],
+        "resume_rule": "checkpoint_ns plus batch digest defines the only safe resume point",
+        "no_production_load_before_approval": true
+      },
+      "invariants": [
+        "Each batch is content-addressed; a changed input digest invalidates its checkpoint.",
+        "Replay of the example universe at fixed as-of instants is deterministic.",
+        "No migration result is accepted before an explicitly approved sign-off."
+      ],
+      "acceptance_criteria_proposed": [
+        "Dry-run digests match staged-load digests for every batch.",
+        "Interrupted migrations resume only from a verified checkpoint."
+      ],
+      "not_authorized": ["code change in crates/india-reference", "data admission", "live execution"]
+    },
+    {
+      "id": "P2-08",
+      "title": "Rollback and conflict resolution",
+      "status": "PROPOSED_NOT_APPROVED",
+      "problem": "A bad migration must be reversible without silent overwrites or loss of audit history.",
+      "proposed_model": {
+        "rollback_units": ["versioned snapshot", "immutable audit log", "checkpoint pointer"],
+        "rollback_triggers": ["digest mismatch", "overlapping intervals", "duplicate identity", "rights revocation"],
+        "conflict_detection": ["interval overlap", "identity collision", "precedence tie", "revision gap"],
+        "resolution_policy": "owner decision required for any conflict that precedence cannot resolve; no silent overwrite"
+      },
+      "invariants": [
+        "Rollback restores a prior verified snapshot and records the reason.",
+        "Audit log entries are append-only and survive rollback.",
+        "Unresolved conflicts fail closed."
+      ],
+      "acceptance_criteria_proposed": [
+        "A staged rollback of the example universe restores all prior point-in-time results.",
+        "Every injected conflict produces a named, non-silent failure."
+      ],
+      "not_authorized": ["code change in crates/india-reference", "data admission", "live execution"]
+    },
+    {
+      "id": "P2-09",
+      "title": "Reference-data rights and retention",
+      "status": "PROPOSED_NOT_APPROVED",
+      "problem": "Reference data can carry redistribution and retention obligations that must be settled before any use.",
+      "proposed_model": {
+        "rights_fields": ["authority_id", "rights_status", "rights_evidence_ref", "retention_until_ns", "allowed_uses", "quarantine_on_revocation"],
+        "rights_status_vocabulary": ["UNKNOWN", "REVIEW_PENDING", "APPROVED", "REFUSED", "REVOKED"],
+        "retention_rule": "retention_until_ns must be set before load; revocation moves records to quarantine",
+        "url_token_or_checksum_is_rights_evidence": false
+      },
+      "invariants": [
+        "UNKNOWN, REVIEW_PENDING, REFUSED or REVOKED rights block use.",
+        "A URL, token or checksum is never rights evidence.",
+        "Retention expiry or revocation is enforced by fail-closed quarantine."
+      ],
+      "acceptance_criteria_proposed": [
+        "No example-universe record loads without an explicit rights evidence reference.",
+        "A simulated revocation quarantines all derived records."
+      ],
+      "not_authorized": ["code change in crates/india-reference", "data admission", "live execution", "provider contact"]
+    },
+    {
+      "id": "P2-10",
+      "title": "Point-in-time lookup semantics",
+      "status": "PROPOSED_NOT_APPROVED",
+      "problem": "Point-in-time lookup must combine identity, lifecycle, adjustments, calendar, effective time, knowledge time and precedence into one fail-closed rule.",
+      "proposed_model": {
+        "query_fields": ["instrument_id", "as_of_effective_ns", "as_of_knowledge_ns", "calendar_context", "include_adjustments"],
+        "selection_rule": "choose the highest-precedence revision whose effective interval contains as_of_effective_ns and whose knowledge_available_ns <= as_of_knowledge_ns",
+        "ambiguity_policy": "more than one surviving revision is an error, not an arbitrary pick",
+        "result_fields": ["instrument_id", "selected_revision_id", "effective_from_ns", "knowledge_available_ns", "source_digest"]
+      },
+      "invariants": [
+        "No result uses knowledge unavailable at as_of_knowledge_ns.",
+        "Ambiguity, missing interval and missing rights evidence fail closed.",
+        "The selected revision is digest-addressable for audit."
+      ],
+      "acceptance_criteria_proposed": [
+        "Replay of the example universe at declared as-of instants returns one digest-addressable revision.",
+        "Boundary instants on effective and knowledge axes behave identically across both proposed query paths."
+      ],
+      "not_authorized": ["code change in crates/india-reference", "data admission", "live execution"]
+    }
+  ],
+  "prohibitions": [
+    "This record does not unfreeze crates/india-reference.",
+    "This record does not change any release gate status or the overall BLOCKED status.",
+    "This record does not admit a dataset, grant rights or authorize provider contact.",
+    "This record does not authorize experiments, market-shaped replay or live execution.",
+    "No implementation may begin until the approvals listed above are separately recorded."
+  ]
+}

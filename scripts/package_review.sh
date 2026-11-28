@@ -9,6 +9,53 @@ OUT="${2:-$ROOT/../siebensterne-review-packages}"
 LABEL="${3:-$(date -u +%Y-%m-%d)}"
 
 ROOT="$(cd "$ROOT" && pwd)"
+
+# ---- BEGIN canonical CI repository mapping (tested by scripts/test_package_review.py) ----
+# Hosted-CI repository slugs. The workspace repository is
+# siebensterne/siebensterne-workspace. An unknown name has no slug and fails
+# closed: no package is built against a guessed repository.
+repo_slug() {
+  case "${1-}" in
+    fieldbook) printf '%s\n' 'siebensterne/fieldbook' ;;
+    nirnay)    printf '%s\n' 'siebensterne/nirnay' ;;
+    workspace) printf '%s\n' 'siebensterne/siebensterne-workspace' ;;
+    *)
+      printf 'ERROR: no canonical CI repository mapping for %s\n' "${1-}" >&2
+      return 1
+      ;;
+  esac
+}
+
+# Independent verification pin. The expected values are repeated here on
+# purpose: a drifted mapping (for example a wrong workspace slug) is rejected
+# instead of silently querying the wrong hosted repository.
+verify_repo_mapping() {
+  local name expected actual status=0
+  while IFS='|' read -r name expected; do
+    [[ -z "$name" ]] && continue
+    if ! actual="$(repo_slug "$name")"; then
+      printf 'ERROR: repository mapping missing for %s\n' "$name" >&2
+      status=1
+      continue
+    fi
+    if [[ "$actual" != "$expected" ]]; then
+      printf 'ERROR: repository mapping for %s is %s, expected %s\n' "$name" "$actual" "$expected" >&2
+      status=1
+    fi
+  done <<'EXPECTED_CI_REPOSITORIES'
+fieldbook|siebensterne/fieldbook
+nirnay|siebensterne/nirnay
+workspace|siebensterne/siebensterne-workspace
+EXPECTED_CI_REPOSITORIES
+  return "$status"
+}
+# ---- END canonical CI repository mapping ----
+
+if ! verify_repo_mapping; then
+  printf 'ERROR: canonical CI repository mapping failed verification; no packages built.\n' >&2
+  exit 1
+fi
+
 mkdir -p "$OUT"
 OUT="$(cd "$OUT" && pwd)"
 
@@ -28,7 +75,7 @@ package_repo() {
   head="$(git -C "$dir" rev-parse HEAD)"
   branch="$(git -C "$dir" branch --show-current)"
   origin="$(git -C "$dir" config --get remote.origin.url || printf 'none')"
-  ci="$(gh run list --repo "siebensterne/$name" --branch main --workflow CI --limit 1 \
+  ci="$(gh run list --repo "$(repo_slug "$name")" --branch main --workflow CI --limit 1 \
         --json databaseId,headSha,conclusion \
         --jq '.[] | "\(.databaseId) \(.headSha) \(.conclusion)"' 2>/dev/null || printf 'unavailable')"
 
