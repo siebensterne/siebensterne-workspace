@@ -70,12 +70,46 @@ LIFECYCLE_ORDER = (
 )
 FC_IDS = tuple(f"FC-{i:03d}" for i in range(1, 10))
 RG_IDS = tuple(f"RG-{i:03d}" for i in range(1, 7))
-FIXTURE_REQUIRED_IDS = ("VAL-001", "VAL-002") + tuple(f"NEG-{i:03d}" for i in range(1, 13))
+BASE_FIXTURE_IDS = ("VAL-001", "VAL-002") + tuple(f"NEG-{i:03d}" for i in range(1, 13))
+P13_ENUM_FIXTURE_IDS = (
+    "P13-ENUM-QUALITY-UNKNOWN",
+    "P13-ENUM-CONTINUITY-UNKNOWN",
+    "P13-ENUM-QUALITY-TYPES",
+    "P13-ENUM-CONTINUITY-TYPES",
+)
+P13_INTEGER_FIXTURE_IDS = (
+    "P13-INT-SCHEMA",
+    "P13-INT-CAPTURE",
+    "P13-INT-CANONICAL",
+    "P13-INT-RECEIVE-UTC",
+    "P13-INT-RECEIVE-MONOTONIC",
+    "P13-INT-CONNECTION-EPOCH",
+    "P13-INT-PROVIDER",
+    "P13-INT-SOURCE-TIMESTAMP",
+    "P13-INT-EXPONENT",
+)
+P13_LEDGER_FIXTURE_IDS = ("P13-LEDGER-QUARANTINE",)
+P13_CANONICALISATION_FIXTURE_IDS = (
+    "P13-CANON-ESCAPED-UNICODE",
+    "P13-CANON-DUPLICATE",
+)
+P13_FIXTURE_IDS = (
+    P13_ENUM_FIXTURE_IDS
+    + P13_INTEGER_FIXTURE_IDS
+    + P13_LEDGER_FIXTURE_IDS
+    + P13_CANONICALISATION_FIXTURE_IDS
+)
+FIXTURE_REQUIRED_IDS = BASE_FIXTURE_IDS + P13_FIXTURE_IDS
 FIXTURE_COPY_DIR = Path("tests") / "contract_fixtures"
 FIXTURE_STATUS_PENDING = "FIXTURES_DEFINED_BEHAVIOURAL_RESULTS_PENDING"
 FIXTURE_STATUS_VERIFIED = "BEHAVIOUR_VERIFIED"
-FIXTURE_STATUSES = (FIXTURE_STATUS_PENDING, FIXTURE_STATUS_VERIFIED)
+FIXTURE_STATUS_P13 = "P13_FIXTURES_DEFINED_BEHAVIOUR_PENDING"
+FIXTURE_STATUSES = (FIXTURE_STATUS_PENDING, FIXTURE_STATUS_VERIFIED, FIXTURE_STATUS_P13)
 BEHAVIOUR_COMMAND = ("cargo", "test", "--test", "contract_conformance")
+CONFORMANCE_TEST_PATHS = {
+    "fieldbook": "tests/contract_conformance.rs",
+    "nirnay": "crates/release-verifier/tests/contract_conformance.rs",
+}
 
 EXPECTED_FREEZE = {
     "incremental_data_budget_inr": 0,
@@ -489,18 +523,26 @@ def find_fixture_copy_dirs(repo: Path) -> list[Path]:
 
 
 def fixture_ledger_consistency(items: list, expect: list) -> bool:
-    """Accepted events must be strictly increasing per (source_id, session_ref)."""
+    """Accepted events must be strictly increasing per (source_id, session_ref).
+
+    A rejected event never reaches the ledger, so non-integer or missing
+    sequence members on a rejected boundary case are not ledger violations.
+    Accepted events still require both sequences to be integers.
+    """
     ledgers: dict[tuple, tuple[int, int]] = {}
     for index, item in enumerate(items):
         if not isinstance(item, dict):
             return False
-        capture = item.get("capture_sequence")
-        canonical = item.get("canonical_sequence")
-        if not isinstance(capture, int) or not isinstance(canonical, int):
-            return False
         if not isinstance(expect, list) or index >= len(expect) or not isinstance(expect[index], dict):
             return False
-        if expect[index].get("accepted") is not True:
+        accepted = expect[index].get("accepted") is True
+        capture = item.get("capture_sequence")
+        canonical = item.get("canonical_sequence")
+        if accepted and (
+            not isinstance(capture, int) or not isinstance(canonical, int)
+        ):
+            return False
+        if not accepted:
             continue
         key = (item.get("source_id"), item.get("session_ref"))
         previous = ledgers.get(key)
@@ -561,6 +603,7 @@ def verify_fixture_semantics(
         for index, item in enumerate(items):
             code = expectation_code(expect, index)
             expect_mismatch = code == "ENVELOPE_DIGEST_MISMATCH"
+            structural = code == "UNKNOWN_OR_MISSING_MEMBER"
             duplicate = None
             obj = item
             if mode == "raw":
@@ -575,10 +618,37 @@ def verify_fixture_semantics(
                 except ValueError:
                     obj = None
                 if duplicate is not None:
-                    digests_ok = digests_ok and duplicate == "source_id" and code == "UNKNOWN_OR_MISSING_MEMBER"
+                    # A duplicate is the sole defect: the recorded digest must
+                    # still be the digest of the equivalent unique-member object.
+                    unique_digest = None
+                    try:
+                        resolved = json.loads(item)
+                        if isinstance(resolved, dict):
+                            unique_digest = canonical_envelope_digest(resolved)
+                    except ValueError:
+                        pass
+                    digests_ok = digests_ok and (
+                        duplicate in ENVELOPE_FIELDS
+                        and structural
+                        and unique_digest is not None
+                        and unique_digest == resolved.get("envelope_digest")
+                    )
                     continue
-            if not isinstance(obj, dict) or tuple(sorted(obj)) != tuple(sorted(ENVELOPE_FIELDS)):
+            if not isinstance(obj, dict):
                 digests_ok = False
+                continue
+            member_set = tuple(sorted(obj))
+            if member_set != tuple(sorted(ENVELOPE_FIELDS)):
+                # Required-member absence is a structural rejection, not a
+                # digest mismatch: verify the digest over the members present.
+                payload = {key: value for key, value in obj.items() if key != "envelope_digest"}
+                encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+                recomputed = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+                digests_ok = digests_ok and (
+                    structural
+                    and set(obj).issubset(ENVELOPE_FIELDS)
+                    and recomputed == obj.get("envelope_digest")
+                )
                 continue
             matches = canonical_envelope_digest(obj) == obj.get("envelope_digest")
             digests_ok = digests_ok and (matches != expect_mismatch)
@@ -650,6 +720,30 @@ def verify_fixtures(results: list[dict], root: Path) -> str:
     format_ok = isinstance(fmt, dict) and all(k in fmt for k in format_keys)
     check(results, format_ok, "fixture/manifest/format", f"documented_keys={len(format_keys)}")
 
+    p13_format_keys = (
+        "p13_integer_boundaries", "p13_enum_types", "p13_ledger_admission",
+        "p13_canonicalisation", "p13_behaviour_full_set", "p13_fixture_groups",
+    )
+    groups = fmt.get("p13_fixture_groups") if isinstance(fmt, dict) else None
+    grouped_ids = (
+        [fid for group in groups.values() for fid in group]
+        if isinstance(groups, dict)
+        and all(isinstance(group, list) and all(isinstance(fid, str) for fid in group) for group in groups.values())
+        else []
+    )
+    p13_format_ok = (
+        isinstance(fmt, dict)
+        and all(isinstance(fmt.get(key), str) and fmt[key] for key in p13_format_keys[:-1])
+        and len(grouped_ids) == len(P13_FIXTURE_IDS)
+        and tuple(sorted(grouped_ids)) == tuple(sorted(P13_FIXTURE_IDS))
+    )
+    check(
+        results,
+        p13_format_ok,
+        "fixture/manifest/p13_documentation",
+        f"documented_keys={len(p13_format_keys)} grouped_ids={len(grouped_ids)}",
+    )
+
     files = manifest.get("files")
     ids = [f.get("id") for f in files if isinstance(f, dict)] if isinstance(files, list) else []
     files_ok = (
@@ -666,6 +760,39 @@ def verify_fixtures(results: list[dict], root: Path) -> str:
         )
     )
     check(results, files_ok, "fixture/manifest/files", f"ids={ids}")
+
+    for fid in P13_FIXTURE_IDS:
+        check(
+            results,
+            ids.count(fid) == 1,
+            f"fixture/coverage/{fid}",
+            f"occurrences={ids.count(fid)}",
+        )
+    p13_meta = [f for f in files if isinstance(f, dict) and f.get("id") in P13_FIXTURE_IDS] if isinstance(files, list) else []
+    p13_digest_ok = len(p13_meta) == len(P13_FIXTURE_IDS) and all(
+        meta.get("path") == f"contracts/fixtures/{meta.get('id')}.json"
+        and (root / str(meta.get("path"))).is_file()
+        and sha256_file(root / str(meta.get("path"))) == meta.get("sha256")
+        for meta in p13_meta
+    )
+    check(
+        results,
+        p13_digest_ok,
+        "fixture/coverage/p13_file_digests",
+        f"files={len(p13_meta)} expected={len(P13_FIXTURE_IDS)}",
+    )
+    all_digest_ok = isinstance(files, list) and all(
+        isinstance(meta, dict)
+        and (root / str(meta.get("path"))).is_file()
+        and sha256_file(root / str(meta.get("path"))) == meta.get("sha256")
+        for meta in files
+    )
+    check(
+        results,
+        all_digest_ok,
+        "fixture/coverage/all_file_digests",
+        f"files={len(files) if isinstance(files, list) else 0}",
+    )
 
     spec, spec_err = load_json(root / "contracts" / "source-event-envelope-v1.json")
     codes = (
@@ -800,7 +927,35 @@ def verify_behaviour(
             f"behaviour/{repo}/tests_run",
             f"passed={tests_passed} exit_code={exit_code}",
         )
-        passed = tests_ok
+        fixture_count = len(FIXTURE_REQUIRED_IDS)
+        source_code, source_text = git(repo_path, "show", f"HEAD:{CONFORMANCE_TEST_PATHS[repo]}")
+        source_available = source_code == 0 and bool(source_text.strip())
+        if source_available:
+            full_set_ok = (
+                str(fixture_count) in source_text
+                and "assert_eq!" in source_text
+                and "len()" in source_text
+                and ("for " in source_text and "files" in source_text)
+            )
+            detail = (
+                f"source={CONFORMANCE_TEST_PATHS[repo]} count={fixture_count}"
+                f" assertion_and_iteration={full_set_ok}"
+            )
+        else:
+            # Synthetic self-test repositories have no Rust suite; their
+            # runner must report the full fixture count explicitly.
+            full_set_ok = tests_passed >= fixture_count
+            detail = (
+                f"no Rust suite at {CONFORMANCE_TEST_PATHS[repo]};"
+                f" stub_passed={tests_passed} expected={fixture_count}"
+            )
+        check(
+            results,
+            full_set_ok,
+            f"behaviour/{repo}/full_fixture_set",
+            detail,
+        )
+        passed = tests_ok and full_set_ok
         reports[repo] = {
             "head": head if code == 0 else None,
             "recorded_head": recorded,
@@ -1162,11 +1317,13 @@ def self_test() -> dict:
         cases.append({"id": "SELF-009", "expect": "FAIL:FIXTURE_INDEX", "result": verify(root)})
         write_index(fresh_index())
 
-        def stub_runner(command: tuple[str, ...], cwd: Path, env: dict) -> dict:
-            exit_code = 1 if Path(cwd).name == "nirnay" else 0
+        def stub_runner(command: tuple[str, ...], cwd: Path, env: dict, fail: bool = True) -> dict:
+            count = len(json.loads((root / "contracts" / "fixtures" / "manifest.json").read_text(
+                encoding="utf-8"))["files"])
+            exit_code = 1 if fail and Path(cwd).name == "nirnay" else 0
             return {
                 "exit_code": exit_code,
-                "stdout": "test result: ok. 14 passed; 0 failed; 0 ignored\n",
+                "stdout": f"test result: ok. {count} passed; 0 failed; 0 ignored\n",
                 "stderr": "determin-stub",
             }
 
@@ -1224,6 +1381,35 @@ def self_test() -> dict:
         cases.append({"id": "SELF-014", "expect": "FAIL:OBSERVED_HEAD", "result": verify(root)})
         write_index(fresh_index())
 
+        def passing_runner(command: tuple[str, ...], cwd: Path, env: dict) -> dict:
+            return stub_runner(command, cwd, env, fail=False)
+
+        cases.append({
+            "id": "SELF-015",
+            "expect": "PASS",
+            "result": verify(
+                root,
+                behaviour=True,
+                runner=passing_runner,
+                forced_target_dir=str(root / "cargo-target-selftest-pass"),
+            ),
+        })
+
+        coverage_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        coverage_manifest["files"] = [
+            entry for entry in coverage_manifest["files"]
+            if entry["id"] != "P13-INT-SCHEMA"
+        ]
+        manifest_path.write_text(
+            json.dumps(coverage_manifest, sort_keys=True, separators=(",", ":")), encoding="utf-8"
+        )
+        coverage_index = fresh_index()
+        coverage_index["fixtures"]["sha256"] = sha256_file(manifest_path)
+        write_index(coverage_index)
+        cases.append({"id": "SELF-016", "expect": "FAIL:P13_COVERAGE", "result": verify(root)})
+        write_index(fresh_index())
+        restore_fixtures()
+
     def classify(case: dict) -> bool:
         expect = case["expect"]
         result = case["result"]
@@ -1259,6 +1445,12 @@ def self_test() -> dict:
             return not result["ok"] and "fixture/file/VAL-001/expectations" in codes
         if expect == "FAIL:OBSERVED_HEAD":
             return not result["ok"] and "fixture/index/behaviour_evidence" in codes
+        if expect == "FAIL:P13_COVERAGE":
+            return (
+                not result["ok"]
+                and "fixture/manifest/files" in codes
+                and "fixture/coverage/P13-INT-SCHEMA" in codes
+            )
         return False
 
     passed = sum(classify(c) for c in cases)

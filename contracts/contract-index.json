@@ -34,8 +34,8 @@
   "fixtures": {
     "path": "contracts/fixtures/manifest.json",
     "schema_version": 1,
-    "sha256": "3edcfde5fdd7fb0ecadda4cc447cf2a52ea29f6d5df723a3185a08150c057654",
-    "conformance_status": "BEHAVIOUR_VERIFIED",
+    "sha256": "b9066d915d77eb63b309e5f05eace4288e833754de2d731ebf25538347a3a3fd",
+    "conformance_status": "P13_FIXTURES_DEFINED_BEHAVIOUR_PENDING",
     "observed_heads": {
       "fieldbook": "e2bd10c5f39ec271a030a863384dc6effcf15f1c",
       "nirnay": "bd6d7bbdee89b2abde80b5a27453ab2b311b9c7e"
