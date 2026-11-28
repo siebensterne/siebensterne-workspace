@@ -522,6 +522,32 @@ def find_fixture_copy_dirs(repo: Path) -> list[Path]:
     return sorted(found)
 
 
+# Names such as P1.5-..., P15-... or PHASE-... are called out explicitly in the
+# allowlist detail. They are rejected like any other unlisted file.
+PHASE_LABELLED_NAME = re.compile(r"(?:^|[-_])(?:P\d+(?:[._-]\d+)*|PHASE)(?:[-_]|$)", re.IGNORECASE)
+
+
+def tracked_fixture_files(repo: Path, copy_dir: Path) -> tuple[list[str], str]:
+    """Return tracked paths inside a copied fixture directory, relative to it.
+
+    Git is authoritative: an untracked stray file is not packaging evidence,
+    but any tracked file beyond the canonical manifest list plus manifest.json
+    is an unapproved fixture amendment and must fail closed. Nested paths are
+    preserved verbatim so a file in a subdirectory cannot hide behind a name.
+    """
+    try:
+        rel_dir = copy_dir.resolve().relative_to(repo.resolve())
+    except ValueError:
+        return [], "copy directory is outside the repository"
+    code, output = git(repo, "ls-files", "-z", "--", rel_dir.as_posix())
+    if code != 0:
+        return [], f"git ls-files failed: {output}"
+    files = sorted(
+        Path(item).relative_to(rel_dir).as_posix() for item in output.split("\0") if item
+    )
+    return files, ""
+
+
 def fixture_ledger_consistency(items: list, expect: list) -> bool:
     """Accepted events must be strictly increasing per (source_id, session_ref).
 
@@ -841,6 +867,37 @@ def verify_fixtures(results: list[dict], root: Path) -> str:
             copy_dir is not None and not missing and not mismatched,
             f"fixture/copies/{repo}/files",
             f"dir={str(copy_dir) if copy_dir else 'none'} missing={missing} mismatched={mismatched}",
+        )
+
+        # Exact allowlist: the tracked file set of each copied fixture directory
+        # must equal the canonical manifest file list plus manifest.json. Any
+        # extra tracked file (especially a phase-labelled one) fails closed.
+        expected_tracked = sorted({Path(meta["path"]).name for meta in files} | {"manifest.json"})
+        if copy_dir is None:
+            tracked: list[str] = []
+            track_err = "no fixture copy directory matched the canonical manifest"
+        else:
+            tracked, track_err = tracked_fixture_files((root / repo).resolve(), copy_dir)
+        extra = sorted(set(tracked) - set(expected_tracked))
+        missing_tracked = sorted(set(expected_tracked) - set(tracked))
+        phase_labelled = sorted(
+            name for name in extra if PHASE_LABELLED_NAME.search(Path(name).name)
+        )
+        allowlist_ok = track_err == "" and not extra and not missing_tracked
+        detail = (
+            f"dir={str(copy_dir) if copy_dir else 'none'} "
+            f"tracked={len(tracked)} expected={len(expected_tracked)} "
+            f"extra={extra} missing={missing_tracked}"
+        )
+        if phase_labelled:
+            detail += f" phase_labelled={phase_labelled}"
+        if track_err:
+            detail += f" error={track_err}"
+        check(
+            results,
+            allowlist_ok,
+            f"fixture/copies/{repo}/tracked_allowlist",
+            detail,
         )
     return manifest_digest
 
@@ -1410,6 +1467,58 @@ def self_test() -> dict:
         write_index(fresh_index())
         restore_fixtures()
 
+        # Exact allowlist negative cases: one extra TRACKED file per repo must
+        # fail closed, including phase-labelled names that imply an unapproved
+        # fixture amendment. Rebind heads after each commit so no other check
+        # is affected and the allowlist code is the sole failure.
+        def commit_extra(repo_name: str, filename: str, remove: bool = False) -> None:
+            rel = (FIXTURE_COPY_DIR / filename).as_posix()
+            env = dict(os.environ)
+            env.update(
+                GIT_AUTHOR_NAME="fixture",
+                GIT_AUTHOR_EMAIL="fixture@example.invalid",
+                GIT_COMMITTER_NAME="fixture",
+                GIT_COMMITTER_EMAIL="fixture@example.invalid",
+                GIT_AUTHOR_DATE="2026-01-03T00:00:00Z",
+                GIT_COMMITTER_DATE="2026-01-03T00:00:00Z",
+            )
+            if not remove:
+                (root / repo_name / rel).write_text("{}\n", encoding="utf-8")
+            args = ("rm", "-q", "--", rel) if remove else ("add", "--", rel)
+            for step in (args, ("commit", "-q", "-m", f"{'remove' if remove else 'inject'} {filename}")):
+                proc = subprocess.run(
+                    ["git", "-C", str(root / repo_name), *step],
+                    capture_output=True, text=True, env=env, check=False,
+                )
+                if proc.returncode != 0:
+                    raise RuntimeError(f"fixture extra {step[0]} failed: {proc.stderr.strip()}")
+            _, new_head = git(root / repo_name, "rev-parse", "HEAD")
+            heads[repo_name] = new_head
+            base_state["source_heads_at_record_time"][repo_name] = new_head
+            write_state(base_state)
+            write_index(fresh_index())
+
+        extra_fieldbook = "P1.5-PHASE-EXTRA.json"
+        extra_nirnay = "P15-UNLISTED.json"
+        commit_extra("fieldbook", extra_fieldbook)
+        cases.append({
+            "id": "SELF-017",
+            "expect": "FAIL:EXTRA_FIXTURE",
+            "expect_detail_contains": extra_fieldbook,
+            "result": verify(root),
+        })
+        commit_extra("nirnay", extra_nirnay)
+        cases.append({
+            "id": "SELF-018",
+            "expect": "FAIL:EXTRA_FIXTURE",
+            "expect_detail_contains": extra_nirnay,
+            "result": verify(root),
+        })
+        commit_extra("fieldbook", extra_fieldbook, remove=True)
+        commit_extra("nirnay", extra_nirnay, remove=True)
+        restore_fixtures()
+        cases.append({"id": "SELF-019", "expect": "PASS", "result": verify(root)})
+
     def classify(case: dict) -> bool:
         expect = case["expect"]
         result = case["result"]
@@ -1450,6 +1559,22 @@ def self_test() -> dict:
                 not result["ok"]
                 and "fixture/manifest/files" in codes
                 and "fixture/coverage/P13-INT-SCHEMA" in codes
+            )
+        if expect == "FAIL:EXTRA_FIXTURE":
+            allowlist_failed = any(
+                c["status"] == "FAIL"
+                and c["code"].startswith("fixture/copies/")
+                and c["code"].endswith("/tracked_allowlist")
+                for c in result["checks"]
+            )
+            if not (not result["ok"] and allowlist_failed):
+                return False
+            needle = case.get("expect_detail_contains")
+            return not needle or any(
+                c["status"] == "FAIL"
+                and c["code"].endswith("/tracked_allowlist")
+                and needle in c["detail"]
+                for c in result["checks"]
             )
         return False
 

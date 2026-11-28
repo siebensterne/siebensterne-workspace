@@ -46,6 +46,16 @@
     },
     "note": "Conformance evidence only; not data admission, dataset acceptance, rights authorization, provider collection, market-data permission or live execution."
   },
+  "proposed_records": {
+    "india-reference-migration-v1": {
+      "path": "contracts/india-reference-migration-v1.json",
+      "schema_version": 1,
+      "sha256": "d1c820225b6f011ef0cde0fea7667b67d67271c31fecfee1905b3f15f045cd48",
+      "status": "PROPOSED_NOT_APPROVED",
+      "code_freeze": "REMAINS_FROZEN_PENDING_APPROVAL",
+      "note": "Design-only P2 migration record; not approved, no gate status changed, no unfreeze of crates/india-reference, no data admitted."
+    }
+  },
   "blocked_research": {
     "status": "BLOCKED",
     "scope": "point-in-time research and reference authority over frozen crates/india-reference",
