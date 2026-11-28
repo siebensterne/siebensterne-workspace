@@ -8,8 +8,8 @@
       "status": "SPECIFIED_AND_IMPLEMENTED_INDEPENDENTLY",
       "verification": {
         "status": "VERIFIED_AT_EXACT_HEADS",
-        "fieldbook": "2ef503ff397186abfcd7fc619f0d1703d73aa9d1",
-        "nirnay": "360c80711f6a10174f60787f6f08c89df51aca85",
+        "fieldbook": "e2bd10c5f39ec271a030a863384dc6effcf15f1c",
+        "nirnay": "bd6d7bbdee89b2abde80b5a27453ab2b311b9c7e",
         "checker": "scripts/check_contracts.py --root .",
         "schema_version_constants": {
           "fieldbook": "SOURCE_EVENT_SCHEMA_VERSION = 1",
@@ -37,8 +37,8 @@
     "sha256": "3edcfde5fdd7fb0ecadda4cc447cf2a52ea29f6d5df723a3185a08150c057654",
     "conformance_status": "BEHAVIOUR_VERIFIED",
     "observed_heads": {
-      "fieldbook": "2ef503ff397186abfcd7fc619f0d1703d73aa9d1",
-      "nirnay": "360c80711f6a10174f60787f6f08c89df51aca85"
+      "fieldbook": "e2bd10c5f39ec271a030a863384dc6effcf15f1c",
+      "nirnay": "bd6d7bbdee89b2abde80b5a27453ab2b311b9c7e"
     },
     "test_counts": {
       "fieldbook": 1,
